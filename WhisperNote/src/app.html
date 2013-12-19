@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>WhisperNote Encrypted Note v1.0</title>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+        <meta http-equiv="cache-control" content="max-age=0" />
+        <meta http-equiv="cache-control" content="no-cache" />
+        <meta http-equiv="pragma" content="no-cache" />
+        <meta http-equiv="expires" content="Mon, 1 Jan 2000 11:11:11 GMT" />
+        <meta name="viewport" content="width=device-width" />
+        <meta name="sca-app-type" content="WhisperNote" />
+
+        <script id="encrypted-data" type="text/javascript">var encData={"v":1,"iter":1000,"ks":256,"ts":128,"mode":"ocb2","cipher":"aes","salt":"","iv":"","adata":"","ct":"","cattname":"","catt":""};</script>
+        <script>{{= js }}</script>
+        <link rel="stylesheet" href="../dist/cnote.css"/>
+    </head>
+    <body onload="SCA.doOnload();">
+        <nav class="navbar navbar-default navbar-fixed-top" role="navigation">
+            <div class="navbar-header">
+                <a class="navbar-brand" href="http://www.consunet.com.au/">
+                    <img id="logo" class="img-thumbnail" alt="Consunet Pty Ltd" src="data:image/png;base64,R0lGODlhIAAgAMZpACIiISMjIiQkIyUlJC8vLjIyMTQ0M0BAP0lJSVBQUGRkZGhoZ2lpaGpqamtra3h4eH19fYGBgIKCgYmJiIqKipOTk4q4VIq4VYu4Voy5V466WrCwr5jAabKyspnBarOzs5rCbLS0tJ7EcqLHeLu7u729vKjKgKnKgb6+vqnLgqrLgqrLg6zMhq3Nh7DPjLHQjrPRkbTRkbXSk7bSlLbTlbfTlrfTl7zWnbzWnsDZo8HZpMHZpcLap8fdrdjY18zgtc3ht87ht9ra2tzc3N7e3dXlwtbmw9fnxdjnxuLi4tvpytvpy+Tk5NzqzN3qzujo6OTu2OXv2ubw2+fw3Ojx3ejx3u7u7vDw8PHx8fPz8/T09PL37PP37fX58fj4+Pf68/f69Pr6+vn79vv7+/r8+Pz8/P39/f7+/f7+/v///////////////////////////////////////////////////////////////////////////////////////////yH5BAEKAH8ALAAAAAAgACAAAAf+gGmCg4SFhoeIiYqLjI2IZx4sjoY4ImiGKxYWJpODNJorhVWamiedMqQWVYNoGKkWKYZEQoYxrxiXaU2vmj+CKAkAwgAIG4JGvBZNgiC8GV9pEMPTAAppYBm8IGlcyUBpFNMEBcMTgkHJXEi8Gmk+wwZMglcHEoQavEg8vDlpC8IDzCjKwYsHDF5K0gwbskgJLxgseEWxIkxAmEVReLFowQsKlooXFUHh1WIGryMKhZFYdITXjB68aqSJMOyKohq8ejhJlubJtA5JmJQA0IBQMidikt1IE4LaNAeCbiQTkyZFsilpPghwGqBCminJYqWRkswClTRjHkxj4CUNlbJaUgZxKNtCkBktWcoIipiMA6EtZS1gGKGjSBEdI1yV3VIISODHr74ZegEZ8otELiqXdbGoxwXNpC70aESmmWYQZDp1UfFYRZdOhMhsWbLDho0dS7akhs27t+9AADs=">
+                    WhisperNote
+                </a>
+                <form id="import-form" class="navbar-form navbar-right" onsubmit="return false;">
+                    <input id="import" onchange="SCA.importFile();" class="offscreen" type="file" name="import">
+                </form>
+            </div>
+
+            <div class="navbar-collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li><a onclick='SCA.clickImport();' href="#">Import</a></li>
+                    <li><a class="serif info" onclick="SCA.showAbout();" href="#"><b>i</b></a></li>
+                </ul>
+            </div>
+        </nav>
+
+        <div id="pagecontainer" class="container">
+            <br/>
+            <div id="nojavascript" style="display: inline;">
+                <div class="jumbotron">
+                    <div class="container">
+                        <h2>Javascript not enabled!</h2>
+                        <h3>This application requires Javascript. Please enable it in your browser settings.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div id="unsupported" style="display: none;">
+                <div class="jumbotron">
+                    <div class="container">
+                        <h2>Your browser is unsupported!</h2>
+                        <h3>Please upgrade to the latest version of your browser in order to use this application.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div id="locked" style="display: none;">
+                <div class="jumbotron">
+                    <div class="container">
+                        <div class="row">
+                            <div class="col-sm-9 col-md-10">
+                                <div class="pull-left">
+                                    <h2>This content is protected.</h2>
+                                    <h3>Please enter a password to unlock it.</h3>
+                                </div>
+                                <div class="visible-sm visible-md visible-lg pull-right">
+                                    <img height="100" width="100" class="img-pixelated" src="data:image/gif;base64,R0lGODlhEAAQAMIEAAAAACUlJTs7O3h4eP///////////////yH5BAEKAAQALAAAAAAQABAAAAMsSLrcPjC6FeuYBDI9ufINCCpCAJzoGQhYu5RpurouHKssjdn3rE+8mO+3SAAAOw==">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <form id="decrypt" class="form-horizontal" autocomplete="off" onsubmit="SCA.decrypt(); return false;">
+                    <div id="dec-password-group" class="form-group">
+                        <label for="decrypt_pass" class="col-lg-2 control-label">Password</label>
+                        <div class="col-lg-4">
+                            <input id="dec-password" name="dec-password" type="password" class="form-control">
+                            <span id="dec-password-help" class="help-block"></span>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="hint" class="col-lg-2 control-label">Hint</label>
+                        <div class="col-lg-4">
+                            <p id="dec-hint" class="form-control-static">(None provided)</p>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-lg-offset-2 col-lg-10">
+                            <button id="do-decrypt" type="button" onclick="SCA.decrypt();" class="btn btn-success btn-sm">Decrypt</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+            <div id="unlocked" style="display: none;">
+                <div id="help-screen" class="container alert alert-info alert-dismissable" style="display: none;">
+                    <button type="button" class="close" onclick="SCA.displayHelp(false);">&times;</button>
+                    <b>WhiperNote</b> is a portable encrypted message container. <b>WhisperNote</b> is free to use, 
+										open source, free from app stores and compatible with most modern devices (computers, tablets, phones).<br/><br/>
+										<a id="help-toggle" href="#" onclick="SCA.toggleHelpDetail();" class="alert-link">more</a>
+                    <div id="help-detail" style="display: none;">
+											<br/>
+                        <b>WhiperNote</b> is different to other message encryption software because everything
+												you required is contained in the HTML file you are reading right now. <br/><br/>
+												<div>
+													<b>Security</b>
+													<ul>
+														<li><b>WhiperNote</b> uses AES 256 bit encryption to store your data, this is a very strong form of encryption.</li>
+														<li><b>WhiperNote</b> uses your browser as the execution environment, you probably use your browser for your banking too.</li>
+														<li><b>WhiperNote</b> does not store your data on a server, it saves it to the device you are using.</li>
+														<li>If you lose your password, it can not be recovered.</li>
+														<li>Providing high quality security tools is very difficult and like other tools <b>WhiperNote</b> has known weaknesses.</li>
+														<li>For more information please see the <a href="http://www.consunet.com.au">website.</a></li>
+													</ul>
+												</div>
+												
+												<div>
+													<b>Create your note</b>
+													<ul>
+														<li>Just type or cut and paste the text content you want to encrypt in the Message area.</li>
+														<li>You can optionally select a single file from your device to be included with your note. This file should be less than 10Mb in size</li>
+														<li>Once you're done editing your note, at the bottom of the screen type in a password to protect the note contents.</li>
+														<li>Optionally, provide a hint for yourself, but don't make it obvious.</li>
+														<li>Hit the Encrypt button. This will encrypt the note and package everything neatly into a single HTML file. You can save it to your local disc or perhaps a cloud service.</li>
+													</ul>
+												</div>
+												
+												<div>
+													<b>Share your note</b>
+													<ul>
+														<li>Due to technical limitations of current browsers, if you send a <b>WhiperNote</b> through email (or other insecure channel) the recipient 
+															needs do one of three things to read it securely:
+															<ul>
+																<li>Download a new <b>WhiperNote</b> and Import your note into theirs.</li>
+																<li>Use the Consunet <a href="http://www.consunet.com.au/products/validator">Validator</a> service to check that the note has not been maliciously modified in transit.</li>
+																<li>Temporarily disconnect from the Internet when they are reading the note.</li>
+															</ul>
+														</li>
+														<li>When sharing the password you should use a different channel to the one you sent your note through (i.e. call the recipient over the phone).</li>
+													</ul>
+												</div>
+                    </div>
+                </div>
+                <div class="container">
+                    <form id="main" role="form" autocomplete="off">
+                        <div class="form-group">
+                            <label for="payload">Message</label>
+                            <textarea id="payload" class="form-control input-large" placeholder="Enter your private message here..." rows="15"></textarea>
+                        </div>
+                        <div class="form-group pull-left">
+                            <label for="file">Attach File</label>
+                            <input type="file" id="file" name="file" />
+                        </div>
+                        <div id="att-download" class="form-group pull-right" style="display: none;">
+                            <label id="download-label" for="download"></label>
+                            <button id="download" type="button" onclick="SCA.downloadDecrypted();" class="btn btn-primary btn-sm">Download</button>
+                        </div>
+                    </form>
+                </div>
+                <div class="container">
+                    <nav class="navbar navbar-default navbar-fixed-bottom">
+                        <div class="navbar-collapse">
+                            <form id="encrypt" class="navbar-form" role="form" onsubmit="return false;">
+                                <div id="enc-password-group" class="form-group">
+                                    <label class="sr-only" for="enc-password">Password</label>
+                                    <div class="col-sm-12 col-md-12 col-lg-12">
+                                        <input type="password" class="form-control input-sm" id="enc-password" name="enc-password" placeholder="Password" onkeydown="SCA.validateEncPass();" onkeyup="SCA.validateEncPass();">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="sr-only" for="enc-hint">Hint</label>
+                                    <div class="col-sm-12 col-md-12 col-lg-12">
+                                        <input type="text" class="form-control input-sm" id="enc-hint" name="enc-hint" placeholder="Hint to remember">
+                                    </div>
+                                </div>
+                                <div id="enc-password-fb-group" class="form-group" style="display: none;">
+                                    <div class="col-sm-12 col-md-12 col-lg-12">
+                                        <label id="enc-password-fb" class="control-label"></label>
+                                    </div>
+                                </div>
+                                <button id="do-encrypt" type="button" onclick="SCA.encrypt();" class="btn btn-sm btn-success col-xs-12 col-sm-2 col-md-1 col-lg-1">Encrypt</button>
+                            </form>
+                        </div>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>
