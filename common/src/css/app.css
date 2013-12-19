@@ -1,0 +1,63 @@
+/*! Custom classes */
+.srch {
+	width: 70px;
+}
+
+.offscreen {
+	display: none; 
+	position: absolute; 
+	top: -100px;
+}
+
+.serif {
+	font-family: Georgia, "Times New Roman", Times, serif;
+}
+
+.info {
+	font-size: 2em;
+}
+
+.img-pixelated {
+	image-rendering: optimizeSpeed;
+	image-rendering: -moz-crisp-edges;
+	image-rendering: -o-crisp-edges;
+	image-rendering: -webkit-optimize-contrast;
+	image-rendering: optimize-contrast;
+	-ms-interpolation-mode: nearest-neighbor;
+}
+
+.navbar-input {
+	padding-top: 10px;
+}
+
+/*! Bootstrap customizations */
+
+body {
+  padding-top: 50px;
+	padding-bottom: 100px;
+}
+
+.form-group {
+  margin-bottom: 4px;
+}
+
+.btn-xs {
+	margin: 4px 0px;
+}
+
+.navbar-brand {
+  padding: 5px 5px;
+}
+.nav > li > a {
+  padding: 15px 7px;
+}
+.panel {
+  margin-bottom: 10px;
+}
+.panel-body {
+  padding: 4px;/*custom*/
+}
+
+.panel-heading {
+  padding: 4px 4px;/*custom*/
+}
