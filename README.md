@@ -1,3 +1,3 @@
 Consunet / Apps
 ====
-A collection of useful (hopefully) applications coming in December 2013.
+A collection of useful (hopefully) applications coming very soon now.
