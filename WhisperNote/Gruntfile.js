@@ -14,8 +14,8 @@ module.exports = function(grunt) {
         jsdoc: {
             dist: {
                 src: [
-                    '../common/src/common.js', 
-                    '../common/src/constants.js', 
+                    '../common/src/common.js',
+                    '../common/src/constants.js',
                     'src/app.js',
                     'src/constants.js'
                 ],
@@ -61,7 +61,7 @@ module.exports = function(grunt) {
                     removeComments: true,
                     removeCommentsFromCDATA: true,
                     removeCDATASectionsFromCDATA: true,
-                    collapseWhitespace: true,
+                    collapseWhitespace: false,
                     collapseBooleanAttributes: true,
                     removeAttributeQuotes: false,
                     removeRedundantAttributes: true,
