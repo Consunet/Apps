@@ -26,8 +26,8 @@ module.exports = function(grunt) {
             js: {
                 src: [
                     'lib/sjcl.js',
-                    'lib/blob_min.js',
-                    'lib/fs_min.js',
+                    'lib/Blob.js',
+                    'lib/FileSaver.js',
                     '../common/src/constants.js',
                     '../common/src/common.js',
                     'src/constants.js',
