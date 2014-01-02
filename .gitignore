@@ -1,0 +1,13 @@
+/WhisperNote/nbproject/private/
+/WhisperNote/node_modules/
+/WhisperNote/dist/*
+/WhisperNote/public_html/*
+/WhisperNote/doc/*
+/WhisperNote/npm-debug.log
+
+/EveryPass/node_modules/
+/EveryPass/dist/*
+/EveryPass/nbproject/private/
+/EveryPass/public_html/*
+/EveryPass/doc/*
+/EveryPass/npm-debug.log
