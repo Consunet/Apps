@@ -160,19 +160,19 @@ module.exports = function(grunt) {
     grunt.template.addDelimiters("curly", "{{", "}}");
 
     grunt.registerTask('buildhtml', 'Builds the app html.', function() {
-        var css = grunt.file.read('dist/cnote.min.css');
-        var js = grunt.file.read('dist/cnote.min.js');
-        var html = grunt.file.read('dist/cnote.html');
+        var css = grunt.file.read('dist/whispernote.min.css');
+        var js = grunt.file.read('dist/whispernote.min.js');
+        var html = grunt.file.read('dist/whispernote.html');
         var obj = {css: css, js: js};
 
         var processedTemplate = grunt.template.process(html, {data: obj, delimiters: "curly"});
-        grunt.file.write('dist/cnote_built.html', processedTemplate);
+        grunt.file.write('dist/whispernote_built.html', processedTemplate);
     });
 
     grunt.registerTask('builddebug', 'Builds the debuggable app html.', function() {
-        var css = grunt.file.read('dist/cnote.min.css');
-        var js = grunt.file.read('dist/cnote.js');
-        var html = grunt.file.read('dist/cnote.html');
+        var css = grunt.file.read('dist/whispernote.min.css');
+        var js = grunt.file.read('dist/whispernote.js');
+        var html = grunt.file.read('dist/whispernote.html');
         var obj = {css: css, js: js};
 
         var processedTemplate = grunt.template.process(html, {data: obj, delimiters: "curly"});
