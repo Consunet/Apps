@@ -92,7 +92,7 @@ module.exports = function(grunt) {
         uncss: {
             dist: {
                 files: {
-                    'dist/cpass.min.css': ['src/app.html']
+                    'dist/everypass.min.css': ['src/app.html']
                 }
             },
             options: {
@@ -119,10 +119,10 @@ module.exports = function(grunt) {
         replace: {
             dist: {
                 src: ['src/app.html'], // source files array (supports minimatch)
-                dest: 'dist/cpass.html', // destination directory or file
+                dest: 'dist/everypass.html', // destination directory or file
                 options: {processTemplates: false},
                 replacements: [{
-                        from: '<link rel="stylesheet" href="../dist/cpass.css"/>', // string replacement
+                        from: '<link rel="stylesheet" href="../dist/everypass.css"/>', // string replacement
                         to: '<style type="text/css">{{= css }}</style>'
                     }]
             }
@@ -153,19 +153,19 @@ module.exports = function(grunt) {
     grunt.template.addDelimiters("curly", "{{", "}}");
 
     grunt.registerTask('buildhtml', 'Builds the app html.', function() {
-        var css = grunt.file.read('dist/cpass.min.css');
-        var js = grunt.file.read('dist/cpass.min.js');
-        var html = grunt.file.read('dist/cpass.html');
+        var css = grunt.file.read('dist/everypass.min.css');
+        var js = grunt.file.read('dist/everypass.min.js');
+        var html = grunt.file.read('dist/everypass.html');
         var obj = {css: css, js: js};
 
         var processedTemplate = grunt.template.process(html, {data: obj, delimiters: "curly"});
-        grunt.file.write('dist/cpass_built.html', processedTemplate);
+        grunt.file.write('dist/everypass_built.html', processedTemplate);
     });
 
     grunt.registerTask('builddebug', 'Builds the debuggable app html.', function() {
-        var css = grunt.file.read('dist/cpass.min.css');
-        var js = grunt.file.read('dist/cpass.js');
-        var html = grunt.file.read('dist/cpass.html');
+        var css = grunt.file.read('dist/everypass.min.css');
+        var js = grunt.file.read('dist/everypass.js');
+        var html = grunt.file.read('dist/everypass.html');
         var obj = {css: css, js: js};
 
         var processedTemplate = grunt.template.process(html, {data: obj, delimiters: "curly"});

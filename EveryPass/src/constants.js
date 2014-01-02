@@ -3,7 +3,7 @@
  */ 
 
 /**
- * @namespace CPASS_CONSTANTS
+ * @namespace CONST
  * @type {object}
  * @description
  * <p>
