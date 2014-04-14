@@ -224,11 +224,14 @@ SCA.setUnlocked = function(isUnlocked) {
     this.setDisplay("unlocked", unlockedDisplay);
 
     var search = this.e("search");
+    var menuButton = this.e("menu-button");
 
     if (isUnlocked) {
         search.removeAttribute("disabled");
+        menuButton.removeAttribute("disabled");
     } else {
         search.setAttribute("disabled", "");
+        menuButton.setAttribute("disabled", "");
     }
 };
 

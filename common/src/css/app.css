@@ -1,6 +1,36 @@
 /*! Custom classes */
-.srch {
-	width: 70px;
+
+@media (max-width: 379px) {
+    .srch {
+        width: 120px !important;
+    }
+}
+
+@media (min-width:380px) and (max-width: 499px) {
+    .srch {
+        width: 150px !important;
+    }
+}
+
+@media (min-width:500px) and (max-width: 767px) {
+    .srch {
+        width: 200px !important;
+    }
+}
+@media (min-width: 768px) and (max-width: 991px) {
+    .srch {
+        width: 300px !important;
+    }
+}
+@media (min-width: 992px) and (max-width: 1199px) {
+    .srch {
+        width: 400px !important;
+    }
+}
+@media (min-width: 1200px) {
+    .srch {
+        width: 500px !important;
+    }
 }
 
 .offscreen {
@@ -60,4 +90,50 @@ body {
 
 .panel-heading {
   padding: 4px 4px;/*custom*/
+}
+
+.menu {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  z-index: 1000;
+  float: left;
+  min-width: 160px;
+  padding: 5px 0;
+  margin: 2px 0 0;
+  list-style: none;
+  font-size: 14px;
+  background-color: #ffffff;
+  border: 1px solid #cccccc;
+  border: 1px solid rgba(0, 0, 0, 0.15);
+  border-radius: 4px;
+  -webkit-box-shadow: 0 6px 12px rgba(0, 0, 0, 0.175);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.175);
+  background-clip: padding-box;
+}
+
+.menu li a {
+  display: block;
+  padding: 3px 20px;
+  clear: both;
+  font-weight: normal;
+  line-height: 1.42857143;
+  color: #333333;
+  white-space: nowrap;
+}
+
+.menu > li > a:hover,
+.menu > li > a:focus{
+  text-decoration: none;
+  color: #262626;
+  background-color: #f5f5f5;
+}
+
+.menu > .active > a,
+.menu > .active > a:hover,
+.menu > .active > a:focus {
+  color: #ffffff;
+  text-decoration: none;
+  outline: 0;
+  background-color: #428bca;
 }

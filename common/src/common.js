@@ -54,10 +54,10 @@ var SCA = {
         var element = this.e(id);
         var value = element.value;
         element.value = "";
-				try {
-					element.innerHtml = "";
-				} catch (e){
-				}
+        try {
+            element.innerHtml = "";
+        } catch (e){
+        }
         return value;
     },  
             
@@ -238,8 +238,7 @@ var SCA = {
         } else if(this.isShown("unlocked")) {
             contextualInfo = CONST.about.unlocked;
         }
-        //alert(CONST.about.general + contextualInfo);
-				SCA.displayHelp(true);
+        SCA.displayHelp(true);
     },
 
     /**
@@ -412,10 +411,45 @@ var SCA = {
     },
             
     /**
+     * Used to toggle the state of the menu.
+     * @returns {undefined}
+     */
+    toggleMenu: function() {
+        if (this.isShown("menu")) {
+            this.displayMenu(false);
+        } else {
+            this.displayMenu(true);
+        }
+    },
+            
+    /**
+     * Used to display or hide the menu.
+     * @param {boolean} isDisplay - true to display the menu, false to hide it
+     */
+    displayMenu: function(isDisplay) {
+        var display = isDisplay ? "inline" : "none";
+        this.setDisplay("menu", display);
+    },  
+            
+    handleMouseClick: function(source) {
+        if (source.srcElement.id === "menu-button") {
+            SCA.toggleMenu();
+        } else {
+            SCA.displayMenu(false);
+        }
+    },
+            
+    /**
      * Initialises the app.
      */
     doOnload: function() {
         this.setDisplay("nojavascript", "none");
+        
+        if (document.addEventListener) {
+            document.addEventListener('click', SCA.handleMouseClick, false);
+        } else if (document.attachEvent) {
+            document.attachEvent('onclick', SCA.handleMouseClick, false);
+        }
 
         try {
             if (!(window.File && window.FileReader && window.FileList && window.Blob)) {
