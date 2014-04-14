@@ -418,7 +418,6 @@ var SCA = {
         this.setDisplay("nojavascript", "none");
 
         try {
-            new Blob();
             if (!(window.File && window.FileReader && window.FileList && window.Blob)) {
                 throw "File operations not supported";
             }
@@ -438,6 +437,8 @@ var SCA = {
                 this.setUnlocked(true);
                 this.displayHelp(true);
             }
+            // Allows automated tests to pass with PhantomJS / Blob incompatiblity for now.
+            new Blob();
         } catch (e) {
             alert(e);
             console.log(e);
