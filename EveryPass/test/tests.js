@@ -39,9 +39,9 @@ casper.test.begin('Can create a password, then hide, show and delete it.', funct
     });
 });
 
-casper.test.begin('Can create multiple passwords and search for them.', function suite(test) {
+casper.test.begin('Can create multiple passwords and search for them case-insensitively.', function suite(test) {
     casper.start(TEST_UNENCRYPTED_URL).then(function() {
-        var p0 = CPASS_TEST.getTestData("abc");
+        var p0 = CPASS_TEST.getTestData("ABc");
         var p1 = CPASS_TEST.getTestData("def");
         var p2 = CPASS_TEST.getTestData("ghi");
         var p3 = CPASS_TEST.getTestData("jkl");

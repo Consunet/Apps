@@ -254,7 +254,7 @@ SCA.decrypt = function() {
  */
 SCA.filterPwds = function() {
     var MIN_SEARCH_TERM_LENGTH = 2;
-    var searchTerm = this.e("search").value;
+    var searchTerm = this.e("search").value.toLowerCase();
     var filtered = [];
 
     this.eachPwd(function(id, pwd) {
@@ -262,7 +262,7 @@ SCA.filterPwds = function() {
             SCA.setDisplay(id, "inherit");
             filtered.push(id);
         } else {
-            var jsonString = JSON.stringify(pwd);
+            var jsonString = JSON.stringify(pwd).toLowerCase();
 
             // Search the jsonString for the search term
             if (jsonString.indexOf(searchTerm) !== -1) {
