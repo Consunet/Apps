@@ -92,10 +92,13 @@ casper.test.begin('Can create multiple passwords and search for them case-insens
     });
 });
 
-casper.test.begin('Can create a password, then encrypt it.', function suite(test) {
+casper.test.begin('Can create a password, add more details to form without adding, then encrypt it.', function suite(test) {
     casper.start(TEST_UNENCRYPTED_URL).then(function() {
         CPASS_TEST.addPassword(casper, test);
         var id = 'p0';
+
+        // Simulates adding details to form without clicking add
+        casper.fillSelectors('form#new-entry', CPASS_TEST.getTestData("abc"), false);
 
         var encValues = {"#enc-password": TEST_PASSWORD, "#enc-hint": TEST_HINT};
         this.fillSelectors('form#encrypt', encValues, false);
@@ -181,6 +184,12 @@ casper.test.begin('Can do decrypt of encrypted file.', function suite(test) {
         CPASS_TEST.togglePwd(casper, id);
         CPASS_TEST.assertPasswordBodyShown(test, id);
         CPASS_TEST.verifyDataMatches(test, id, CPASS_TEST.getTestData());
+        
+        id = 'p1';
+        CPASS_TEST.assertPasswordBodyHidden(test, id);
+        CPASS_TEST.togglePwd(casper, id);
+        CPASS_TEST.assertPasswordBodyShown(test, id);
+        CPASS_TEST.verifyDataMatches(test, id, CPASS_TEST.getTestData("abc"));
     }).run(function() {
         test.done();
     });

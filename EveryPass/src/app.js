@@ -212,6 +212,22 @@ SCA.encrypt = function() {
  * Encrypts all password data in the DOM and stores it as a JSON object within a script tag element.
  */
 SCA.encryptAndEmbedData = function() {
+    // Check for existing uncommitted password data.
+    var newService = SCA.e("new-service").value;
+    var newUser = SCA.e("new-username").value;
+    var newPass = SCA.e("new-password").value;
+    var newQuestion = SCA.e("new-question").value;
+    var newAnswer = SCA.e("new-answer").value;
+
+    // If there is any data there, then add the password.
+    if (newService.length !== 0 ||
+        newUser.length !== 0 ||
+        newPass.length !== 0 ||
+        newQuestion.length !== 0 ||
+        newAnswer.length !== 0) {
+        SCA.newPwd();
+    }
+    
     return this.encryptWith(function(cs, prp, iv, adata) {
         // Reset document specific elements
         SCA._divPwds().innerHTML = "";
