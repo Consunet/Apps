@@ -350,7 +350,9 @@ SCA.checkGoRegex = /((([A-Za-z]{3,9}:(?:\/\/)?)(?:[-;:&=\+\$,\w]+@)?[A-Za-z0-9.-
  */
 SCA.checkGo = function(id) {
     var service = this.e(id + "-service").value;
-    if (service.match(SCA.checkGoRegex)) {
+    var panelBody = this.e(id + "-body");
+
+    if (service.match(SCA.checkGoRegex) && panelBody.style.display === "inherit") {
         this.setDisplay(id + "-go", "inline");
     } else {
         this.setDisplay(id + "-go", "none");
