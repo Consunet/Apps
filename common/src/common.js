@@ -431,8 +431,14 @@ var SCA = {
         this.setDisplay("menu", display);
     },  
             
+    /**
+     * Handles all mouse click events in the app.
+     * @param {type} source - the source of the event.
+     */
     handleMouseClick: function(source) {
-        if (source.srcElement.id === "menu-button") {
+        var target = source.target || source.srcElement;
+
+        if (target.id === "menu-button") {
             SCA.toggleMenu();
         } else {
             SCA.displayMenu(false);
