@@ -234,6 +234,7 @@ SCA.setUnlocked = function(isUnlocked) {
     if (isUnlocked) {
         search.removeAttribute("disabled");
         menuButton.removeAttribute("disabled");
+        search.focus();
     } else {
         search.setAttribute("disabled", "");
         menuButton.setAttribute("disabled", "");
