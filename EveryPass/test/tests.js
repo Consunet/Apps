@@ -16,7 +16,7 @@ casper.test.begin('Can verify basic app details.', function suite(test) {
 
 casper.test.begin('Can create a password, then hide, show and delete it.', function suite(test) {
     casper.start(TEST_UNENCRYPTED_URL).then(function() {
-        var data = CPASS_TEST.getTestData();
+        var data = CPASS_TEST.getTestData("www.consunet.com.au");
         CPASS_TEST.addPassword(casper, test, data);
 
         var id = 'p0';
@@ -26,6 +26,7 @@ casper.test.begin('Can create a password, then hide, show and delete it.', funct
         CPASS_TEST.togglePwd(casper, id);
         CPASS_TEST.assertPasswordBodyShown(test, id);
         CPASS_TEST.verifyDataMatches(test, id, data);
+        test.assertVisible('#' + id + '-go', "Go button is visible for " + id);
 
         // Hide the password again
         CPASS_TEST.togglePwd(casper, id);
@@ -75,6 +76,7 @@ casper.test.begin('Can create multiple passwords and search for them case-insens
         // Once there is a single match the password body should be shown
         CPASS_TEST.search(casper, "d");
         CPASS_TEST.assertPasswordBodyShown(test, 'p4');
+        test.assertNotVisible('#p4-go', "Go button is not visible for p4, which is not a URL");
         CPASS_TEST.verifyDataMatches(test, 'p4', p4);
 
         // Once the search is reset, the passwords are hidden again
