@@ -121,8 +121,7 @@ SCA.showPwdBody = function(id, show, select) {
         panelBody.style.display = "inherit";
         toggleButton.innerHTML = "Hide";
         if (select) {
-            var pwdField = this.e(id + "-password");
-            pwdField.select();
+            SCA.selectPwd(id);
         }
     } else {
         panelBody.style.display = "none";
@@ -139,6 +138,16 @@ SCA.togglePwd = function(id) {
     var panelBody = this.e(id + "-body");
     var isHidden = panelBody.style.display === "none";
     this.showPwdBody(id, isHidden, true);
+};
+
+/**
+ * Selects password text for a particular password..
+ * 
+ * @param {string} id - the ID of the password text to select.
+ */
+SCA.selectPwd = function(id) {
+    var pwdField = this.e(id + "-password");
+    pwdField.select();
 };
 
 /**
