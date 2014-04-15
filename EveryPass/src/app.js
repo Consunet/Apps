@@ -123,9 +123,11 @@ SCA.showPwdBody = function(id, show, select) {
         if (select) {
             SCA.selectPwd(id);
         }
+        this.checkGo(id);
     } else {
         panelBody.style.display = "none";
         toggleButton.innerHTML = "Show";
+        this.setDisplay(id + "-go", "none");
     }
 };
 
@@ -309,4 +311,27 @@ SCA.generatePwd = function() {
     replace = String.fromCharCode(97 + Math.round(Math.random() * 25));
     generated = generated.replace(/\//g, replace);
     this.e("new-password").value = generated;
+};
+
+/**
+ * Populates the password field for a new entry with a generated random base64 String.
+ */
+SCA.go = function(id) {
+  var service = this.e(id + "-service").value;
+  if (service.indexOf("http://") === -1) {
+      service = "http://" + service;
+  }
+  
+  window.open(service);
+};
+
+SCA.checkGoRegex = /((([A-Za-z]{3,9}:(?:\/\/)?)(?:[-;:&=\+\$,\w]+@)?[A-Za-z0-9.-]+|(?:www.|[-;:&=\+\$,\w]+@)[A-Za-z0-9.-]+)((?:\/[\+~%\/.\w-_]*)?\??(?:[-\+=&;%@.\w_]*)#?(?:[\w]*))?)/;
+
+SCA.checkGo = function(id) {
+    var service = this.e(id + "-service").value;
+    if (service.match(SCA.checkGoRegex)) {
+        this.setDisplay(id + "-go", "inline");
+    } else {
+        this.setDisplay(id + "-go", "none");
+    }
 };

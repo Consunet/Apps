@@ -1,35 +1,41 @@
 /*! Custom classes */
 
-@media (max-width: 379px) {
+@media (max-width: 329px) {
     .srch {
-        width: 120px !important;
+        width: 90px !important;
     }
 }
 
-@media (min-width:380px) and (max-width: 499px) {
+@media (min-width:330px) and (max-width: 359px) {
     .srch {
-        width: 150px !important;
+        width: 100px !important;
+    }
+}
+
+@media (min-width:360px) and (max-width: 499px) {
+    .srch {
+        width: 130px !important;
     }
 }
 
 @media (min-width:500px) and (max-width: 767px) {
     .srch {
-        width: 200px !important;
+        width: 250px !important;
     }
 }
 @media (min-width: 768px) and (max-width: 991px) {
     .srch {
-        width: 300px !important;
+        width: 400px !important;
     }
 }
 @media (min-width: 992px) and (max-width: 1199px) {
     .srch {
-        width: 400px !important;
+        width: 500px !important;
     }
 }
 @media (min-width: 1200px) {
     .srch {
-        width: 500px !important;
+        width: 550px !important;
     }
 }
 

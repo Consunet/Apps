@@ -29,7 +29,7 @@
                 <form class="navbar-form navbar-left" role="search"> 
                    <label class="sr-only" for="search">Search</label>
                    <input id="search" name="search" type="search" class="form-control srch" onkeydown="SCA.filterPwds();" onkeyup="SCA.filterPwds();" placeholder="Search..." disabled="">
-                   <button id="menu-button" type="button" class="btn btn-sm btn-default">&#9776;</button>
+                   <button id="menu-button" type="button" class="btn btn-sm btn-default"><span style="line-height: 0.9em; font-size: 1.5em; font-weight: 900;">&equiv;</span></button>
                     <ul id="menu" class="menu" role="menu" style=" display: none;">
                         <li role="presentation"><a role="menuitem" onclick="SCA.clickImport();" href="#">Import</a></li>
                         <li role="presentation"><a role="menuitem" onclick="SCA.showAbout();" href="#">Help</a></li>
@@ -173,11 +173,11 @@
                     <div class="panel panel-info">
                         <div class="panel-heading">
                             <div class="row">
-                                <div class="col-xs-7 col-md-8">
+                                <div class="col-xs-6 col-md-8">
                                     <label class="sr-only" for="new-service">Service</label>
                                     <input type="text" class="form-control input-sm" id="new-service" name="new-service" placeholder="New password for...">
                                 </div>
-                                <div class="col-xs-3 col-md-2">
+                                <div class="col-xs-4 col-md-2">
                                     <button id="generate-pwd" type="button" onclick="SCA.generatePwd();" class="btn btn-xs btn-success pull-left">Generate</button>
                                 </div>
                                 <div class="col-xs-2 col-md-2">
@@ -236,14 +236,15 @@
                 <div class="panel panel-default">
                     <div class="panel-heading">
                         <div class="row">
-                            <div class="col-xs-8 col-md-8">
+                            <div class="col-xs-6 col-sm-7 col-md-8 col-lg-8">
                                 <label class="sr-only" for="new-service">Service</label>
-                                <input id="pwid-service" name="pwid-service" type="text" class="form-control input-sm"></input>
+                                <input id="pwid-service" name="pwid-service" type="text" class="form-control input-sm pull-left" onkeydown="SCA.checkGo('pwid');" onkeyup="SCA.checkGo('pwid');"></input>
                             </div>
-                            <div class="col-xs-2 col-md-2">
+                            <div class="col-xs-5 col-sm-4 col-md-2 col-lg-2 btn-toolbar">
                                 <button id="pwid-toggle" type="button" onclick="SCA.togglePwd('pwid');" class="btn btn-xs btn-primary pull-left">Show</button>
+                                <button id="pwid-go" type="button" onclick="SCA.go('pwid');" class="btn btn-xs btn-success pull-left">Go</button>
                             </div>
-                            <div class="col-xs-2 col-md-2">
+                            <div class="col-xs-1 col-sm-1 col-md-2 col-lg-2">
                                 <button id="pwid-delete" type="button" onclick="SCA.delPwd('pwid');" class="btn btn-xs btn-danger pull-right">Del</button>
                             </div>
                         </div>
