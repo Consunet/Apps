@@ -314,7 +314,7 @@ SCA.generatePwd = function() {
 };
 
 /**
- * Populates the password field for a new entry with a generated random base64 String.
+ * Opens a new window matching the URL stored in the service name.
  */
 SCA.go = function(id) {
   var service = this.e(id + "-service").value;
@@ -327,6 +327,10 @@ SCA.go = function(id) {
 
 SCA.checkGoRegex = /((([A-Za-z]{3,9}:(?:\/\/)?)(?:[-;:&=\+\$,\w]+@)?[A-Za-z0-9.-]+|(?:www.|[-;:&=\+\$,\w]+@)[A-Za-z0-9.-]+)((?:\/[\+~%\/.\w-_]*)?\??(?:[-\+=&;%@.\w_]*)#?(?:[\w]*))?)/;
 
+/**
+ * Enables or disables the "Go" button depending of if the Service name is a URL or not.
+ * @param {type} id the id of the password to check.
+ */
 SCA.checkGo = function(id) {
     var service = this.e(id + "-service").value;
     if (service.match(SCA.checkGoRegex)) {
