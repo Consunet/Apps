@@ -83,7 +83,7 @@ SCA.addPwd = function(item) {
     this.e(id + "-password").value = item.p;
     this.e(id + "-question").value = item.q;
     this.e(id + "-answer").value = item.a;
-    this.showPwdBody(id, false);
+    this.showPwdBody(id, false, false);
 };
 
 /**
@@ -111,14 +111,19 @@ SCA.delPwd = function(id) {
  * 
  * @param {string} id - the ID of the password to show/hide the body of
  * @param {boolean} show - true if the password body should be shown, false otherwise
+ * @param {boolean} select - true if the password field should be selected on show, false otherwise
  */
-SCA.showPwdBody = function(id, show) {
+SCA.showPwdBody = function(id, show, select) {
     var panelBody = this.e(id + "-body");
     var toggleButton = this.e(id + "-toggle");
 
     if (show) {
         panelBody.style.display = "inherit";
         toggleButton.innerHTML = "Hide";
+        if (select) {
+            var pwdField = this.e(id + "-password");
+            pwdField.select();
+        }
     } else {
         panelBody.style.display = "none";
         toggleButton.innerHTML = "Show";
@@ -133,7 +138,7 @@ SCA.showPwdBody = function(id, show) {
 SCA.togglePwd = function(id) {
     var panelBody = this.e(id + "-body");
     var isHidden = panelBody.style.display === "none";
-    this.showPwdBody(id, isHidden);
+    this.showPwdBody(id, isHidden, true);
 };
 
 /**
@@ -275,10 +280,10 @@ SCA.filterPwds = function() {
     });
 
     if (filtered.length === 1 && searchTerm.length >= MIN_SEARCH_TERM_LENGTH) {
-        this.showPwdBody(filtered[0], true);
+        this.showPwdBody(filtered[0], true, false);
     } else {
         for (var id in filtered) {
-            this.showPwdBody(filtered[id], false);
+            this.showPwdBody(filtered[id], false, false);
         }
     }
 };
