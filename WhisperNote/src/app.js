@@ -42,9 +42,10 @@ SCA.encrypt = function() {
  * @param {string} filename - the name of the file, if provided.
  */
 SCA.encryptWithFile = function(arrayBuffer, filename) {
-    this.encryptAndEmbedData(arrayBuffer, filename);
-    this.saveDocument();
-    this.doOnload();
+    if (this.encryptAndEmbedData(arrayBuffer, filename)) {
+        this.saveDocument();
+        this.doOnload();
+    }
 };
 
 /**
@@ -55,7 +56,7 @@ SCA.encryptWithFile = function(arrayBuffer, filename) {
  * @param {string} filename - the name of the file, if provided.
  */
 SCA.encryptAndEmbedData = function(arrayBuffer, filename) {
-    this.encryptWith(function(cs, prp, iv, adata) {
+    return this.encryptWith(function(cs, prp, iv, adata) {
         cs.cattname = "";
         cs.catt = "";
 

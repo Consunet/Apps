@@ -202,16 +202,17 @@ SCA.eachPwd = function(fn) {
  * Stores all password data as an encrypted object within the DOM and then writes it out to a file.
  */
 SCA.encrypt = function() {
-    this.encryptAndEmbedData();
-    this.saveDocument();
-    this.doOnload();
+    if (this.encryptAndEmbedData()) {
+        this.saveDocument();
+        this.doOnload();
+    }
 };
 
 /**
  * Encrypts all password data in the DOM and stores it as a JSON object within a script tag element.
  */
 SCA.encryptAndEmbedData = function() {
-    this.encryptWith(function(cs, prp, iv, adata) {
+    return this.encryptWith(function(cs, prp, iv, adata) {
         // Reset document specific elements
         SCA._divPwds().innerHTML = "";
         SCA.e("search").setAttribute("disabled", "");

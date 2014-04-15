@@ -45,7 +45,7 @@ var SCA = {
 
     /**
      * Gets the value of an input element, and then clears the value.
-		 * Need to be agressive so that user data isn't left behind in the DOM.
+     * Need to be agressive so that user data isn't left behind in the DOM.
      * 
      * @param {string} id - the ID of the input element
      * @returns {string} the input element value
@@ -60,6 +60,27 @@ var SCA = {
         }
         return value;
     },  
+            
+    /**
+     * Validates the password value to enforce non-empty password.
+     * Prompts the user if the password if the supplied password is weak.
+     * @returns {Boolean} true if the encrypting should proceed, false otherwise.
+     */
+    checkEncPass: function() {
+        var encPass = this.e("enc-password").value;
+        this.validateEncPass();
+        if (encPass.length === 0) {
+            alert("Password cannot be empty!");
+            return false;
+        }
+        
+        var feedback = this.e("enc-password-fb").innerHTML;
+        if (feedback === "Password: Weak") {
+            return confirm("Weak password used - proceed with Encrypt?");
+        }
+        
+        return true;
+    },
             
     /**
      * Gets and clears the encryption password field.
@@ -249,6 +270,10 @@ var SCA = {
      * taken on the given encrypt parameters.
      */
     encryptWith: function(callback) {
+        if (!this.checkEncPass()) {
+            return false;
+        }
+        
         var cs = this.getClonedCypherSettings();
         var salt = sjcl.random.randomWords(2, 2);
         var iv = sjcl.random.randomWords(4, 2);
@@ -285,6 +310,7 @@ var SCA = {
         fbGroup.setAttribute("class", "form-group");
         this.e("enc-password-fb").innerHTML = "";
         this.e("enc-password-group").setAttribute("class", "form-group");
+        return true;
     },
             
     /**
@@ -329,8 +355,10 @@ var SCA = {
         var score = this.getPasswordStrength(pass);
         var formClass = "form-group";
         var feedback = "Password: ";
-        
-        if (score < 0.33) {
+        if (score === 0) {
+            formClass += " has-error";
+            feedback += "Empty!";
+        } else if (score < 0.33) {
             formClass += " has-error";
             feedback += "Weak";
         } else if (score < 0.66) {
@@ -358,7 +386,7 @@ var SCA = {
      * @returns {Number} the normalized score.
      */
     getPasswordStrength: function(password) {
-        var desiredLength = 18;
+        var desiredLength = 20;
         var score = password.length;
         if (password.match(/[A-Z]/)) {
             score += 1;
