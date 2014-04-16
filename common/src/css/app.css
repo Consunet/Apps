@@ -144,6 +144,12 @@ body {
   background-color: #428bca;
 }
 
+.menu-icon {
+    line-height: 0.9em;
+    font-size: 1.5em;
+    font-weight: 900;
+}
+
 .dragged {
    opacity: 0.20;
 }
