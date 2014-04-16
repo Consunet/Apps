@@ -358,10 +358,10 @@ var SCA = {
         if (score === 0) {
             formClass += " has-error";
             feedback += "Empty!";
-        } else if (score < 0.33) {
+        } else if (score < 0.65) {
             formClass += " has-error";
             feedback += "Weak";
-        } else if (score < 0.66) {
+        } else if (score < 0.95) {
             formClass += " has-warning";
             feedback += "OK";
         } else {
@@ -380,23 +380,40 @@ var SCA = {
      * A simple function to calculate the strength of a password based on
      * its length and content.
      * The returned score is normalized against a desired password length,
-     * and the score is boosted by the presence of non-word and uppercase characters.
+     * and the desired password length is based on whether the password contains
+     * various combinations of mixed case alphanumeric characters.
+     * It is based on the entropy definitions on Wikipedia:
+     * http://en.wikipedia.org/wiki/Password_strength#Bit_strength_threshold
      * 
      * @param {string} password - the password to assess.
      * @returns {Number} the normalized score.
      */
     getPasswordStrength: function(password) {
-        var desiredLength = 20;
-        var score = password.length;
-        if (password.match(/[A-Z]/)) {
-            score += 1;
+        // 96 bits of entropy for just Arabic numerals
+        var desiredLength = 29;
+        var matchesNumeric = password.match(/[0-9].*[0-9]/);
+        var matchesLower = password.match(/[a-z].*[a-z]/);
+        var matchesUpper = password.match(/[A-Z].*[A-Z]/);
+        var matchesSymbol = password.match(/[\W].*[\W]/);
+
+        if (matchesNumeric && matchesLower && matchesUpper){
+            desiredLength = 17;
+        } else if (matchesNumeric && matchesLower) {
+            desiredLength = 19;
+        } else if (matchesNumeric && matchesUpper) {
+            desiredLength = 19;
+        } else if (matchesLower && matchesUpper) {
+            desiredLength = 17;
+        } else if (matchesLower || matchesUpper) {
+            desiredLength = 21;
         }
         
-        if (password.match(/\W/)) {
-            score += 2;
+        if (matchesSymbol) {
+            desiredLength -= 2;
         }
         
-        return score / desiredLength;
+        var score = password.length / desiredLength;
+        return score;
     },
             
     /**
