@@ -342,7 +342,12 @@ SCA.go = function(id) {
   window.open(service);
 };
 
-SCA.checkGoRegex = /((([A-Za-z]{3,9}:(?:\/\/)?)(?:[-;:&=\+\$,\w]+@)?[A-Za-z0-9.-]+|(?:www.|[-;:&=\+\$,\w]+@)[A-Za-z0-9.-]+)((?:\/[\+~%\/.\w-_]*)?\??(?:[-\+=&;%@.\w_]*)#?(?:[\w]*))?)/;
+/**
+ * Stores the RegExp used for checking for URLs in the password service name.
+ * Credit: https://gist.github.com/searls/1033143
+ * @type RegExp
+ */
+SCA.checkGoRegex = /\b((?:https?:\/\/|www\d{0,3}[.]|[a-z0-9.\-]+[.][a-z]{2,4}\/)(?:[^\s()<>]+|\(([^\s()<>]+|(\([^\s()<>]+\)))*\))+(?:\(([^\s()<>]+|(\([^\s()<>]+\)))*\)|[^\s`!()\[\]{};:'".,<>?«»“”‘’]))/i;
 
 /**
  * Enables or disables the "Go" button depending of if the Service name is a URL or not.
@@ -357,4 +362,128 @@ SCA.checkGo = function(id) {
     } else {
         this.setDisplay(id + "-go", "none");
     }
+};
+
+/**
+ * Stores the current password drag target - highlighted in green.
+ */
+SCA.currentDragEnterPwdTarget = "";
+
+/**
+ * Stores the current password being dragged - greyed out.
+ */
+SCA.currentDraggablePwd = "";
+
+/**
+ * Handles drag events for passwords.
+ */
+SCA.dragPwd = function(ev) {
+    var id = ev.target.id;
+    SCA.currentDraggablePwd = id;
+    SCA.addClass(id, "dragged");
+    return true;
+};
+
+/**
+ * Handles drag enter events for passwords - highlights targets.
+ */
+SCA.dragEnterPwd = function(ev) {
+    ev.preventDefault();
+    var id = ev.currentTarget.id;
+
+    var target = SCA.currentDragEnterPwdTarget;
+    if (!target) {
+        target = id;
+        SCA.currentDragEnterPwdTarget = id;
+        SCA.addClass(target, "drag-target");
+    }
+    
+    if (id !== target) {
+        SCA.removeClass(target, "drag-target");
+        SCA.currentDragEnterPwdTarget = id;
+        SCA.addClass(id, "drag-target");
+    }
+
+    return true;
+};
+
+/**
+ * Handles drag over events for passwords.
+ */
+SCA.allowDrop = function(ev) {
+    ev.preventDefault();
+    return true;
+};
+
+/**
+ * Handles drag end events for passwords - resets state.
+ */
+SCA.dragEnd = function(ev) {
+    ev.preventDefault();
+    var srcIdForm = SCA.currentDraggablePwd;
+    var destIdForm = SCA.currentDragEnterPwdTarget;
+    
+    SCA.removeClass(srcIdForm, "dragged");
+    SCA.removeClass(srcIdForm, "drag-target");
+    SCA.removeClass(destIdForm, "dragged"); // unneeded?
+    SCA.removeClass(destIdForm, "drag-target");
+    
+    SCA.currentDragEnterPwdTarget = "";
+    SCA.currentDraggablePwd = "";
+};
+    
+/**
+ * Handles drop events for passwords - performs the reshuffling if required.
+ */
+SCA.dragDrop = function(ev) {
+    ev.preventDefault();
+    var srcIdForm = SCA.currentDraggablePwd;
+    var destIdForm = ev.currentTarget.id;
+    var srcId = srcIdForm.replace("-form", "");
+    var destId = destIdForm.replace("-form", "");
+
+    if (srcId === destId) {
+        return true;
+    }
+    
+    var src = this.e(srcId);
+    var dest = this.e(destId);
+    var pwds = this._divPwds();
+
+    var pos = this.getPwdPositions(srcId, destId);
+    
+    // Swap src and dest (ensure src is before dest)
+    pwds.removeChild(src);
+    pwds.insertBefore(src, dest);
+    
+    // If Src was before dest, then swap src and dest position - make dest before src.
+    if (pos[0] < pos[1]) { 
+        pwds.removeChild(dest);
+        pwds.insertBefore(dest, src);
+    }
+    
+    return true;
+};
+
+/**
+ * Obtains an array containing the src and dest positions of the passwords in the list.
+ * @param {type} srcId the id of the src password
+ * @param {type} destId the id of the dest password
+ * @returns {Array} of the src and dest positions in the list, respectively.
+ */
+SCA.getPwdPositions = function(srcId, destId) {
+    var srcPos = 0;
+    var destPos = 0;
+    var i = 0;
+    this.eachPwd(function(searchId, pwd) {
+        if (srcId === searchId) {
+            srcPos = i;
+        }
+        if (destId === searchId) {
+            destPos = i;
+        }
+        i++;
+    });
+    
+    return [srcPos, destPos];
 };

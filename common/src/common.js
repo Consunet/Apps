@@ -472,6 +472,37 @@ var SCA = {
             SCA.displayMenu(false);
         }
     },
+    
+    /**
+     * Adds a class to a particular element
+     * @param {type} id the id of the element to add to
+     * @param {type} className the class to add
+     */
+    addClass: function(id, className) {
+        var ele = this.e(id);
+        ele.classList.add(className);
+    },
+    
+    /**
+     * Checks for a class on a particular element
+     * @param {type} id the id of the element to check
+     * @param {type} className the class to check for
+     * @return {Boolean} true if the element has that class, false otherwise.
+     */
+    hasClass: function(id, className) {
+        var ele = this.e(id);
+        return ele.classList.contains(className);
+    },
+    
+    /**
+     * Removes a class from a particular element
+     * @param {type} id the id of the element to remove from
+     * @param {type} className the class to remove
+     */
+    removeClass: function(id, className) {
+        var ele = this.e(id);
+        ele.classList.remove(className);
+    },
             
     /**
      * Initialises the app.
