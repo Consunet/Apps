@@ -380,6 +380,9 @@ SCA.currentDraggablePwd = "";
 SCA.dragPwd = function(ev) {
     var id = ev.target.id;
     SCA.currentDraggablePwd = id;
+    
+    // Required by Firefox to allow drag and drop events to fire
+    ev.dataTransfer.setData("id", id);
     SCA.addClass(id, "dragged");
     return true;
 };
@@ -420,13 +423,14 @@ SCA.allowDrop = function(ev) {
  */
 SCA.dragEnd = function(ev) {
     ev.preventDefault();
-    var srcIdForm = SCA.currentDraggablePwd;
-    var destIdForm = SCA.currentDragEnterPwdTarget;
-    
-    SCA.removeClass(srcIdForm, "dragged");
-    SCA.removeClass(srcIdForm, "drag-target");
-    SCA.removeClass(destIdForm, "dragged"); // unneeded?
-    SCA.removeClass(destIdForm, "drag-target");
+
+    // Reset all passwords - to cater for Firefox case where multiple selections take place.
+    // Also makes it more robust.
+    this.eachPwd(function(id, pwd) {
+        var form = id + "-form";
+        SCA.removeClass(form, "dragged");
+        SCA.removeClass(form, "drag-target");
+    });
     
     SCA.currentDragEnterPwdTarget = "";
     SCA.currentDraggablePwd = "";
