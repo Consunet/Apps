@@ -378,9 +378,9 @@ SCA.currentDraggablePwd = "";
  * Handles drag events for passwords.
  */
 SCA.dragPwd = function(ev) {
-    var id = ev.target.id;
+    var id = ev.target.id.replace(/-drag.*/, "-form");
     SCA.currentDraggablePwd = id;
-    
+
     // Required by Firefox to allow drag and drop events to fire
     ev.dataTransfer.setData("id", id);
     SCA.addClass(id, "dragged");
