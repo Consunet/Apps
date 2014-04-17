@@ -285,14 +285,13 @@ var SCA = {
         var adata = sjcl.codec.utf8String.toBits(this.getEncHint());
         cs.adata = sjcl.codec.base64.fromBits(adata);
         
-        var plaintext = {
-            opts: this.readOptions(),
-            pl: this.getPayload()
-        };
-        
-        var plaintextBits = sjcl.codec.utf8String.toBits(JSON.stringify(plaintext));
+        var plaintextBits = sjcl.codec.utf8String.toBits(this.getPayload());
         var ct = sjcl.mode[cs.mode].encrypt(prp, plaintextBits, iv, adata, cs.ts);
         cs.ct = sjcl.codec.base64.fromBits(ct);
+        
+        var optionsBits = sjcl.codec.utf8String.toBits(JSON.stringify(this.readOptions()));
+        var opts = sjcl.mode[cs.mode].encrypt(prp, optionsBits, iv, adata, cs.ts);
+        cs.opts = sjcl.codec.base64.fromBits(opts);
         
         // Call the callback to do specific actions with encrypt parameters
         callback(cs, prp, iv, adata);
@@ -338,11 +337,21 @@ var SCA = {
         
         try {
             var out = sjcl.mode[encData.mode].decrypt(prp, data, iv, adata, encData.ts);
-            out = JSON.parse(sjcl.codec.utf8String.fromBits(out));
+            out = sjcl.codec.utf8String.fromBits(out);
             
             // Call with the decrypted contents and parameters
             callback(prp, iv, adata, out);
-            this.setOptions(out.opts);
+            
+            // Handle the case where encData opts not available
+            if (encData.opts) {
+                var optData = sjcl.codec.base64.toBits(encData.opts);
+                var decryptedOpts = sjcl.mode[encData.mode].decrypt(prp, optData, iv, adata, encData.ts);
+                var opts = JSON.parse(sjcl.codec.utf8String.fromBits(decryptedOpts));
+                this.setOptions(opts);
+            } else {
+                this.setDefaultOptions();
+            }
+            
             this.setUnlocked(true);
             this.displayTimeout(true);
             this.showDecryptError(false);
