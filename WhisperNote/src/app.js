@@ -84,7 +84,7 @@ SCA.encryptAndEmbedData = function(arrayBuffer, filename) {
  * Gets the plaintext message payload to be encrypted.
  * @returns {string} - the message to be encrypted in plaintext.
  */
-SCA.getPlaintext = function() {
+SCA.getPayload = function() {
     return this.getAndClear("payload");
 };
 
@@ -95,14 +95,14 @@ SCA.getPlaintext = function() {
 SCA.decrypt = function() {
     this.decryptWith(function(prp, iv, adata, out) {
         // Populate the message payload
-        SCA.e("payload").value = out;
+        SCA.e("payload").value = out.pl;
         
         // Check for an attachment, and decrypt it if present
         if (encData.cattname) {
             var encryptedFilenameBits = sjcl.codec.base64.toBits(encData.cattname);
             var decryptedFilenameBits = sjcl.mode[encData.mode].decrypt(prp, encryptedFilenameBits, iv, adata, encData.ts);
             var decryptedFilename = sjcl.codec.utf8String.fromBits(decryptedFilenameBits);
-            SCA.e("download-label").value = decryptedFilename;
+            SCA.e("download-label").innerHTML = decryptedFilename;
             SCA.setDisplay("att-download", "inline");
 
             var byteArrays = [];

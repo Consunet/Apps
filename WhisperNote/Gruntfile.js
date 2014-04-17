@@ -120,7 +120,9 @@ module.exports = function(grunt) {
                     '.has-success .form-control',
                     '.has-success .form-control:focus',
                     '.has-success .control-label',
-                    '.has-success .input-group-addon'
+                    '.has-success .input-group-addon',
+                    '.red'
+
                 ]
             }
         },

@@ -70,7 +70,7 @@
 
 body {
   padding-top: 50px;
-	padding-bottom: 100px;
+  padding-bottom: 150px;
 }
 
 .form-group {
@@ -78,7 +78,7 @@ body {
 }
 
 .btn-xs {
-	margin: 4px 0px;
+    margin: 4px 0px;
 }
 
 .navbar-brand {
@@ -184,4 +184,8 @@ body {
     -ms-transform:skew(8deg) rotate(3deg);     
     -o-transform:skew(8deg) rotate(3deg); 
     transform:skew(8deg) rotate(3deg);
+}
+
+.red {
+    color: #ff0000;
 }

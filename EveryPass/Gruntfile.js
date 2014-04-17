@@ -114,7 +114,8 @@ module.exports = function(grunt) {
                     '.has-success .control-label',
                     '.has-success .input-group-addon',
                     '.dragged',
-                    '.drag-target'
+                    '.drag-target',
+                    '.red'
                 ]
             }
         },

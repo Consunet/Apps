@@ -16,7 +16,7 @@
     </head>
     <body onload="SCA.doOnload();">
         <nav class="navbar navbar-default navbar-fixed-top" role="navigation">
-            <div class="navbar-header">
+            <div class="navbar-header pull-left">
                 <a class="navbar-brand" href="http://www.consunet.com.au/">
                     <img id="logo" class="img-thumbnail" alt="Consunet Pty Ltd" src="data:image/gif;base64,R0lGODdhIAAgAMYAAAAAACIiIjAwMHh4eH19fYGBgYyMjIG5VYG5VoK5VoK5V4O6WIS6WIS6WYS7WYW7WoW7W4a7W4a7XIa8XIe8XYe8Xoi9Xom9X4m9YIm9YYm+YYq+YYu+You+Y4u/Y4y/Y4y/ZI3AZo7AZo7AZ5DBaZDBapHCa5PDbZTDbpbEcpbFcJrHd5vHd5vHeJ7JfJ/JfJ/KfqTMhKbNh6nPi6vQjazRj6zRkK3RkLDTlbLUl7TVmrfXnrfXn7jYoLnYoLnYobrZorvao7vapL7ap8DcqsTer8ffssfftMbgs8fgtMjgtMnhttnZ2crht8viusvjus7kvNDlwNXnxtXnx9boyNjpytnpy9rqzdzs0N3s0d7s0t/t0+Pv2efy4Ojy4Ovz5O716O726e726vD26vD26/D36/H37PP47vP47/T48PT58PX58vj4+Pb68/f69Pn5+fj79fr6+vj79vv6+/v7+/n89/r89/r8+Pz9+v3+/P3+/f7+/v/+//7//v///v///ywAAAAAIAAgAAAH/oB/goOEhYaHh3uCioiNjIyDkH+SjZGEkIpoJzJolYhwNiidiop5LRgTM22TnqxwOBEYLXmsf0QbuAszabWIim44C7gbRINfKRjDEzFlrWszEcMYKV9/ekkTycMdS61QIMMbqEl6ci8W4Rgqanx0ce/w73R/airauBYucmAN9xkTV/4wITCgoMGCBJj8uTIhg7QGYKIwCFfBhSAAGDNqxCjIRYVwDKIMgRDOgRNCATYCEPCHjaAnDcJBGAIk2rAEXS4C+FNAo4E/HP94SRAuwg8fNnEd4AU0KKGMgtIcCCeBx4+kGxCE0bmzKVdBYhAU7SEE6wIrOi+q9frHirBh+hGCIHkQbkIOtTu75gUqKMeEcA+QcFGQDsOZtBrZnsFwb4MCLm5MXAhngcafOYMSE6KBbtgFE27w7JCQzkORQW80uhRUxENjCTvw/NkConGyJnUQ1WkiLh2ILYLu3GgszkENLGYemcFSwwFxDDfusPIiIhyuDBQ4wLChQ4cNGBwoOLQuwsukPoKkvLXOuH1767mmCELP6ogF4vDha8Bg4UivRX8sIUJn+eVngQjdUBJJFissgB98GCywQhYKWvKHHUZ8kE2BqHxghB0ANuKHInUowQIJI4SgYggjlMCCErnt4UcrIf4xhhZVUEFFFVqQYSGNPyYC5JA0BgIAOw==">
                     WhisperNote
@@ -26,11 +26,15 @@
                 </form>
             </div>
 
-            <div class="navbar-collapse">
-                <ul class="nav navbar-nav navbar-right">
-                    <li><a onclick='SCA.clickImport();' href="#">Import</a></li>
-                    <li><a class="serif info" onclick="SCA.showAbout();" href="#"><b>i</b></a></li>
-                </ul>
+            <div class="navbar-header pull-right">
+                <form class="navbar-form navbar-left" role="search"> 
+                    <button id="menu-button" type="button" class="btn btn-sm btn-default menu-icon">&equiv;</button>
+                    <ul id="menu" class="menu" role="menu" style=" display: none;">
+                        <li role="presentation"><a role="menuitem" onclick="SCA.clickImport();" href="#">Import</a></li>
+                        <li role="presentation"><a role="menuitem" onclick="SCA.displayOptions(true);" href="#">Options</a></li>
+                        <li role="presentation"><a role="menuitem" onclick="SCA.showAbout();" href="#">Help</a></li>
+                    </ul>
+                </form>
             </div>
         </nav>
 
@@ -93,49 +97,69 @@
             </div>
 
             <div id="unlocked" style="display: none;">
+                <div id="options-screen" class="alert alert-warning alert-dismissable" style="display: none;">
+                    <button type="button" class="close" onclick="SCA.displayOptions(false);">&times;</button> 
+                    <h4>Options</h4>
+                    <form id="options" class="form-horizontal" autocomplete="off" onsubmit="SCA.saveOptions(); return false;">
+                        <div id="opt-save-filename-group" class="form-group">
+                            <label for="opt-save-filename" class="col-md-2 col-lg-2 control-label">Save filename</label>
+                            <div class="col-md-4 col-lg-4">
+                                <input id="opt-save-filename" name="file-save-name" type="text" class="form-control" onkeyup="SCA.validateSaveFilename();" onkeydown="SCA.validateSaveFilename();" value=""></input>
+                                <p id="opt-save-filename-help" class="help-block"></p>
+                            </div>
+                        </div>
+                        <div id="opt-timeout-group" class="form-group">
+                            <label for="opt-timeout" class="col-md-2 col-lg-2 control-label">Timeout period (min.)</label>
+                            <div class="col-md-2 col-lg-2">
+                                <input id="opt-timeout" name="opt-timeout" type="number" onkeyup="SCA.validateTimeout();" onkeydown="SCA.validateTimeout();" onkeypress="return SCA.isNumericKey(event);" class="form-control" value=""></input>
+                                <p id="opt-timeout-help" class="help-block"></p>
+                            </div>
+                        </div>
+                    </form>
+                </div>
                 <div id="help-screen" class="container alert alert-info alert-dismissable" style="display: none;">
                     <button type="button" class="close" onclick="SCA.displayHelp(false);">&times;</button>
                     <b>WhisperNote</b> is a portable encrypted message container. <b>WhisperNote</b> is free to use, open source, free from app stores and compatible with most modern devices (computers, tablets, phones).<br/><br/>
-										<a id="help-toggle" href="#" onclick="SCA.toggleHelpDetail();" class="alert-link">more</a>
+                    <a id="help-toggle" href="#" onclick="SCA.toggleHelpDetail();" class="alert-link">more</a>
                     <div id="help-detail" style="display: none;">
-											<br/>
+			<br/>
                         <b>WhisperNote</b> is different to other message encryption software because everything you require is contained in the HTML file you are reading right now. <br/><br/>
-												<div>
-													<b>Security</b>
-													<ul>
-														<li><b>WhisperNote</b> uses AES 256 bit encryption to store your data, this is a very strong form of encryption.</li>
-														<li><b>WhisperNote</b> uses your browser as the execution environment, you probably use your browser for your banking too.</li>
-														<li><b>WhisperNote</b> does not store your data on a server, it saves it to the device you are using.</li>
-														<li>If you lose your password, it cannot be recovered.</li>
-														<li>Providing high quality security tools is very difficult and like other tools <b>WhisperNote</b> has known weaknesses.</li>
-														<li>For more information please see the <a href="http://www.consunet.com.au/products/whispernote">website.</a></li>
-													</ul>
-												</div>
-												
-												<div>
-													<b>Create your note</b>
-													<ul>
-														<li>Just type or cut and paste the text content you want to encrypt in the Message area.</li>
-														<li>You can optionally select a single file from your device to be included with your note. This file should be less than 10Mb in size.</li>
-														<li>Once you're done editing your note, at the bottom of the screen type in a password to protect the note contents.</li>
-														<li>Optionally, provide a hint for yourself, but don't make it obvious.</li>
-														<li>Hit the Encrypt button. This will encrypt the note and package everything neatly into a single HTML file. You can save it to your local disc or perhaps a cloud service.</li>
-													</ul>
-												</div>
-												
-												<div>
-													<b>Share your note</b>
-													<ul>
-														<li>Due to technical limitations of current browsers, if you send a <b>WhisperNote</b> through email (or other insecure channel) the recipient needs do one of three things to read it securely:
-															<ul>
-																<li>Download a new <b>WhisperNote</b> and Import your note into theirs.</li>
-																<li>Use the Consunet <a href="http://www.consunet.com.au/products/validator">Validator</a> service to check that the note has not been maliciously modified in transit.</li>
-																<li>Temporarily disconnect from the Internet when they are reading the note.</li>
-															</ul>
-														</li>
-														<li>When sharing the password you should use a different channel to the one you sent your note through (i.e. call the recipient over the phone).</li>
-													</ul>
-												</div>
+                        <div>
+                            <b>Security</b>
+                            <ul>
+                                <li><b>WhisperNote</b> uses AES 256 bit encryption to store your data, this is a very strong form of encryption.</li>
+                                <li><b>WhisperNote</b> uses your browser as the execution environment, you probably use your browser for your banking too.</li>
+                                <li><b>WhisperNote</b> does not store your data on a server, it saves it to the device you are using.</li>
+                                <li>If you lose your password, it cannot be recovered.</li>
+                                <li>Providing high quality security tools is very difficult and like other tools <b>WhisperNote</b> has known weaknesses.</li>
+                                <li>For more information please see the <a href="http://www.consunet.com.au/products/whispernote">website.</a></li>
+                            </ul>
+                        </div>
+
+                        <div>
+                            <b>Create your note</b>
+                            <ul>
+                                <li>Just type or cut and paste the text content you want to encrypt in the Message area.</li>
+                                <li>You can optionally select a single file from your device to be included with your note. This file should be less than 10Mb in size.</li>
+                                <li>Once you're done editing your note, at the bottom of the screen type in a password to protect the note contents.</li>
+                                <li>Optionally, provide a hint for yourself, but don't make it obvious.</li>
+                                <li>Hit the Encrypt button. This will encrypt the note and package everything neatly into a single HTML file. You can save it to your local disc or perhaps a cloud service.</li>
+                            </ul>
+                        </div>
+
+                        <div>
+                            <b>Share your note</b>
+                            <ul>
+                                <li>Due to technical limitations of current browsers, if you send a <b>WhisperNote</b> through email (or other insecure channel) the recipient needs do one of three things to read it securely:
+                                        <ul>
+                                            <li>Download a new <b>WhisperNote</b> and Import your note into theirs.</li>
+                                            <li>Use the Consunet <a href="http://www.consunet.com.au/products/validator">Validator</a> service to check that the note has not been maliciously modified in transit.</li>
+                                            <li>Temporarily disconnect from the Internet when they are reading the note.</li>
+                                        </ul>
+                                </li>
+                                <li>When sharing the password you should use a different channel to the one you sent your note through (i.e. call the recipient over the phone).</li>
+                            </ul>
+                        </div>
                     </div>
                 </div>
                 <div class="container">
@@ -155,30 +179,23 @@
                     </form>
                 </div>
                 <div class="container">
-                    <nav class="navbar navbar-default navbar-fixed-bottom">
-                        <div class="navbar-collapse">
-                            <form id="encrypt" class="navbar-form" role="form" onsubmit="return false;">
-                                <div id="enc-password-group" class="form-group">
-                                    <label class="sr-only" for="enc-password">Password</label>
-                                    <div class="col-sm-12 col-md-12 col-lg-12">
-                                        <input type="password" class="form-control input-sm" id="enc-password" name="enc-password" placeholder="Password" onkeydown="SCA.validateEncPass();" onkeyup="SCA.validateEncPass();">
-                                    </div>
-                                </div>
-                                <div class="form-group">
-                                    <label class="sr-only" for="enc-hint">Hint</label>
-                                    <div class="col-sm-12 col-md-12 col-lg-12">
-                                        <input type="text" class="form-control input-sm" id="enc-hint" name="enc-hint" placeholder="Hint to remember">
-                                    </div>
-                                </div>
-                                <div id="enc-password-fb-group" class="form-group" style="display: none;">
-                                    <div class="col-sm-12 col-md-12 col-lg-12">
-                                        <label id="enc-password-fb" class="control-label"></label>
-                                    </div>
-                                </div>
-                                <button id="do-encrypt" type="button" onclick="SCA.encrypt();" class="btn btn-sm btn-success col-xs-12 col-sm-2 col-md-1 col-lg-1">Encrypt</button>
-                            </form>
-                        </div>
-                    </nav>
+                        <nav class="navbar navbar-default navbar-fixed-bottom">
+                        <form id="encrypt" class="navbar-form" role="form" onsubmit="return false;">
+                            <div id="enc-password-group" class="form-group">
+                                <label class="sr-only" for="enc-password">Password</label>
+                                <input type="password" class="form-control input-sm" id="enc-password" name="enc-password" placeholder="Password" onkeydown="SCA.validateEncPass();" onkeyup="SCA.validateEncPass();">
+                                <label class="sr-only" for="enc-hint">Hint</label>
+                                <input type="text" class="form-control input-sm" id="enc-hint" name="enc-hint" placeholder="Hint to remember">
+                            </div>
+                            <button id="do-encrypt" type="submit" onclick="SCA.encrypt();" class="btn navbar-btn btn-sm btn-success">Encrypt</button>
+                            <div id="enc-password-fb-group" class="form-group" style="display: none;">
+                                <label id="enc-password-fb" class="control-label"></label>
+                            </div>
+                            <div class="navbar-btn pull-right">
+                                <h4 id="timeout-value"></h4>
+                            </div>
+                         </form>
+                     </nav>
                 </div>
             </div>
         </div>

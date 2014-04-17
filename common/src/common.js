@@ -144,7 +144,7 @@ var SCA = {
                 [this.getDocumentHtml()], 
                 {type: "application/xhtml+xml;charset=" + document.characterSet}
             ),
-            CONST.appName + ".html"
+            this.getSaveFilename() + ".html"
         );
     },
             
@@ -285,8 +285,13 @@ var SCA = {
         var adata = sjcl.codec.utf8String.toBits(this.getEncHint());
         cs.adata = sjcl.codec.base64.fromBits(adata);
         
-        var plaintext = sjcl.codec.utf8String.toBits(SCA.getPlaintext());
-        var ct = sjcl.mode[cs.mode].encrypt(prp, plaintext, iv, adata, cs.ts);
+        var plaintext = {
+            opts: this.readOptions(),
+            pl: this.getPayload()
+        };
+        
+        var plaintextBits = sjcl.codec.utf8String.toBits(JSON.stringify(plaintext));
+        var ct = sjcl.mode[cs.mode].encrypt(prp, plaintextBits, iv, adata, cs.ts);
         cs.ct = sjcl.codec.base64.fromBits(ct);
         
         // Call the callback to do specific actions with encrypt parameters
@@ -303,7 +308,9 @@ var SCA = {
         this.setDisplay("unsupported", "none");
         this.setDisplay("locked", "none");
         this.setDisplay("unlocked", "none");
+        this.displayOptions(false);
         this.resetHelp();
+        this.displayTimeout(false);
 
         var fbGroup = this.e("enc-password-fb-group");
         fbGroup.style.display = "none";
@@ -331,12 +338,13 @@ var SCA = {
         
         try {
             var out = sjcl.mode[encData.mode].decrypt(prp, data, iv, adata, encData.ts);
-            out = sjcl.codec.utf8String.fromBits(out);
+            out = JSON.parse(sjcl.codec.utf8String.fromBits(out));
             
             // Call with the decrypted contents and parameters
             callback(prp, iv, adata, out);
-            
+            this.setOptions(out.opts);
             this.setUnlocked(true);
+            this.displayTimeout(true);
             this.showDecryptError(false);
             this.e("enc-password").value = password;
             this.e("enc-hint").value = sjcl.codec.utf8String.fromBits(adata);
@@ -475,7 +483,16 @@ var SCA = {
         var display = isDisplay ? "inline" : "none";
         this.setDisplay("menu", display);
     },  
-            
+       
+        /**
+     * Used to display or hide the options.
+     * @param {boolean} isDisplay - true to display the options, false to hide it
+     */
+    displayOptions: function(isDisplay) {
+        var display = isDisplay ? "block" : "none";
+        this.setDisplay("options-screen", display);
+    },  
+    
     /**
      * Handles all mouse click events in the app.
      * @param {type} source - the source of the event.
@@ -483,10 +500,16 @@ var SCA = {
     handleMouseClick: function(source) {
         var target = source.target || source.srcElement;
 
+        // Hide the menu unless we are clicking on the show menu button
         if (target.id === "menu-button") {
             SCA.toggleMenu();
         } else {
             SCA.displayMenu(false);
+        }
+        
+        // Reset the timer if we are counting down.
+        if (SCA.isTimingOut) {
+            SCA.resetTimeout();
         }
     },
     
@@ -522,6 +545,184 @@ var SCA = {
     },
             
     /**
+     * Used to enforce numeric input for form inputs. 
+     * @param {type} evt the event
+     * @returns {Boolean} true if the key was numeric, false otherwise.
+     */
+    isNumericKey: function(evt) {
+        var charCode = (evt.which) ? evt.which : evt.keyCode
+        if (charCode > 31 && (charCode < 48 || charCode > 57))
+            return false;
+        return true;
+    },
+        
+    /**
+     * Sets the options to reasonable default values.
+     */
+    setDefaultOptions: function() {
+        this.setOptions({
+            saveFileName: CONST.appName,
+            timeoutPeriodMins: CONST.defaultTimeoutPeriodMins
+        });
+    },
+    
+    
+     /**
+     * Validates the save filename value and shows an error if it is invalid.
+     */
+    validateSaveFilename: function() {
+        if (!this.isSaveFilenameValid()) {
+            this.addClass("opt-save-filename-group", "has-error");
+            this.e("opt-save-filename-help").innerHTML = "Invalid filename, using default: " + CONST.appName;
+        } else {
+            this.removeClass("opt-save-filename-group", "has-error");
+            this.e("opt-save-filename-help").innerHTML = "";
+        }
+    },
+    
+    /**
+     * Gets the save filename value or resets it to a default value if it is invalid.
+     */
+    getSaveFilename: function() {
+        if (!this.isSaveFilenameValid()) {
+            this.e("opt-save-filename").value = CONST.appName;
+            this.validateSaveFilename();
+        } 
+        return this.e("opt-save-filename").value;
+    },
+    
+    /**
+     * @returns true if the save filename is valid, false otherwise.
+     */
+    isSaveFilenameValid: function() {
+        var saveFilename = this.e("opt-save-filename").value;
+        return saveFilename.match(/\w+/) && !saveFilename.match(/\W+/);
+    },
+    
+    /**
+     * Reads options from the User interface.
+     * @returns a JSON object containing the read options
+     */
+    readOptions: function() {
+        var sfn = this.getSaveFilename();
+        var timeout = this.getTimeout();
+        return {
+            saveFileName: sfn,
+            timeoutPeriodMins: timeout
+        };
+    },
+    
+    /**
+     * Sets the options items.
+     * @param {type} opts the options JSON object to set.
+     */
+    setOptions: function(opts) {
+        this.e("opt-save-filename").value = opts.saveFileName;
+        this.e("opt-timeout").value = opts.timeoutPeriodMins;
+    },
+    
+    /**
+     * Shows/Hides the timeout display
+     * @param {Boolean} isDisplay true if the timeout should be displayed, false otherwise.
+     */
+    displayTimeout: function(isDisplay) {
+        if (isDisplay) {
+            this.resetTimeout();
+            this.isTimingOut = true;
+            this.timeoutHandler = setInterval("SCA.decrement()", 1000);
+        } else {
+            clearInterval(this.timeoutHandler);
+            this.e("timeout-value").innerHTML = "";
+        }
+    },
+    
+    /**
+     * Validates the timeout value and shows an error if it is invalid.
+     */
+    validateTimeout: function() {
+        if (!this.isTimeoutValid()) {
+            this.addClass("opt-timeout-group", "has-error");
+            this.e("opt-timeout-help").innerHTML = "Invalid timeout, using default: " + CONST.defaultTimeoutPeriodMins;
+        } else {
+            this.removeClass("opt-timeout-group", "has-error");
+            this.e("opt-timeout-help").innerHTML = "";
+        }
+    },
+    
+    /**
+     * @returns true if the timeout is a valid number, false otherwise
+     */
+    isTimeoutValid: function() {
+        var timeout = this.e("opt-timeout").value;
+        return timeout.match(/\d+/) && !timeout.match(/\D+/);
+    },
+    
+    /**
+     * Gets the timeout value or resets it to a default value if it is invalid.
+     */
+    getTimeout: function() {
+        if (!this.isTimeoutValid()) {
+            this.e("opt-timeout").value = CONST.defaultTimeoutPeriodMins;
+            this.validateTimeout();
+        }
+        return this.e("opt-timeout").value;
+    },
+    
+    /**
+     * Decrements the timeout value and causes a page refresh if it reaches 0.
+     */
+    decrement: function() {
+        this.timeoutValueSecs -= 1;
+        if (this.timeoutValueSecs === 0) {
+            location.reload();
+        }
+
+        this.setTimeoutString();
+    },
+    
+    /**
+     * Pads the supplied number with a zero if required.
+     * @param {type} num the number to pad.
+     * @returns the padded number.
+     */
+    padNum: function(num) {
+      var toStr = num.toString();
+      if (toStr.length === 1) {
+          return "0" + toStr;
+      } else {
+          return toStr;
+      }
+    },
+    
+    /**
+     * Sets the timeout String displayed to the user.
+     */
+    setTimeoutString: function() {
+        var minutes = this.padNum(Math.floor(this.timeoutValueSecs / 60.0) % 60);
+        var hours = this.padNum(Math.floor(this.timeoutValueSecs / 3600.0));
+        var secs = this.padNum(this.timeoutValueSecs % 60);
+        
+        var timeoutStr = hours + ":" + minutes + ":" + secs;
+        
+        // Make red if timeout is less than or equal to 30
+        if (this.timeoutValueSecs <= 30) {
+            this.addClass("timeout-value", "red");
+        } else {
+            this.removeClass("timeout-value", "red");
+        }
+        
+        this.e("timeout-value").innerHTML = timeoutStr;
+    },
+    
+    /**
+     * Resets the timeout value to the one obtained from the user options.
+     */
+    resetTimeout: function() {
+        this.timeoutValueSecs = parseInt(this.getTimeout()) * 60;
+        this.setTimeoutString();
+    },
+    
+    /**
      * Initialises the app.
      */
     doOnload: function() {
@@ -550,6 +751,7 @@ var SCA = {
                 }
                 this.e("dec-password").focus();
             } else {
+                this.setDefaultOptions();
                 this.setUnlocked(true);
                 this.displayHelp(true);
             }

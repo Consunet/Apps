@@ -26,12 +26,13 @@
                 </form>
             </div>
             <div class="navbar-header pull-right">
-                <form class="navbar-form navbar-left" role="search"> 
-                   <label class="sr-only" for="search">Search</label>
-                   <input id="search" name="search" type="search" class="form-control srch" onkeydown="SCA.filterPwds();" onkeyup="SCA.filterPwds();" placeholder="Search..." disabled="">
-                   <button id="menu-button" type="button" class="btn btn-sm btn-default menu-icon">&equiv;</button>
+                <form class="navbar-form" role="search"> 
+                    <label class="sr-only" for="search">Search</label>
+                    <input id="search" name="search" type="search" class="form-control srch" onkeydown="SCA.filterPwds();" onkeyup="SCA.filterPwds();" placeholder="Search..." disabled="">
+                    <button id="menu-button" type="button" class="btn btn-sm btn-default menu-icon">&equiv;</button>
                     <ul id="menu" class="menu" role="menu" style=" display: none;">
                         <li role="presentation"><a role="menuitem" onclick="SCA.clickImport();" href="#">Import</a></li>
+                        <li role="presentation"><a role="menuitem" onclick="SCA.displayOptions(true);" href="#">Options</a></li>
                         <li role="presentation"><a role="menuitem" onclick="SCA.showAbout();" href="#">Help</a></li>
                     </ul>
                 </form>
@@ -76,14 +77,14 @@
                 </div>
                 <form id="decrypt" class="form-horizontal" autocomplete="off" onsubmit="SCA.decrypt(); return false;">
                     <div id="dec-password-group" class="form-group">
-                        <label for="decrypt_pass" class="col-lg-2 control-label">Password</label>
+                        <label for="dec-password" class="col-lg-2 control-label">Password</label>
                         <div class="col-lg-4">
                             <input id="dec-password" name="dec-password" type="password" class="form-control">
                             <span id="dec-password-help" class="help-block"></span>
                         </div>
                     </div>
                     <div class="form-group">
-                        <label for="hint" class="col-lg-2 control-label">Hint</label>
+                        <label class="col-lg-2 control-label">Hint</label>
                         <div class="col-lg-4">
                             <p id="dec-hint" class="form-control-static">(None provided)</p>
                         </div>
@@ -97,6 +98,26 @@
             </div>
 
             <div id="unlocked" style="display: none;">
+                <div id="options-screen" class="alert alert-warning alert-dismissable" style="display: none;">
+                    <button type="button" class="close" onclick="SCA.displayOptions(false);">&times;</button> 
+                    <h4>Options</h4>
+                    <form id="options" class="form-horizontal" autocomplete="off" onsubmit="SCA.saveOptions(); return false;">
+                        <div id="opt-save-filename-group" class="form-group">
+                            <label for="opt-save-filename" class="col-md-2 col-lg-2 control-label">Save filename</label>
+                            <div class="col-md-4 col-lg-4">
+                                <input id="opt-save-filename" name="file-save-name" type="text" class="form-control" onkeyup="SCA.validateSaveFilename();" onkeydown="SCA.validateSaveFilename();" value=""></input>
+                                <p id="opt-save-filename-help" class="help-block"></p>
+                            </div>
+                        </div>
+                        <div id="opt-timeout-group" class="form-group">
+                            <label for="opt-timeout" class="col-md-2 col-lg-2 control-label">Timeout period (min.)</label>
+                            <div class="col-md-2 col-lg-2">
+                                <input id="opt-timeout" name="opt-timeout" type="number" onkeyup="SCA.validateTimeout();" onkeydown="SCA.validateTimeout();" onkeypress="return SCA.isNumericKey(event);" class="form-control" value=""></input>
+                                <p id="opt-timeout-help" class="help-block"></p>
+                            </div>
+                        </div>
+                    </form>
+                </div>
                 <div id="help-screen" class="alert alert-info alert-dismissable" style="display: none;">
                     <button type="button" class="close" onclick="SCA.displayHelp(false);">&times;</button> 
                     Consunet <b>EveryPass</b> is a Password Manager that allows you to access all your passwords, on all your web enabled devices whether you are connected to the Internet or not.  
@@ -225,6 +246,9 @@
                         <button id="do-encrypt" type="submit" onclick="SCA.encrypt();" class="btn navbar-btn btn-sm btn-success">Encrypt</button>
                         <div id="enc-password-fb-group" class="form-group" style="display: none;">
                             <label id="enc-password-fb" class="control-label"></label>
+                        </div>
+                        <div class="navbar-btn pull-right">
+                            <h4 id="timeout-value"></h4>
                         </div>
                     </form>
                 </nav>
