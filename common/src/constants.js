@@ -33,5 +33,5 @@ var CONST = {
     },
     regexEncryptedData: /<script id="encrypted-data" type="text\/javascript">var encData=(.+);<\/script>/g,
     regexAppType: /<meta name="sca-app-type" content="(\w+)"/g,
-    defaultTimeoutPeriodMins: 10
+    defaultTimeoutPeriodMins: 2
 };
