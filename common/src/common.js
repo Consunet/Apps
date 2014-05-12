@@ -277,6 +277,7 @@ var SCA = {
         var cs = this.getClonedCypherSettings();
         var salt = sjcl.random.randomWords(2, 2);
         var iv = sjcl.random.randomWords(4, 2);
+        cs.v = CONST.version;
         cs.salt = sjcl.codec.base64.fromBits(salt);
         cs.iv = sjcl.codec.base64.fromBits(iv);
 
@@ -337,12 +338,21 @@ var SCA = {
         var data = sjcl.codec.base64.toBits(encData.ct);
         
         try {
-            var out = sjcl.mode[encData.mode].decrypt(prp, data, iv, adata, encData.ts);
-            out = JSON.parse(sjcl.codec.utf8String.fromBits(out));
+            var dec = sjcl.mode[encData.mode].decrypt(prp, data, iv, adata, encData.ts);
+            var payload = sjcl.codec.utf8String.fromBits(dec);
+            var opts = this.getDefaultOptions();
+            
+            // Version 1.3 and onwards includes options as part of the payload
+            if (encData.v > 1.2) {
+                var parsed = JSON.parse(payload);
+                opts = parsed.opts;
+                payload = parsed.pl;
+            }
             
             // Call with the decrypted contents and parameters
-            callback(prp, iv, adata, out);
-            this.setOptions(out.opts);
+            callback(encData.v, prp, iv, adata, payload);
+                      
+            this.setOptions(opts);
             this.setUnlocked(true);
             this.displayTimeout(true);
             this.showDecryptError(false);
@@ -557,13 +567,21 @@ var SCA = {
     },
         
     /**
+     * Get a set of default options.
+     * @returns
+     */
+    getDefaultOptions: function() {
+        return {
+            saveFileName: CONST.appName,
+            timeoutPeriodMins: CONST.defaultTimeoutPeriodMins
+        };
+    },
+        
+    /**
      * Sets the options to reasonable default values.
      */
     setDefaultOptions: function() {
-        this.setOptions({
-            saveFileName: CONST.appName,
-            timeoutPeriodMins: CONST.defaultTimeoutPeriodMins
-        });
+        this.setOptions(this.getDefaultOptions());
     },
     
     

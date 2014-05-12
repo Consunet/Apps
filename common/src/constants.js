@@ -11,6 +11,7 @@
  * </p>
  */
 var CONST = {
+    version: 1.3,
     errorImportFileFormat: "File format incorrect.",
     errorDecrypt: "Incorrect password, or data has been corrupted",
     errorInvalidCypherSettings: "Invalid cypher settings",
@@ -18,7 +19,6 @@ var CONST = {
     errorApplicationTypeNotFound: "Could not determine application type.",
     errorWrongApplicationType: "Incorrect application type",
     cypherSettings: {
-        v: 1,
         iter: 1000,
         ks: 256,
         ts: 128,
@@ -26,6 +26,7 @@ var CONST = {
         cipher: "aes"
     },
     variableCypherSettings: {
+        v:  { desc: "Version", type: "number", mandatory: true},
         iv: { desc: "Initialisation Vector", type: "string", mandatory: true},
         salt: { desc: "Salt", type: "string", mandatory: true},
         adata: { desc: "Hint", type: "string", mandatory: false},

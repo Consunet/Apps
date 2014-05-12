@@ -274,9 +274,12 @@ SCA.setUnlocked = function(isUnlocked) {
  * and unlocks the interface if successful.
  */
 SCA.decrypt = function() {
-    this.decryptWith(function(prp, iv, adata, out) {
-        var pwds = out.pl;
-        SCA.addPwds(pwds);
+    this.decryptWith(function(v, prp, iv, adata, out) {
+        // Handle decoding of versions older than 1.3 where options wasn't part of payload
+        if (v === undefined || v <= 1.2) {
+            out = JSON.parse(out);
+        }
+        SCA.addPwds(out);
     });
 };
 

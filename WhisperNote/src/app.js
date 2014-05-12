@@ -93,9 +93,9 @@ SCA.getPayload = function() {
  * The attachment blob and file name are stored in memory, ready to be downloaded.
  */
 SCA.decrypt = function() {
-    this.decryptWith(function(prp, iv, adata, out) {
+    this.decryptWith(function(v, prp, iv, adata, out) {
         // Populate the message payload
-        SCA.e("payload").value = out.pl;
+        SCA.e("payload").value = out;
         
         // Check for an attachment, and decrypt it if present
         if (encData.cattname) {
