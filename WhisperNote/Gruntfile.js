@@ -80,7 +80,7 @@ module.exports = function(grunt) {
                 test: true,
                 'log-level': 'warning',
                 'fail-fast': true,
-                includes: 'test/tests_support.js'
+                includes: ['test/tests_support.js', '../common/test/common_test.js']
             },
             functionalTests: {
                 src: ['test/tests.js'],

@@ -33,8 +33,7 @@ casper.test.begin('Can create a password, then hide, show and delete it.', funct
         CPASS_TEST.assertPasswordBodyHidden(test, id);
 
         // Ensure that the option to confirm deletion is unchecked.
-        casper.click('#menu-button');
-        casper.click('#menu-options');
+        C_TEST.openOptions(casper, test);
         casper.click('#opt-confirm-del');
 
         // Delete the entry
@@ -131,7 +130,7 @@ casper.test.begin('Does not import bad data.', function suite(test) {
             SCA.processImportedFileText(badText);
         });
         
-        CPASS_TEST.assertFormIsLocked(casper, test, false);
+        C_TEST.assertFormIsLocked(casper, test, false);
     }).run(function() {
         test.done();
     });
@@ -144,7 +143,15 @@ casper.test.begin('Can import good data.', function suite(test) {
             SCA.processImportedFileText(goodText);
         });
 
-        CPASS_TEST.assertFormIsLocked(casper, test, true);
+        C_TEST.assertFormIsLocked(casper, test, true);
+    }).run(function() {
+        test.done();
+    });
+});
+
+casper.test.begin('When bad options are set an error shows.', function suite(test) {
+    casper.start(TEST_UNENCRYPTED_URL).then(function() {
+        C_TEST.setCommonOptions(casper, test, "#$*&Y", "-1");
     }).run(function() {
         test.done();
     });
@@ -152,7 +159,7 @@ casper.test.begin('Can import good data.', function suite(test) {
 
 casper.test.begin('Can verify basic encrypted data details.', function suite(test) {
     casper.start(TEST_ENCRYPTED_URL).then(function() {
-        CPASS_TEST.assertFormIsLocked(casper, test, true);
+        C_TEST.assertFormIsLocked(casper, test, true);
         var doctype = this.page.evaluate(function() {
             return document.doctype.name;
         });
@@ -182,6 +189,9 @@ casper.test.begin('Can do decrypt of encrypted file.', function suite(test) {
 
         this.fillSelectors('form#decrypt', rightDecPassword, false);
         this.click('#do-decrypt');
+
+        C_TEST.assertBrowserUnsupportedMessageIsShown(test, false);
+
         var id = 'p0';
         CPASS_TEST.assertPasswordBodyHidden(test, id);
 

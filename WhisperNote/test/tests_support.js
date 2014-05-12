@@ -11,24 +11,17 @@
  * </p>
  */
 var CNOTE_TEST = {
-              
-    /**
-     * Asserts if the form is currently in a "locked" state or not.
-     * 
-     * @param {Casper} casper - the Casper page driver object
-     * @param {Tester} test - the Casper test object
-     * @param {boolean} isLocked - true if the form should be locked, false otherwise
-     */
-    assertFormIsLocked: function(casper, test, isLocked) {
-        var lockedStyle = casper.getElementAttribute("#locked", 'style');
-        var unlockedStyle = casper.getElementAttribute("#unlocked", 'style');
 
-        if (isLocked) {
-            test.assertEquals(lockedStyle, "display: inline; ", "Locked div is shown");
-            test.assertEquals(unlockedStyle, "display: none; ", "Unlocked div is hidden");
-        } else {
-            test.assertEquals(lockedStyle, "display: none; ", "Locked div is hidden");
-            test.assertEquals(unlockedStyle, "display: inline; ", "Unlocked div is shown");
-        }
+    addNote: function(casper, test, message) {
+        data = { '#payload': message };
+        casper.fillSelectors('form#main', data, false);
+    },
+    
+    assertNoteText: function(casper, test, expectedText) {
+        var msg = casper.evaluate(function() {
+            return document.getElementById("payload").value;
+        });
+        
+        test.assertEqual(msg, expectedText, "Found expected test message: " + expectedText);
     }
 };

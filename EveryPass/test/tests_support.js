@@ -82,26 +82,6 @@ var CPASS_TEST = {
         test.assertVisible('#' + id + '-question', "Question is visible for " + id);
         test.assertVisible('#' + id + '-answer', "Answer is visible for " + id);
     },
-            
-    /**
-     * Asserts if the form is currently in a "locked" state or not.
-     * 
-     * @param {Casper} casper - the Casper page driver object
-     * @param {Tester} test - the Casper test object
-     * @param {boolean} isLocked - true if the form should be locked, false otherwise
-     */
-    assertFormIsLocked: function(casper, test, isLocked) {
-        var lockedStyle = casper.getElementAttribute("#locked", 'style');
-        var unlockedStyle = casper.getElementAttribute("#unlocked", 'style');
-
-        if (isLocked) {
-            test.assertEquals(lockedStyle, "display: inline; ", "Locked div is shown");
-            test.assertEquals(unlockedStyle, "display: none; ", "Unlocked div is hidden");
-        } else {
-            test.assertEquals(lockedStyle, "display: none; ", "Locked div is hidden");
-            test.assertEquals(unlockedStyle, "display: inline; ", "Unlocked div is shown");
-        }
-    },
 
     /**
      * Asserts that the password entry matches the specified expectation

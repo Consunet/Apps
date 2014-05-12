@@ -270,7 +270,7 @@ var SCA = {
      * taken on the given encrypt parameters.
      */
     encryptWith: function(callback) {
-        if (this.isUsingSafari()) {
+        if (this.getBrowserName() === "Safari") {
             alert("Encryption is not currently supported on Safari due to lack of standards support. Please use a different browser (e.g. Google Chrome or Mozilla Firefox) to allow encryption of files.");
             return false;
         }
@@ -748,7 +748,7 @@ var SCA = {
     /**
      * @returns {Boolean} true if the user is using Safari or false otherwise.
      */
-    isUsingSafari: function() {
+    getBrowserName: function() {
         var N = navigator.appName, ua=navigator.userAgent, tem;
         var M = ua.match(/(opera|chrome|safari|firefox|msie|phantomjs)\/?\s*(\.?\d+(\.\d+)*)/i);
         if(M) { 
@@ -758,7 +758,7 @@ var SCA = {
             }
         }
         M = M ? [M[1], M[2]] : [N, navigator.appVersion, '-?'];
-        return M[0] === "Safari";
+        return M[0];
     },
     
     /**
@@ -777,7 +777,12 @@ var SCA = {
             if (!(window.File && window.FileReader && window.FileList && window.Blob)) {
                 throw "File operations not supported";
             }
-
+            
+            // Allows automated tests to pass with PhantomJS / Blob incompatiblity for now.
+            if (this.getBrowserName() !== "PhantomJS") {
+                new Blob();
+            }
+            
             this.setDisplay("unsupported", "none");
 
             sjcl.random.startCollectors();
@@ -794,8 +799,7 @@ var SCA = {
                 this.setUnlocked(true);
                 this.displayHelp(true);
             }
-            // Allows automated tests to pass with PhantomJS / Blob incompatiblity for now.
-            new Blob();
+            
         } catch (e) {
             alert(e);
             console.log(e);
