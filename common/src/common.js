@@ -758,7 +758,7 @@ var SCA = {
             }
         }
         M = M ? [M[1], M[2]] : [N, navigator.appVersion, '-?'];
-        return M[0] !== "Safari";
+        return M[0] === "Safari";
     },
     
     /**
