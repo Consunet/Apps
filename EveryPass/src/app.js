@@ -240,7 +240,7 @@ SCA.encryptAndEmbedData = function() {
  * @returns {string} - the passwords to be encrypted in plaintext.
  */
 SCA.getPayload = function() {
-    return JSON.stringify(SCA.getPwds());
+    return SCA.getPwds();
 };
 
 /**
@@ -275,7 +275,7 @@ SCA.setUnlocked = function(isUnlocked) {
  */
 SCA.decrypt = function() {
     this.decryptWith(function(prp, iv, adata, out) {
-        var pwds = JSON.parse(out);
+        var pwds = out.pl;
         SCA.addPwds(pwds);
     });
 };
