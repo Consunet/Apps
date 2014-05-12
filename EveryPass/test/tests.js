@@ -7,7 +7,7 @@ var TEST_HINT = "hint value";
 
 casper.test.begin('Can verify basic app details.', function suite(test) {
     casper.start(TEST_UNENCRYPTED_URL).then(function() {
-        test.assertTitle("EveryPass Password Manager v1.2", "Password manager homepage title is the one expected");
+        test.assertTitle("EveryPass Password Manager v1.3", "Password manager homepage title is the one expected");
         test.assertTextExists("EveryPass", "Description exists");
     }).run(function() {
         test.done();
