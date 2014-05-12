@@ -270,6 +270,11 @@ var SCA = {
      * taken on the given encrypt parameters.
      */
     encryptWith: function(callback) {
+        if (this.isUsingSafari()) {
+            alert("Encryption is not currently supported on Safari due to lack of standards support. Please use a different browser (e.g. Google Chrome or Mozilla Firefox) to allow encryption of files.");
+            return false;
+        }
+    
         if (!this.checkEncPass()) {
             return false;
         }
@@ -738,6 +743,22 @@ var SCA = {
     resetTimeout: function() {
         this.timeoutValueSecs = parseInt(this.getTimeout()) * 60;
         this.setTimeoutString();
+    },
+    
+    /**
+     * @returns {Boolean} true if the user is using Safari or false otherwise.
+     */
+    isUsingSafari: function() {
+        var N = navigator.appName, ua=navigator.userAgent, tem;
+        var M = ua.match(/(opera|chrome|safari|firefox|msie|phantomjs)\/?\s*(\.?\d+(\.\d+)*)/i);
+        if(M) { 
+            tem = ua.match(/version\/([\.\d]+)/i);
+            if (tem !== null) {
+                M[2]= tem[1];
+            }
+        }
+        M = M ? [M[1], M[2]] : [N, navigator.appVersion, '-?'];
+        return M[0] !== "Safari";
     },
     
     /**
