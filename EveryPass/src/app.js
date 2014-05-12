@@ -103,7 +103,15 @@ SCA.addPwds = function(pwds) {
  * @param {string} id - the ID of the password element to remove.
  */
 SCA.delPwd = function(id) {
-    this.e(id).outerHTML = "";
+    var canDelete = true;
+    if (this.isConfirmPwdDelete()) {
+        var pwdName = this.e(id + "-service").value;
+        canDelete = confirm("Delete Password for " + pwdName + "?");
+    }
+    
+    if (canDelete) {
+        this.e(id).outerHTML = "";
+    }
 };
 
 /**
@@ -493,4 +501,48 @@ SCA.getPwdPositions = function(srcId, destId) {
     });
     
     return [srcPos, destPos];
+};
+
+/**
+ * @returns true if the confirm password checkbox is checked, false otherwise
+ */
+SCA.isConfirmPwdDelete = function() {
+  return this.e("opt-confirm-del").checked;
+};
+
+/**
+ * Get a set of default options for EveryPass.
+ * @returns
+ */
+SCA.getDefaultOptions = function() {
+    return {
+        saveFileName: CONST.appName,
+        timeoutPeriodMins: CONST.defaultTimeoutPeriodMins,
+        confirmPwdDelete: true
+    };
+};
+
+/**
+ * @param {type} opts options to set
+ */
+SCA.setOptions = function(opts) {
+    this.e("opt-save-filename").value = opts.saveFileName;
+    this.e("opt-timeout").value = opts.timeoutPeriodMins;
+    this.e("opt-confirm-del").checked = opts.confirmPwdDelete;
+};
+
+/**
+* Reads options from the EveryPass User interface.
+* @returns a JSON object containing the read options
+*/
+SCA.readOptions = function() {
+    var sfn = this.getSaveFilename();
+    var timeout = this.getTimeout();
+    var pwdDelete = this.isConfirmPwdDelete();
+
+    return {
+        saveFileName: sfn,
+        timeoutPeriodMins: timeout,
+        confirmPwdDelete: pwdDelete
+    };
 };

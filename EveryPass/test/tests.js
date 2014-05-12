@@ -32,6 +32,11 @@ casper.test.begin('Can create a password, then hide, show and delete it.', funct
         CPASS_TEST.togglePwd(casper, id);
         CPASS_TEST.assertPasswordBodyHidden(test, id);
 
+        // Ensure that the option to confirm deletion is unchecked.
+        casper.click('#menu-button');
+        casper.click('#menu-options');
+        casper.click('#opt-confirm-del');
+
         // Delete the entry
         CPASS_TEST.delPwd(casper, id);
         CPASS_TEST.assertPasswordNotExists(test, id);

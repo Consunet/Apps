@@ -31,9 +31,9 @@
                     <input id="search" name="search" type="search" class="form-control srch" onkeydown="SCA.filterPwds();" onkeyup="SCA.filterPwds();" placeholder="Search..." disabled="">
                     <button id="menu-button" type="button" class="btn btn-sm btn-default menu-icon">&equiv;</button>
                     <ul id="menu" class="menu" role="menu" style=" display: none;">
-                        <li role="presentation"><a role="menuitem" onclick="SCA.clickImport();" href="#">Import</a></li>
-                        <li role="presentation"><a role="menuitem" onclick="SCA.displayOptions(true);" href="#">Options</a></li>
-                        <li role="presentation"><a role="menuitem" onclick="SCA.showAbout();" href="#">Help</a></li>
+                        <li role="presentation"><a id="menu-import" role="menuitem" onclick="SCA.clickImport();" href="#">Import</a></li>
+                        <li role="presentation"><a id="menu-options" role="menuitem" onclick="SCA.displayOptions(true);" href="#">Options</a></li>
+                        <li role="presentation"><a id="menu-about" role="menuitem" onclick="SCA.showAbout();" href="#">Help</a></li>
                     </ul>
                 </form>
             </div>
@@ -114,6 +114,14 @@
                             <div class="col-md-2 col-lg-2">
                                 <input id="opt-timeout" name="opt-timeout" type="number" onkeyup="SCA.validateTimeout();" onkeydown="SCA.validateTimeout();" onkeypress="return SCA.isNumericKey(event);" class="form-control" value=""></input>
                                 <p id="opt-timeout-help" class="help-block"></p>
+                            </div>
+                        </div>
+                        <div id="opt-confirm-del-group" class="form-group">
+                            <label for="opt-timeout" class="col-md-2 col-lg-2 control-label">
+                                Confirm deletion of passwords?
+                            </label>
+                            <div class="col-md-1 col-lg-1">
+                                <input id="opt-confirm-del" name="opt-confirm-del" type="checkbox" class="form-control" value=""></input>
                             </div>
                         </div>
                     </form>
