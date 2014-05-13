@@ -70,13 +70,13 @@ var SCA = {
         var encPass = this.e("enc-password").value;
         this.validateEncPass();
         if (encPass.length === 0) {
-            alert("Password cannot be empty!");
+            alert("_('Password cannot be empty!')");
             return false;
         }
         
         var feedback = this.e("enc-password-fb").innerHTML;
-        if (feedback === "Password: Weak") {
-            return confirm("Weak password used - proceed with Encrypt?");
+        if (feedback === "_('Password'): _('Weak')") {
+            return confirm("_('Weak password used - proceed with Encrypt?')");
         }
         
         return true;
@@ -189,17 +189,17 @@ var SCA = {
             // Validates the application type
             var appTypeMatches = CONST.regexAppType.exec(text);
             if (!(appTypeMatches && appTypeMatches.length === 2)) {
-                throw CONST.errorApplicationTypeNotFound;
+                throw "_('Could not determine application type.')";
             }
 
             if (appTypeMatches[1] !== CONST.appName) {
-                throw CONST.errorWrongApplicationType;
+                throw "_('Incorrect application type')";
             }
             
             // Validates the encrypted data
             var encDataMatches = CONST.regexEncryptedData.exec(text);
             if (!(encDataMatches && encDataMatches.length === 2)) {
-                throw CONST.errorImportFileFormat;
+                throw "_('File format incorrect.')";
             }
 
             var parsed = JSON.parse(encDataMatches[1]);
@@ -208,7 +208,7 @@ var SCA = {
             // Validates the cypher settings
             for (var key in CONST.cypherSettings) {
                 if (parsed[key] !== CONST.cypherSettings[key]) {
-                    throw CONST.errorInvalidCypherSettings;
+                    throw "_('Invalid cypher settings')";
                 }
             }
 
@@ -228,7 +228,7 @@ var SCA = {
             SCA.doOnload();
         } catch(e) {
             console.log(e);
-            alert(CONST.errorImportFailed + e);
+            alert("_('Import failed: ')" + e);
         }
     },            
 
@@ -242,7 +242,7 @@ var SCA = {
 
         if (show) {
             passGroup.setAttribute("class", "form-group has-error");
-            this.e("dec-password-help").innerHTML = CONST.errorDecrypt;
+            this.e("dec-password-help").innerHTML = "_('Incorrect password, or data has been corrupted')";
         } else {
             passGroup.setAttribute("class", "form-group");
             this.e("dec-password-help").innerHTML = "";
@@ -253,12 +253,6 @@ var SCA = {
      * Shows help information about the app
      */
     showAbout: function() {
-        var contextualInfo = "";
-        if (this.isShown("locked")) {
-            contextualInfo = CONST.about.locked;
-        } else if(this.isShown("unlocked")) {
-            contextualInfo = CONST.about.unlocked;
-        }
         SCA.displayHelp(true);
     },
 
@@ -271,7 +265,7 @@ var SCA = {
      */
     encryptWith: function(callback) {
         if (this.getBrowserName() === "Safari") {
-            alert("Encryption is not currently supported on Safari due to lack of standards support. Please use a different browser (e.g. Google Chrome or Mozilla Firefox) to allow encryption of files.");
+            alert("_('Encryption is not currently supported on Safari due to lack of standards support. Please use a different browser [e.g. Google Chrome or Mozilla Firefox] to allow encryption of files.')");
             return false;
         }
     
@@ -377,19 +371,19 @@ var SCA = {
         var pass = this.e("enc-password").value;
         var score = this.getPasswordStrength(pass);
         var formClass = "form-group";
-        var feedback = "Password: ";
+        var feedback = "_('Password'): ";
         if (score === 0) {
             formClass += " has-error";
-            feedback += "Empty!";
+            feedback += "_('Empty')!";
         } else if (score < 0.65) {
             formClass += " has-error";
-            feedback += "Weak";
+            feedback += "_('Weak')";
         } else if (score < 0.95) {
             formClass += " has-warning";
-            feedback += "OK";
+            feedback += "_('OK')";
         } else {
             formClass += " has-success";
-            feedback += "Strong";
+            feedback += "_('Strong')";
         }
         
         var fbGroup = this.e("enc-password-fb-group");
@@ -596,7 +590,7 @@ var SCA = {
     validateSaveFilename: function() {
         if (!this.isSaveFilenameValid()) {
             this.addClass("opt-save-filename-group", "has-error");
-            this.e("opt-save-filename-help").innerHTML = "Invalid filename, using default: " + CONST.appName;
+            this.e("opt-save-filename-help").innerHTML = "_('Invalid filename, using default'): " + CONST.appName;
         } else {
             this.removeClass("opt-save-filename-group", "has-error");
             this.e("opt-save-filename-help").innerHTML = "";
@@ -665,7 +659,7 @@ var SCA = {
     validateTimeout: function() {
         if (!this.isTimeoutValid()) {
             this.addClass("opt-timeout-group", "has-error");
-            this.e("opt-timeout-help").innerHTML = "Invalid timeout, using default: " + CONST.defaultTimeoutPeriodMins;
+            this.e("opt-timeout-help").innerHTML = "_('Invalid timeout, using default'): " + CONST.defaultTimeoutPeriodMins;
         } else {
             this.removeClass("opt-timeout-group", "has-error");
             this.e("opt-timeout-help").innerHTML = "";
@@ -775,7 +769,7 @@ var SCA = {
 
         try {
             if (!(window.File && window.FileReader && window.FileList && window.Blob)) {
-                throw "File operations not supported";
+                throw "_('File operations not supported')";
             }
             
             // Allows automated tests to pass with PhantomJS / Blob incompatiblity for now.

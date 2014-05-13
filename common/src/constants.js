@@ -12,12 +12,6 @@
  */
 var CONST = {
     version: 1.3,
-    errorImportFileFormat: "File format incorrect.",
-    errorDecrypt: "Incorrect password, or data has been corrupted",
-    errorInvalidCypherSettings: "Invalid cypher settings",
-    errorImportFailed: "Import failed: ",
-    errorApplicationTypeNotFound: "Could not determine application type.",
-    errorWrongApplicationType: "Incorrect application type",
     cypherSettings: {
         iter: 1000,
         ks: 256,
@@ -26,11 +20,11 @@ var CONST = {
         cipher: "aes"
     },
     variableCypherSettings: {
-        v:  { desc: "Version", type: "number", mandatory: true},
-        iv: { desc: "Initialisation Vector", type: "string", mandatory: true},
-        salt: { desc: "Salt", type: "string", mandatory: true},
-        adata: { desc: "Hint", type: "string", mandatory: false},
-        ct: { desc: "Cypher text", type: "string", mandatory: false}
+        v:  { desc: "_('Version')", type: "number", mandatory: true},
+        iv: { desc: "_('Initialisation Vector')", type: "string", mandatory: true},
+        salt: { desc: "_('Salt')", type: "string", mandatory: true},
+        adata: { desc: "_('Hint')", type: "string", mandatory: false},
+        ct: { desc: "_('Cypher text')", type: "string", mandatory: false}
     },
     regexEncryptedData: /<script id="encrypted-data" type="text\/javascript">var encData=(.+);<\/script>/g,
     regexAppType: /<meta name="sca-app-type" content="(\w+)"/g,

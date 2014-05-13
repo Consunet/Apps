@@ -66,11 +66,7 @@ module.exports = function(grunt) {
             basic: {
                 options: {
                   locales: ['en', 'es', 'fr', 'de', 'gr', 'it', 'ru', 'pt', 'cn', 'nl', 'fi', 'id', 'pl'],
-                  directory: 'locales',
-                  data: {
-                      "Title": "WhisperNote Encrypted Note",
-                      "Version": "1.3"
-                  }
+                  directory: 'locales'
                 },
                 files: {
                   'public_html/index.html': ['public_html/index.html'],
