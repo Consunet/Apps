@@ -31,9 +31,15 @@ This project uses [Grunt](http://gruntjs.com/) for the automation of JavaScript 
 Once you have cloned the repository, the required steps to build the project are:
 
 1. Download and Install [NodeJS](http://nodejs.org/download/). This includes the Node Package Manager (or [NPM](https://npmjs.org/)).
-2. Install the [Grunt CLI](http://gruntjs.com/getting-started) by typing: ```npm install -g grunt-cli```
-3. From the project's root, install project dependencies using: ```npm install ```
-4. Run Grunt with ```grunt```
+2. (Windows Only) Download and Install [Python 2.x](https://www.python.org/downloads/). Put the Python binary on the System PATH.
+3. (Windows Only) Download and Install [Microsoft Visual C++ 2010 Express](http://www.visualstudio.com/en-us/downloads#d-2010-express).
+4. (Windows Only) Download and Install [Microsoft Windows SDK for Windows 7 and .NET Framework 4](http://www.microsoft.com/en-au/download/details.aspx?id=8279).
+5. (Windows Only) Download and Install [Microsoft Visual C++ 2010 Service Pack 1 Compiler Update for the Windows SDK 7.1](http://www.microsoft.com/en-us/download/details.aspx?id=4422).
+6. Install PhantomJS (http://phantomjs.org/download.html) and add it to your PATH
+7. Install CasperJS (http://casperjs.org/) and add the executable in batchbin to your PATH
+8. Install the [Grunt CLI](http://gruntjs.com/getting-started) by typing: ```npm install -g grunt-cli```
+9. From the project's root, install project dependencies using: ```npm install ```
+10. Run Grunt with ```grunt```
 
 ### Lessons learnt
 #### SJCL vs CryptoJS

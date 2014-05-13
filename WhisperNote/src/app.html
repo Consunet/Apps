@@ -30,9 +30,9 @@
                 <form class="navbar-form navbar-left" role="search"> 
                     <button id="menu-button" type="button" class="btn btn-sm btn-default menu-icon">&equiv;</button>
                     <ul id="menu" class="menu" role="menu" style=" display: none;">
-                        <li role="presentation"><a id="menu-import" role="menuitem" onclick="SCA.clickImport();" href="#">Import</a></li>
-                        <li role="presentation"><a id="menu-options" role="menuitem" onclick="SCA.displayOptions(true);" href="#">Options</a></li>
-                        <li role="presentation"><a id="menu-about" role="menuitem" onclick="SCA.showAbout();" href="#">Help</a></li>
+                        <li role="presentation"><a id="menu-import" role="menuitem" onclick="SCA.clickImport();" href="#">_('Import')</a></li>
+                        <li role="presentation"><a id="menu-options" role="menuitem" onclick="SCA.displayOptions(true);" href="#">_('Options')</a></li>
+                        <li role="presentation"><a id="menu-about" role="menuitem" onclick="SCA.showAbout();" href="#">_('Help')</a></li>
                     </ul>
                 </form>
             </div>
@@ -43,8 +43,8 @@
             <div id="nojavascript" style="display: inline;">
                 <div class="jumbotron">
                     <div class="container">
-                        <h2>Javascript not enabled!</h2>
-                        <h3>This application requires Javascript. Please enable it in your browser settings.</p>
+                        <h2>_('Javascript not enabled!')</h2>
+                        <h3>_('This application requires Javascript. Please enable it in your browser settings.')</p>
                     </div>
                 </div>
             </div>
@@ -52,8 +52,8 @@
             <div id="unsupported" style="display: none;">
                 <div class="jumbotron">
                     <div class="container">
-                        <h2>Your browser is unsupported!</h2>
-                        <h3>Please upgrade to the latest version of your browser in order to use this application.</p>
+                        <h2>_('Your browser is unsupported!')</h2>
+                        <h3>_('Please upgrade to the latest version of your browser in order to use this application.')</p>
                     </div>
                 </div>
             </div>
@@ -64,8 +64,8 @@
                         <div class="row">
                             <div class="col-sm-9 col-md-10">
                                 <div class="pull-left">
-                                    <h2>This content is protected.</h2>
-                                    <h3>Please enter a password to unlock it.</h3>
+                                    <h2>_('This content is protected.')</h2>
+                                    <h3>_('Please enter a password to unlock it.')</h3>
                                 </div>
                                 <div class="visible-sm visible-md visible-lg pull-right">
                                     <img height="100" width="100" class="img-pixelated" src="data:image/gif;base64,R0lGODlhEAAQAMIEAAAAACUlJTs7O3h4eP///////////////yH5BAEKAAQALAAAAAAQABAAAAMsSLrcPjC6FeuYBDI9ufINCCpCAJzoGQhYu5RpurouHKssjdn3rE+8mO+3SAAAOw==">
@@ -76,21 +76,21 @@
                 </div>
                 <form id="decrypt" class="form-horizontal" autocomplete="off" onsubmit="SCA.decrypt(); return false;">
                     <div id="dec-password-group" class="form-group">
-                        <label for="decrypt_pass" class="col-lg-2 control-label">Password</label>
+                        <label for="decrypt_pass" class="col-lg-2 control-label">_('Password')</label>
                         <div class="col-lg-4">
                             <input id="dec-password" name="dec-password" type="password" class="form-control">
                             <span id="dec-password-help" class="help-block"></span>
                         </div>
                     </div>
                     <div class="form-group">
-                        <label for="hint" class="col-lg-2 control-label">Hint</label>
+                        <label for="hint" class="col-lg-2 control-label">_('Hint')</label>
                         <div class="col-lg-4">
-                            <p id="dec-hint" class="form-control-static">(None provided)</p>
+                            <p id="dec-hint" class="form-control-static">(_('None provided'))</p>
                         </div>
                     </div>
                     <div class="form-group">
                         <div class="col-lg-offset-2 col-lg-10">
-                            <button id="do-decrypt" type="button" onclick="SCA.decrypt();" class="btn btn-success btn-sm">Decrypt</button>
+                            <button id="do-decrypt" type="button" onclick="SCA.decrypt();" class="btn btn-success btn-sm">_('Decrypt')</button>
                         </div>
                     </div>
                 </form>
@@ -99,17 +99,17 @@
             <div id="unlocked" style="display: none;">
                 <div id="options-screen" class="container alert alert-warning alert-dismissable" style="display: none;">
                     <button type="button" class="close" onclick="SCA.displayOptions(false);">&times;</button> 
-                    <h4>Options</h4>
+                    <h4>_('Options')</h4>
                     <form id="options" class="form-horizontal" autocomplete="off" onsubmit="SCA.saveOptions(); return false;">
                         <div id="opt-save-filename-group" class="form-group">
-                            <label for="opt-save-filename" class="col-md-2 col-lg-2 control-label">Save filename</label>
+                            <label for="opt-save-filename" class="col-md-2 col-lg-2 control-label">_('Save filename')</label>
                             <div class="col-md-4 col-lg-4">
                                 <input id="opt-save-filename" name="file-save-name" type="text" class="form-control" onkeyup="SCA.validateSaveFilename();" onkeydown="SCA.validateSaveFilename();" value=""></input>
                                 <p id="opt-save-filename-help" class="help-block"></p>
                             </div>
                         </div>
                         <div id="opt-timeout-group" class="form-group">
-                            <label for="opt-timeout" class="col-md-2 col-lg-2 control-label">Timeout period (min.)</label>
+                            <label for="opt-timeout" class="col-md-2 col-lg-2 control-label">_('Timeout period') (min.)</label>
                             <div class="col-md-2 col-lg-2">
                                 <input id="opt-timeout" name="opt-timeout" type="number" onkeyup="SCA.validateTimeout();" onkeydown="SCA.validateTimeout();" onkeypress="return SCA.isNumericKey(event);" class="form-control" value=""></input>
                                 <p id="opt-timeout-help" class="help-block"></p>
@@ -119,62 +119,25 @@
                 </div>
                 <div id="help-screen" class="container alert alert-info alert-dismissable" style="display: none;">
                     <button type="button" class="close" onclick="SCA.displayHelp(false);">&times;</button>
-                    <b>WhisperNote</b> is a portable encrypted message container. <b>WhisperNote</b> is free to use, open source, free from app stores and compatible with most modern devices (computers, tablets, phones).<br/><br/>
+                    _('HelpBasicString')
                     <a id="help-toggle" href="#" onclick="SCA.toggleHelpDetail();" class="alert-link">more</a>
                     <div id="help-detail" style="display: none;">
-			<br/>
-                        <b>WhisperNote</b> is different to other message encryption software because everything you require is contained in the HTML file you are reading right now. <br/><br/>
-                        <div>
-                            <b>Security</b>
-                            <ul>
-                                <li><b>WhisperNote</b> uses AES 256 bit encryption to store your data, this is a very strong form of encryption.</li>
-                                <li><b>WhisperNote</b> uses your browser as the execution environment, you probably use your browser for your banking too.</li>
-                                <li><b>WhisperNote</b> does not store your data on a server, it saves it to the device you are using.</li>
-                                <li>If you lose your password, it cannot be recovered.</li>
-                                <li>Providing high quality security tools is very difficult and like other tools <b>WhisperNote</b> has known weaknesses.</li>
-                                <li>For more information please see the <a href="http://www.consunet.com.au/products/whispernote">website.</a></li>
-                            </ul>
-                        </div>
-
-                        <div>
-                            <b>Create your note</b>
-                            <ul>
-                                <li>Just type or cut and paste the text content you want to encrypt in the Message area.</li>
-                                <li>You can optionally select a single file from your device to be included with your note. This file should be less than 10Mb in size.</li>
-                                <li>Once you're done editing your note, at the bottom of the screen type in a password to protect the note contents.</li>
-                                <li>Optionally, provide a hint for yourself, but don't make it obvious.</li>
-                                <li>Hit the Encrypt button. This will encrypt the note and package everything neatly into a single HTML file. You can save it to your local disc or perhaps a cloud service.</li>
-                            </ul>
-                        </div>
-
-                        <div>
-                            <b>Share your note</b>
-                            <ul>
-                                <li>Due to technical limitations of current browsers, if you send a <b>WhisperNote</b> through email (or other insecure channel) the recipient needs do one of three things to read it securely:
-                                        <ul>
-                                            <li>Download a new <b>WhisperNote</b> and Import your note into theirs.</li>
-                                            <li>Use the Consunet <a href="http://www.consunet.com.au/products/validator">Validator</a> service to check that the note has not been maliciously modified in transit.</li>
-                                            <li>Temporarily disconnect from the Internet when they are reading the note.</li>
-                                        </ul>
-                                </li>
-                                <li>When sharing the password you should use a different channel to the one you sent your note through (i.e. call the recipient over the phone).</li>
-                            </ul>
-                        </div>
+		    _('HelpDetailString')
                     </div>
                 </div>
                 <div class="container">
                     <form id="main" role="form" autocomplete="off">
                         <div class="form-group">
-                            <label for="payload">Message</label>
-                            <textarea id="payload" class="form-control input-large" placeholder="Enter your private message here..." rows="15"></textarea>
+                            <label for="payload">_('Message')</label>
+                            <textarea id="payload" class="form-control input-large" placeholder="_('Enter your private message here...')" rows="15"></textarea>
                         </div>
                         <div class="form-group pull-left">
-                            <label for="file">Attach File</label>
+                            <label for="file">_('Attach File')</label>
                             <input type="file" id="file" name="file" />
                         </div>
                         <div id="att-download" class="form-group pull-right" style="display: none;">
                             <label id="download-label" for="download"></label>
-                            <button id="download" type="button" onclick="SCA.downloadDecrypted();" class="btn btn-primary btn-sm">Download</button>
+                            <button id="download" type="button" onclick="SCA.downloadDecrypted();" class="btn btn-primary btn-sm">_('Download')</button>
                         </div>
                     </form>
                 </div>
@@ -182,12 +145,12 @@
                         <nav class="navbar navbar-default navbar-fixed-bottom">
                         <form id="encrypt" class="navbar-form" role="form" onsubmit="return false;">
                             <div id="enc-password-group" class="form-group">
-                                <label class="sr-only" for="enc-password">Password</label>
-                                <input type="password" class="form-control input-sm" id="enc-password" name="enc-password" placeholder="Password" onkeydown="SCA.validateEncPass();" onkeyup="SCA.validateEncPass();">
-                                <label class="sr-only" for="enc-hint">Hint</label>
-                                <input type="text" class="form-control input-sm" id="enc-hint" name="enc-hint" placeholder="Hint to remember">
+                                <label class="sr-only" for="enc-password">_('Password')</label>
+                                <input type="password" class="form-control input-sm" id="enc-password" name="enc-password" placeholder="_('Password')" onkeydown="SCA.validateEncPass();" onkeyup="SCA.validateEncPass();">
+                                <label class="sr-only" for="enc-hint">_('Hint')</label>
+                                <input type="text" class="form-control input-sm" id="enc-hint" name="enc-hint" placeholder="_('Hint to remember')">
                             </div>
-                            <button id="do-encrypt" type="submit" onclick="SCA.encrypt();" class="btn navbar-btn btn-sm btn-success">Encrypt</button>
+                            <button id="do-encrypt" type="submit" onclick="SCA.encrypt();" class="btn navbar-btn btn-sm btn-success">_('Encrypt')</button>
                             <div id="enc-password-fb-group" class="form-group" style="display: none;">
                                 <label id="enc-password-fb" class="control-label"></label>
                             </div>

@@ -11,19 +11,6 @@ module.exports = function(grunt) {
                 '*/\n',
         // Task configuration.
         clean: ["dist/*", "public_html/*"],
-        jsdoc: {
-            dist: {
-                src: [
-                    '../common/src/common.js',
-                    '../common/src/constants.js',
-                    'src/app.js',
-                    'src/constants.js'
-                ],
-                options: {
-                    destination: 'doc'
-                }
-            }
-        },
         concat: {
             options: {
                 stripBanners: true
@@ -75,6 +62,21 @@ module.exports = function(grunt) {
                 }
             }
         },
+        template_runner: {
+            basic: {
+                options: {
+                  locales: ['en', 'es', 'fr', 'de', 'gr', 'it', 'ru', 'pt', 'cn', 'nl', 'fi', 'id', 'pl'],
+                  directory: 'locales',
+                  data: {
+                      "Title": "WhisperNote Encrypted Note",
+                      "Version": "1.3"
+                  }
+                },
+                files: {
+                  'public_html/index.html': ['public_html/index.html'],
+                },
+            },
+        },
         casper: {
             options: {
                 test: true,
@@ -83,10 +85,7 @@ module.exports = function(grunt) {
                 includes: ['test/tests_support.js', '../common/test/common_support.js']
             },
             functionalTests: {
-                src: ['test/tests.js', '../common/test/common_tests.js'],
-                dest: function(input) {
-                    return input.replace(/\.js$/, '.xml');
-                }
+                src: ['../common/test/common_tests.js', 'test/tests.js']
             }
         },
         connect: {
@@ -100,11 +99,10 @@ module.exports = function(grunt) {
         uncss: {
             dist: {
                 files: {
-                    'dist/<%= pkg.name %>.min.css': ['src/app.html']
+                    'dist/<%= pkg.name %>.un.css': ['src/app.html']
                 }
             },
             options: {
-                compress: true,
                 ignore: [
                     '.has-error .help-block',
                     '.has-error .form-control',
@@ -126,6 +124,14 @@ module.exports = function(grunt) {
                 ]
             }
         },
+        cssmin: {
+            minify: {
+                expand: true,
+                src: ['dist/<%= pkg.name %>.un.css'],
+                dest: '',
+                ext: '.min.css'
+            }
+        },
         replace: {
             dist: {
                 src: ['src/app.html'], // source files array (supports minimatch)
@@ -139,7 +145,7 @@ module.exports = function(grunt) {
         },
         watch: {
             scripts: {
-                files: ['src/*', 'test/*', 'Gruntfile.js', '../common/**'],
+                files: ['src/*', 'test/*', 'Gruntfile.js', 'locales/*', '../common/**'],
                 tasks: ['debug'],
                 options: {
                     spawn: true
@@ -152,12 +158,13 @@ module.exports = function(grunt) {
     grunt.loadNpmTasks('grunt-contrib-concat');
     grunt.loadNpmTasks('grunt-contrib-uglify');
     grunt.loadNpmTasks('grunt-contrib-htmlmin');
+    grunt.loadNpmTasks('grunt-contrib-cssmin');
     grunt.loadNpmTasks('grunt-contrib-watch');
     grunt.loadNpmTasks('grunt-contrib-connect');
     grunt.loadNpmTasks('grunt-casper');
     grunt.loadNpmTasks('grunt-uncss');
     grunt.loadNpmTasks('grunt-text-replace');
-    grunt.loadNpmTasks('grunt-jsdoc');
+    grunt.loadNpmTasks('grunt-template-runner');
 
     grunt.template.addDelimiters("curly", "{{", "}}");
 
@@ -182,6 +189,6 @@ module.exports = function(grunt) {
     });
 
     // Default task.
-    grunt.registerTask('default', ['clean', 'concat', 'uglify', 'uncss', 'replace', 'buildhtml', 'htmlmin', 'connect', 'casper']);
-    grunt.registerTask('debug', ['clean', 'concat', 'uncss', 'replace', 'builddebug', 'connect', 'casper']);
+    grunt.registerTask('default', ['clean', 'concat', 'uglify', 'uncss', 'cssmin', 'replace', 'buildhtml', 'htmlmin', 'template_runner', 'connect', 'casper']);
+    grunt.registerTask('debug', ['clean', 'concat', 'uncss', 'replace', 'cssmin', 'builddebug', 'template_runner', 'connect', 'casper']);
 };
