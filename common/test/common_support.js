@@ -50,6 +50,11 @@ var C_TEST = {
         casper.click('#menu-options');
     },
     
+    sendKeysOptionSaveFilename: function(casper, test, saveFilename) {
+        this.openOptions(casper, test);
+        casper.sendKeys('form#options input#opt-save-filename', saveFilename);
+    },
+    
     setCommonOptions: function(casper, test, saveFilename, timeout) {
         this.openOptions(casper, test);
         var data = {
@@ -57,5 +62,32 @@ var C_TEST = {
             '#opt-timeout': timeout
         };
         casper.fillSelectors('form#options', data, false);
+    },
+    
+    decryptWith: function(casper, password) {
+        var data = {"#dec-password": password};
+        casper.fillSelectors('form#decrypt', data, false);
+        casper.click('#do-decrypt');
+    },
+    
+    encryptWith: function(casper, password, hint, writeToTarget) {
+        var encValues = {"#enc-password": password, "#enc-hint": hint};
+        casper.fillSelectors('form#encrypt', encValues, false);
+        
+        // Simulates the user clicking on Encrypt - like executing:
+        // this.click('#do-encrypt');
+        // Without the Casper test hanging at this point, waiting for User to save file
+        var testEncryptedHtml = casper.page.evaluate(function() {
+            SCA.encryptAndEmbedData();
+            return SCA.getDocumentHtml();
+        });
+        
+        fs.write(writeToTarget, testEncryptedHtml);
+    },
+    
+    setEncryptPass: function(casper, password) {
+        var emptyValues = {"#enc-password": ""};
+        casper.fillSelectors('form#encrypt', emptyValues, false);
+        casper.sendKeys('form#encrypt input#enc-password', password);
     }
 };

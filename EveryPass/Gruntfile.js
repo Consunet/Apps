@@ -75,10 +75,10 @@ module.exports = function(grunt) {
                 test: true,
                 'log-level': 'warning',
                 'fail-fast': true,
-                includes: ['test/tests_support.js', '../common/test/common_test.js']
+                includes: ['test/tests_support.js', '../common/test/common_support.js']
             },
             functionalTests: {
-                src: ['test/tests.js'],
+                src: ['test/tests.js', '../common/test/common_tests.js'],
                 dest: function(input) {
                     return input.replace(/\.js$/, '.xml');
                 }
