@@ -47,5 +47,9 @@
 	"Invalid timeout, using default": "Invalid timeout, using default",
 	"File operations not supported": "File operations not supported",
 	"Password cannot be empty!": "Password cannot be empty!",
-	"Weak password used - proceed with Encrypt?": "Weak password used - proceed with Encrypt?"
+	"Weak password used - proceed with Encrypt?": "Weak password used - proceed with Encrypt?",
+	"New password for...": "New password for...",
+	"Save filename": "Save filename",
+	"Timeout period": "Timeout period",
+	"Confirm deletion of passwords?": "Confirm deletion of passwords?"
 }
