@@ -10,6 +10,7 @@ The data is encrypted using the [Stanford Javascript Crypto Library](http://cryp
 ```
 EveryPass
 +-- lib                 (Minified Javascript library dependencies)
++-- locales             (Stores strings for internationalisation)
 +-- nbproject           (NetBeans IDE data)
 +-- dist                (Stores built components)
 +-- public_html         (Final html output)
@@ -37,7 +38,7 @@ Once you have cloned the repository, the required steps to build the project are
 4. (Windows Only) Download and Install [Microsoft Windows SDK for Windows 7 and .NET Framework 4](http://www.microsoft.com/en-au/download/details.aspx?id=8279).
 5. (Windows Only) Download and Install [Microsoft Visual C++ 2010 Service Pack 1 Compiler Update for the Windows SDK 7.1](http://www.microsoft.com/en-us/download/details.aspx?id=4422).
 6. Install PhantomJS (http://phantomjs.org/download.html) and add it to your PATH
-7. Install CasperJS (http://casperjs.org/) and add the executable in batchbin to your PATH
+7. Install CasperJS 1.1-beta3 (http://casperjs.org/) and add the executable in batchbin to your PATH
 8. Install the [Grunt CLI](http://gruntjs.com/getting-started) by typing: ```npm install -g grunt-cli```
 9. From the project's root, install project dependencies using: ```npm install ```
 10. Run Grunt with ```grunt```
