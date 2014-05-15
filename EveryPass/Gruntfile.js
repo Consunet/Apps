@@ -64,16 +64,16 @@ module.exports = function(grunt) {
                 }
             }
         },
-        template_runner: {
-            basic: {
+        i18n: {
+            default: {
+                src: ['public_html/index.html'],
                 options: {
-                  locales: ['en', 'es', 'fr', 'de', 'el', 'it', 'ru', 'pt', 'zh', 'nl', 'fi', 'id', 'pl'],
-                  directory: 'locales'
-                },
-                files: {
-                  'public_html/index.html': ['public_html/index.html'],
-                },
-            },
+                    locales: 'locales/*.json',
+                    base: 'public_html/',
+                    output: 'public_html/',
+                    format: 'default'
+                }
+            }
         },
         casper: {
             options: {
@@ -161,7 +161,7 @@ module.exports = function(grunt) {
     grunt.loadNpmTasks('grunt-casper');
     grunt.loadNpmTasks('grunt-uncss');
     grunt.loadNpmTasks('grunt-text-replace');
-    grunt.loadNpmTasks('grunt-template-runner');
+    grunt.loadNpmTasks('grunt-i18n');
 
     grunt.template.addDelimiters("curly", "{{", "}}");
 
@@ -186,6 +186,6 @@ module.exports = function(grunt) {
     });
 
     // Default task.
-    grunt.registerTask('default', ['clean', 'concat', 'uglify', 'uncss', 'cssmin', 'replace', 'buildhtml', 'htmlmin', 'template_runner', 'connect', 'casper']);
-    grunt.registerTask('debug', ['clean', 'concat', 'uncss', 'replace', 'cssmin', 'builddebug', 'template_runner', 'connect', 'casper']);
+    grunt.registerTask('default', ['clean', 'concat', 'uglify', 'uncss', 'cssmin', 'replace', 'buildhtml', 'htmlmin', 'i18n', 'connect', 'casper']);
+    grunt.registerTask('debug', ['clean', 'concat', 'uncss', 'replace', 'cssmin', 'builddebug', 'i18n', 'connect', 'casper']);
 };

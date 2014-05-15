@@ -20,11 +20,11 @@ var CONST = {
         cipher: "aes"
     },
     variableCypherSettings: {
-        v:  { desc: "_('Version')", type: "number", mandatory: true},
-        iv: { desc: "_('Initialisation Vector')", type: "string", mandatory: true},
-        salt: { desc: "_('Salt')", type: "string", mandatory: true},
-        adata: { desc: "_('Hint')", type: "string", mandatory: false},
-        ct: { desc: "_('Cypher text')", type: "string", mandatory: false}
+        v:  { desc: "<%= Version %>", type: "number", mandatory: true},
+        iv: { desc: "<%= InitialisationVector %>", type: "string", mandatory: true},
+        salt: { desc: "<%= Salt %>", type: "string", mandatory: true},
+        adata: { desc: "<%= Hint %>", type: "string", mandatory: false},
+        ct: { desc: "<%= CypherText %>", type: "string", mandatory: false}
     },
     regexEncryptedData: /<script id="encrypted-data" type="text\/javascript">var encData=(.+);<\/script>/g,
     regexAppType: /<meta name="sca-app-type" content="(\w+)"/g,

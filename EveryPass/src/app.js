@@ -106,7 +106,7 @@ SCA.delPwd = function(id) {
     var canDelete = true;
     if (this.isConfirmPwdDelete()) {
         var pwdName = this.e(id + "-service").value;
-        canDelete = confirm("_('Delete Password for') " + pwdName + "?");
+        canDelete = confirm("<%= DeletePasswordFor %> " + pwdName + "?");
     }
     
     if (canDelete) {
@@ -127,14 +127,14 @@ SCA.showPwdBody = function(id, show, select) {
 
     if (show) {
         panelBody.style.display = "inherit";
-        toggleButton.innerHTML = "_('Hide')";
+        toggleButton.innerHTML = "<%= Hide %>";
         if (select) {
             SCA.selectPwd(id);
         }
         this.checkGo(id);
     } else {
         panelBody.style.display = "none";
-        toggleButton.innerHTML = "_('Show')";
+        toggleButton.innerHTML = "<%= Show %>";
         this.setDisplay(id + "-go", "none");
     }
 };

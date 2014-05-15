@@ -2,7 +2,7 @@
  * EveryPass global parameters
  */
 var BASE_URL = "http://localhost:8000/public_html/";
-var TEST_UNENCRYPTED_URL = BASE_URL + "index_en.html";
+var TEST_UNENCRYPTED_URL = BASE_URL + "en/index.html";
 var TEST_ENCRYPTED_URL = BASE_URL + "test_encrypted.html";
 var TEST_IMPORTED_URL = BASE_URL + "test_imported.html";
 var TEST_PASSWORD = "password";

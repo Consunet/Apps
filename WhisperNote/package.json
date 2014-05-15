@@ -24,6 +24,6 @@
     "grunt-casper": "0.3.8",
     "grunt-uncss": "0.3.3",
     "grunt-text-replace": "0.3.11",
-    "grunt-template-runner": "0.2.1"
+    "grunt-i18n": "0.6.0"
   }
 }
