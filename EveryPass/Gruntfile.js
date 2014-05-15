@@ -49,13 +49,15 @@ module.exports = function(grunt) {
                     removeCommentsFromCDATA: true,
                     removeCDATASectionsFromCDATA: true,
                     collapseWhitespace: true,
+                    conservativeCollapse: true,
                     collapseBooleanAttributes: true,
                     removeAttributeQuotes: false,
                     removeRedundantAttributes: true,
                     useShortDoctype: true,
                     removeEmptyAttributes: true,
                     removeOptionalTags: true,
-                    removeEmptyElements: false
+                    removeEmptyElements: false,
+                    keepClosingSlash: false
                 },
                 files: {
                     'public_html/index.html': 'dist/<%= pkg.name %>_built.html'
@@ -65,7 +67,7 @@ module.exports = function(grunt) {
         template_runner: {
             basic: {
                 options: {
-                  locales: ['en', 'es', 'fr', 'de', 'gr', 'it', 'ru', 'pt', 'cn', 'nl', 'fi', 'id', 'pl'],
+                  locales: ['en', 'es', 'fr', 'de', 'el', 'it', 'ru', 'pt', 'cn', 'nl', 'fi', 'id', 'pl'],
                   directory: 'locales'
                 },
                 files: {
