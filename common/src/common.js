@@ -448,7 +448,7 @@ var SCA = {
     toggleHelpDetail: function() {
         var isDetailed = this.isHelpDetailed();
         var display = isDetailed ? "none" : "block";
-        var toggle = isDetailed ? "more" : "less";
+        var toggle = isDetailed ? "_('more')" : "_('less')";
         this.setDisplay("help-detail", display);
         this.e("help-toggle").innerHTML = toggle;
     },

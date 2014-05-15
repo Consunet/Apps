@@ -51,5 +51,7 @@
 	"New password for...": "New password for...",
 	"Save filename": "Save filename",
 	"Timeout period": "Timeout period",
-	"Confirm deletion of passwords?": "Confirm deletion of passwords?"
+	"Confirm deletion of passwords?": "Confirm deletion of passwords?",
+	"more": "more",
+	"less": "less"
 }

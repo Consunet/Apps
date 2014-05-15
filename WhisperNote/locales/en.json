@@ -41,5 +41,7 @@
 	"Strong": "Strong",
 	"Invalid filename, using default": "Invalid filename, using default",
 	"Invalid timeout, using default": "Invalid timeout, using default",
-	"File operations not supported": "File operations not supported"
+	"File operations not supported": "File operations not supported",
+	"more": "more",
+	"less": "less"
 }

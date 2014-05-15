@@ -67,7 +67,7 @@ module.exports = function(grunt) {
         template_runner: {
             basic: {
                 options: {
-                  locales: ['en', 'es', 'fr', 'de', 'el', 'it', 'ru', 'pt', 'cn', 'nl', 'fi', 'id', 'pl'],
+                  locales: ['en', 'es', 'fr', 'de', 'el', 'it', 'ru', 'pt', 'zh', 'nl', 'fi', 'id', 'pl'],
                   directory: 'locales'
                 },
                 files: {
