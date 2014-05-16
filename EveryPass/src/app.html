@@ -26,7 +26,7 @@
                 </form>
             </div>
             <div class="navbar-header pull-right">
-                <form class="navbar-form" role="search"> 
+                <form id="search-form" class="navbar-form" role="search" onsubmit="return false;"> 
                     <label class="sr-only" for="search"><%= Search %></label>
                     <input id="search" name="search" type="search" class="form-control srch" onkeydown="SCA.filterPwds();" onkeyup="SCA.filterPwds();" placeholder="<%= Search %>..." disabled="">
                     <button id="menu-button" type="button" class="btn btn-sm btn-default menu-icon">&equiv;</button>
