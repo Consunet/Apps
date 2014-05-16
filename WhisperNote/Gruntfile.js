@@ -50,7 +50,7 @@ module.exports = function(grunt) {
                     removeCDATASectionsFromCDATA: true,
                     collapseWhitespace: true,
                     conservativeCollapse: true,
-                    collapseBooleanAttributes: true,
+                    collapseBooleanAttributes: false,
                     removeAttributeQuotes: false,
                     removeRedundantAttributes: true,
                     useShortDoctype: true,
