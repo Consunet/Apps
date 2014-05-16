@@ -33,10 +33,11 @@ Once you have cloned the repository, the required steps to build the project are
 
 1. Download and Install [NodeJS](http://nodejs.org/download/). This includes the Node Package Manager (or [NPM](https://npmjs.org/)).
 2. Install PhantomJS (http://phantomjs.org/download.html) and add it to your PATH
-3. Install CasperJS 1.1-beta3 (http://casperjs.org/) and add the executable in batchbin to your PATH
+3. Install CasperJS 1.1-beta3 (http://casperjs.org/) and add the batchbin folder to your PATH (if working on Windows)
 4. Install the [Grunt CLI](http://gruntjs.com/getting-started) by typing: ```npm install -g grunt-cli```
 5. From the project's root, install project dependencies using: ```npm install ```
 6. Run Grunt with ```grunt```
+7. The built distributions are made available within the public_html folder, under their respective locales
 
 ### Lessons learnt
 #### SJCL vs CryptoJS
