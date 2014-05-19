@@ -383,74 +383,66 @@ SCA.checkGo = function(id) {
 };
 
 /**
- * Stores the current password drag target - highlighted in green.
- */
-SCA.currentDragEnterPwdTarget = "";
-
-/**
  * Stores the current password being dragged - greyed out.
  */
 SCA.currentDraggablePwd = "";
 
 /**
- * Handles drag events for passwords.
+ * Handles ondragstart events for passwords.
  */
-SCA.dragPwd = function(ev) {
-    var id = ev.target.id.replace(/-drag.*/, "-form");
+SCA.dragStartPwd = function(ev) {
+    var id = ev.target.id;
     SCA.currentDraggablePwd = id;
 
     // Required by Firefox to allow drag and drop events to fire
     ev.dataTransfer.setData("id", id);
-    SCA.addClass(id, "dragged");
-    return true;
+    ev.dataTransfer.effectAllowed = 'move';
+    var glowId = id.replace("-drag", "-glow");
+    SCA.addClass(glowId, "dragged");
+};
+
+/**
+ * Handles drag over events for passwords.
+ */
+SCA.dragOverPwd = function(ev) {
+    if (ev.preventDefault) {
+        ev.preventDefault(); // Necessary. Allows us to drop.
+    }
+
+    ev.dataTransfer.dropEffect = 'move';
+    return false;
 };
 
 /**
  * Handles drag enter events for passwords - highlights targets.
  */
 SCA.dragEnterPwd = function(ev) {
-    ev.preventDefault();
     var id = ev.currentTarget.id;
-
-    var target = SCA.currentDragEnterPwdTarget;
-    if (!target) {
-        target = id;
-        SCA.currentDragEnterPwdTarget = id;
-        SCA.addClass(target, "drag-target");
-    }
-    
-    if (id !== target) {
-        SCA.removeClass(target, "drag-target");
-        SCA.currentDragEnterPwdTarget = id;
-        SCA.addClass(id, "drag-target");
-    }
-
-    return true;
+    var glowId = id.replace("-drag", "-glow");
+    SCA.addClass(glowId, "drag-target");
 };
 
 /**
- * Handles drag over events for passwords.
+ * Handles drag leave events for passwords - unhighlights targets.
  */
-SCA.allowDrop = function(ev) {
-    ev.preventDefault();
-    return true;
+SCA.dragLeavePwd = function(ev) {
+    var id = ev.currentTarget.id;
+    var glowId = id.replace("-drag", "-glow");
+    SCA.removeClass(glowId, "drag-target");
 };
 
 /**
  * Handles drag end events for passwords - resets state.
  */
-SCA.dragEnd = function(ev) {
-    ev.preventDefault();
-
+SCA.dragEndPwd = function(ev) {
     // Reset all passwords - to cater for Firefox case where multiple selections take place.
     // Also makes it more robust.
     this.eachPwd(function(id, pwd) {
-        var form = id + "-form";
+        var form = id + "-glow";
         SCA.removeClass(form, "dragged");
         SCA.removeClass(form, "drag-target");
     });
     
-    SCA.currentDragEnterPwdTarget = "";
     SCA.currentDraggablePwd = "";
 };
     
@@ -458,14 +450,21 @@ SCA.dragEnd = function(ev) {
  * Handles drop events for passwords - performs the reshuffling if required.
  */
 SCA.dragDrop = function(ev) {
-    ev.preventDefault();
+    // Stops some browsers from redirecting.
+    if (ev.stopPropagation) {
+        ev.stopPropagation(); 
+    }
+    if (ev.preventDefault) { 
+        ev.preventDefault(); 
+    }
+
     var srcIdForm = SCA.currentDraggablePwd;
     var destIdForm = ev.currentTarget.id;
-    var srcId = srcIdForm.replace("-form", "");
-    var destId = destIdForm.replace("-form", "");
+    var srcId = srcIdForm.replace("-drag", "");
+    var destId = destIdForm.replace("-drag", "");
 
     if (srcId === destId) {
-        return true;
+        return false;
     }
     
     var src = this.e(srcId);
@@ -484,7 +483,7 @@ SCA.dragDrop = function(ev) {
         pwds.insertBefore(dest, src);
     }
     
-    return true;
+    return false;
 };
 
 /**
