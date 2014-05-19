@@ -393,12 +393,11 @@ SCA.currentDraggablePwd = "";
 SCA.dragStartPwd = function(ev) {
     var id = ev.target.id;
     SCA.currentDraggablePwd = id;
-
+    var glowId = id.replace("-drag", "-glow");
+    SCA.addClass(glowId, "dragged");
     // Required by Firefox to allow drag and drop events to fire
     ev.dataTransfer.setData("id", id);
     ev.dataTransfer.effectAllowed = 'move';
-    var glowId = id.replace("-drag", "-glow");
-    SCA.addClass(glowId, "dragged");
 };
 
 /**
