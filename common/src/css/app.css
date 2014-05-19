@@ -81,6 +81,18 @@ body {
     margin: 4px 0px;
 }
 
+.navbar-icon{
+  background-image: url(../../../../../imgs/logo.png);
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: auto;
+  display: inline-block;
+  height: 32px;
+  width: 32px;
+  padding-top: 36px;
+  padding-left: 36px;
+}
+
 .navbar-brand {
   padding: 5px 5px;
 }

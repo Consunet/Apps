@@ -75,6 +75,15 @@ module.exports = function(grunt) {
                 }
             }
         },
+        imageEmbed: {
+            dist: {
+                src: [ "dist/<%= pkg.name %>.un.css" ],
+                dest: "dist/<%= pkg.name %>.base64.css",
+                options: {
+                    deleteAfterEncoding : false
+                }
+            }
+        },
         casper: {
             options: {
                 test: true,
@@ -124,7 +133,7 @@ module.exports = function(grunt) {
         cssmin: {
             minify: {
                 expand: true,
-                src: ['dist/<%= pkg.name %>.un.css'],
+                src: ['dist/<%= pkg.name %>.base64.css'],
                 dest: '',
                 ext: '.min.css'
             }
@@ -162,6 +171,7 @@ module.exports = function(grunt) {
     grunt.loadNpmTasks('grunt-uncss');
     grunt.loadNpmTasks('grunt-text-replace');
     grunt.loadNpmTasks('grunt-i18n');
+    grunt.loadNpmTasks('grunt-image-embed');
 
     grunt.template.addDelimiters("curly", "{{", "}}");
 
@@ -186,6 +196,6 @@ module.exports = function(grunt) {
     });
 
     // Default task.
-    grunt.registerTask('default', ['clean', 'concat', 'uglify', 'uncss', 'cssmin', 'replace', 'buildhtml', 'htmlmin', 'i18n', 'connect', 'casper']);
-    grunt.registerTask('debug', ['clean', 'concat', 'uncss', 'replace', 'cssmin', 'builddebug', 'i18n', 'connect', 'casper']);
+    grunt.registerTask('default', ['clean', 'concat', 'uglify', 'uncss', 'imageEmbed', 'cssmin', 'replace', 'buildhtml', 'htmlmin', 'i18n', 'connect', 'casper']);
+    grunt.registerTask('debug', ['clean', 'concat', 'uncss', 'imageEmbed', 'replace', 'cssmin', 'builddebug', 'i18n', 'connect', 'casper']);
 };

@@ -4,6 +4,7 @@
 /WhisperNote/public_html/*
 /WhisperNote/doc/*
 /WhisperNote/npm-debug.log
+/WhisperNote/imgs/Thumbs.db
 
 /EveryPass/node_modules/
 /EveryPass/dist/*
@@ -11,4 +12,6 @@
 /EveryPass/public_html/*
 /EveryPass/doc/*
 /EveryPass/npm-debug.log
+/EveryPass/imgs/Thumbs.db
 common/nbproject/private/private.xml
+/common/imgs/Thumbs.db
