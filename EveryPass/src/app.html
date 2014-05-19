@@ -200,20 +200,22 @@
         </div>
 
         <div id="pw-data" class="container" style="display: none;">
-            <form id="pwid-form" class="form-horizontal" role="form" autocomplete="off" onsubmit="return false;"  ondragover="SCA.allowDrop(event);" ondragenter="SCA.dragEnterPwd(event);" ondrop="SCA.dragDrop(event);" ondragend="SCA.dragEnd(event);">
-                <div class="panel panel-default">
+            <form id="pwid-form" class="form-horizontal" role="form" autocomplete="off" onsubmit="return false;">
+                <div id="pwid-glow" class="panel panel-default">
                     <div class="panel-heading">
                         <div class="row">
                             <div class="col-xs-6 col-sm-7 col-md-8 col-lg-8">
                                 <label class="sr-only" for="new-service"><%= Service %></label>
                                 <input id="pwid-service" name="pwid-service" type="text" class="form-control input-sm pull-left" onkeydown="SCA.checkGo('pwid');" onkeyup="SCA.checkGo('pwid');"></input>
                             </div> 
-                            <div id="pwid-drag1" class="col-xs-5 col-sm-4 col-md-2 col-lg-2 btn-toolbar" style="cursor: ns-resize;" draggable="true" ondragstart="SCA.dragPwd(event);">
-                                <button id="pwid-toggle" type="button" onclick="SCA.togglePwd('pwid');" class="btn btn-xs btn-primary pull-left"><%= Show %></button>
-                                <button id="pwid-go" type="button" onclick="SCA.go('pwid');" class="btn btn-xs btn-success pull-left"><%= Go %></button>
-                            </div>
-                            <div id="pwid-drag2" class="col-xs-1 col-sm-1 col-md-2 col-lg-2" style="cursor: ns-resize;" draggable="true" ondragstart="SCA.dragPwd(event);">
-                                <button id="pwid-delete" type="button" onclick="SCA.delPwd('pwid');" class="btn btn-xs btn-danger pull-right">Del</button>
+                            <div id="pwid-drag" style="cursor: ns-resize;" draggable="true" ondragstart="SCA.dragStartPwd(event);" ondragover="SCA.dragOverPwd(event);" ondragenter="SCA.dragEnterPwd(event);" ondragleave="SCA.dragLeavePwd(event);" ondrop="SCA.dragDrop(event);" ondragend="SCA.dragEndPwd(event);">
+                                <div class="col-xs-5 col-sm-4 col-md-2 col-lg-2 btn-toolbar">
+                                    <button id="pwid-toggle" type="button" onclick="SCA.togglePwd('pwid');" class="btn btn-xs btn-primary pull-left"><%= Show %></button>
+                                    <button id="pwid-go" type="button" onclick="SCA.go('pwid');" class="btn btn-xs btn-success pull-left"><%= Go %></button>
+                                </div>
+                                <div class="col-xs-1 col-sm-1 col-md-2 col-lg-2">
+                                    <button id="pwid-delete" type="button" onclick="SCA.delPwd('pwid');" class="btn btn-xs btn-danger pull-right">Del</button>
+                                </div>
                             </div>
                         </div>
                     </div>
