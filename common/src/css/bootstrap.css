@@ -5679,6 +5679,12 @@ button.close {
     background-size: contain;
     width: 100px;
     height: 100px;
+    image-rendering: optimizeSpeed;
+    image-rendering: -moz-crisp-edges;
+    image-rendering: -o-crisp-edges;
+    image-rendering: -webkit-optimize-contrast;
+    image-rendering: optimize-contrast;
+    -ms-interpolation-mode: nearest-neighbor;
 }
 .visible-xs,
 .visible-sm,
