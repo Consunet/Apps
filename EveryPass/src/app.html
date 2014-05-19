@@ -28,7 +28,7 @@
             <div class="navbar-header pull-right">
                 <form id="search-form" class="navbar-form" role="search" onsubmit="return false;"> 
                     <label class="sr-only" for="search"><%= Search %></label>
-                    <input id="search" name="search" type="search" class="form-control srch" onkeydown="SCA.filterPwds();" onkeyup="SCA.filterPwds();" placeholder="<%= Search %>..." disabled="">
+                    <input id="search" name="search" type="search" class="form-control srch" onkeydown="SCA.filterPwds(event);" onkeyup="SCA.filterPwds(event);" placeholder="<%= Search %>..." disabled="">
                     <button id="menu-button" type="button" class="btn btn-sm btn-default menu-icon">&equiv;</button>
                     <ul id="menu" class="menu" role="menu" style=" display: none;">
                         <li role="presentation"><a id="menu-import" role="menuitem" onclick="SCA.clickImport();" href="#"><%= Import %></a></li>

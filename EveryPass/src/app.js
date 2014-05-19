@@ -297,11 +297,11 @@ SCA.decrypt = function() {
  * Matching is only done when the search term length is greater than two.
  * If there is a single match, that password's body is revealed.
  */
-SCA.filterPwds = function() {
+SCA.filterPwds = function(event) {
     // Clear search field on ESC
-    if (event !== undefined && event.which === 27) {
+    if (event && event.which === 27) {
         SCA.e("search").value = "";
-    };
+    }
     
     var MIN_SEARCH_TERM_LENGTH = 2;
     var searchTerm = this.e("search").value.toLowerCase();
