@@ -1,27 +1,51 @@
-/*! Custom classes */
+/* ! Custom classes */
 
 @media (max-width: 329px) {
     .srch {
         width: 90px !important;
     }
+		#enc-password {
+				width: 100px !important; 
+		}
+		#enc-hint {
+				width: 100px !important; 
+		}
 }
 
 @media (min-width:330px) and (max-width: 359px) {
     .srch {
         width: 100px !important;
     }
+		#enc-password {
+			width: 100px !important; 
+		}
+		#enc-hint {
+			width: 100px !important; 
+		}
 }
 
 @media (min-width:360px) and (max-width: 499px) {
     .srch {
         width: 130px !important;
     }
+		#enc-password {
+			width: 120px !important; 
+		}
+		#enc-hint {
+			width: 120px !important; 
+		}
 }
 
 @media (min-width:500px) and (max-width: 767px) {
     .srch {
         width: 250px !important;
     }
+		#enc-password {
+			width: 120px !important; 
+		}
+		#enc-hint {
+			width: 120px !important; 
+		}
 }
 @media (min-width: 768px) and (max-width: 991px) {
     .srch {
@@ -37,6 +61,14 @@
     .srch {
         width: 550px !important;
     }
+}
+
+@media (min-width: 0px) and (max-width: 440px) {
+			#timeout-value {
+				width: 0px;
+				height: 0px;
+				visibility: hidden !important;
+		}
 }
 
 .offscreen {
@@ -66,7 +98,7 @@
 	padding-top: 10px;
 }
 
-/*! Bootstrap customizations */
+/* ! Bootstrap customizations */
 
 body {
   padding-top: 50px;
