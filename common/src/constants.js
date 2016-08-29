@@ -11,18 +11,20 @@
  * </p>
  */
 var CONST = {
-    version: 1.3,
+    version: 1.4,
     cypherSettings: {
-        iter: 1000,
-        ks: 256,
-        ts: 128,
-        mode: "ocb2",
-        cipher: "aes"
+        iter: 1000, // maintained for backwards compatibility
+        ks: 256, // maintained for backwards compatibility
+        ts: 128, // maintained for backwards compatibility
+        mode: "ocb2", // maintained for backwards compatibility
+        cipher: "aes", // maintained for backwards compatibility
+        keyHashAlgorithm: "SHA-256",
+        cipherAlgorithm: "AES-CBC"
     },
     variableCypherSettings: {
         v:  { desc: "<%= Version %>", type: "number", mandatory: true},
         iv: { desc: "<%= InitialisationVector %>", type: "string", mandatory: true},
-        salt: { desc: "<%= Salt %>", type: "string", mandatory: true},
+        salt: { desc: "<%= Salt %>", type: "string", mandatory: false}, // maintained for backwards compatibility
         adata: { desc: "<%= Hint %>", type: "string", mandatory: false},
         ct: { desc: "<%= CypherText %>", type: "string", mandatory: false}
     },

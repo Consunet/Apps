@@ -10,17 +10,20 @@ casper.test.begin('Can verify basic app details.', function suite(test) {
 });
 
 casper.test.begin('Can create a note without an attachment, then encrypt it.', function suite(test) {
-    casper.start(TEST_UNENCRYPTED_URL).then(function() {
+    casper.start(TEST_UNENCRYPTED_URL).then(function () {
         CNOTE_TEST.addNote(casper, test, TEST_MESSAGE);
-        
-        // Do encrypt
-        C_TEST.encryptWith(casper, TEST_PASSWORD, TEST_HINT, "public_html/test_encrypted.html");
 
-        // Note should be deleted on encryption
-        CNOTE_TEST.assertNoteText(casper, test, '');
-    }).run(function() {
-        test.done();
-    });
+        // Do encrypt
+        var encryptionPromise = C_TEST.encryptWith(casper, TEST_PASSWORD, TEST_HINT, "public_html/test_encrypted.html");
+        encryptionPromise.then(function () {
+            // Note should be deleted on encryption
+            CNOTE_TEST.assertNoteText(casper, test, '');
+
+            test.done();
+        }).catch(function (reason) {
+            test.fail(reason);
+        });
+    }).run();
 });
 
 casper.test.begin('Does not import bad WhisperNote data.', function suite(test) {

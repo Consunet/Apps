@@ -6,6 +6,8 @@
  * These functions provide a higher level of abstraction for driving the app using Casper JS.
  * </p>
  */
+var Promise = require('es6-promise').Promise; // required as PhantomJS lacks native Promise API.
+
 var C_TEST = {
               
     /**
@@ -70,19 +72,38 @@ var C_TEST = {
         casper.click('#do-decrypt');
     },
     
+    /**
+     * Returns a Promise which will perform encryption on the page in the
+     * future.
+     * 
+     * @param {type} casper
+     * @param {type} password
+     * @param {type} hint
+     * @param {type} writeToTarget
+     * @returns {Promise} when resolved the encryption will be complete. When
+     *      rejected, there was a problem with encryption.
+     */
     encryptWith: function(casper, password, hint, writeToTarget) {
         var encValues = {"#enc-password": password, "#enc-hint": hint};
         casper.fillSelectors('form#encrypt', encValues, false);
         
-        // Simulates the user clicking on Encrypt - like executing:
-        // this.click('#do-encrypt');
-        // Without the Casper test hanging at this point, waiting for User to save file
-        var testEncryptedHtml = casper.page.evaluate(function() {
-            SCA.encryptAndEmbedData();
-            return SCA.getDocumentHtml();
+        var retval = new Promise(function(resolve, reject) {
+            casper.page.evaluate(function() {
+                var encryptionPromise = SCA.encryptAndEmbedData();
+                // Simulates the user clicking on Encrypt - like executing:
+                // this.click('#do-encrypt');
+                // Without the Casper test hanging at this point, waiting for User to save file
+                encryptionPromise.then(function() {
+                    var testEncryptedHtml = SCA.getDocumentHtml();
+                    fs.write(writeToTarget, testEncryptedHtml);
+                    resolve();
+                }).catch(function(reason) {
+                    reject(reason);
+                });
+            });
         });
         
-        fs.write(writeToTarget, testEncryptedHtml);
+        return retval;
     },
     
     setEncryptPass: function(casper, password) {
