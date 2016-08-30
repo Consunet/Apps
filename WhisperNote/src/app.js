@@ -139,7 +139,7 @@ SCA.decrypt = function() {
     
     var me = this;
     
-    var decryptionPromise = this.decryptWith(function(v, cryptoKey, iv, adata, out) {
+    var decryptionPromise = this.decryptWith(function(v, key, iv, adata, out) {
         
         // Populate the message payload
         SCA.e("payload").value = out;
@@ -148,42 +148,65 @@ SCA.decrypt = function() {
         
         // Check for an attachment, and decrypt it if present
         if (encData.cattname) {
-            var cryptoObj = window.crypto || window.msCrypto; // for IE 11
-            var sc = cryptoObj.subtle;
-            
-            var promiseArray = [];
-            
-            var filenameBuffer = me.convertStringToUint8Array(encData.cattname);
-            var filenameDecryptionPromise = sc.decrypt({'name': "AES-CBC", 'iv': iv.buffer}, cryptoKey, filenameBuffer);
-            promiseArray.push(filenameDecryptionPromise);
-            
-            for (var i = 0; i < encData.catt.length; i++) {
-                var sliceBuffer = me.convertStringToUint8Array(encData.catt[i]).buffer;
-                var sliceDecryptionPromise = sc.decrypt({'name': "AES-CBC", 'iv': iv.buffer}, cryptoKey, sliceBuffer);
-                promiseArray.push(sliceDecryptionPromise);
-            }
-            
-            retval = new Promise(function(resolve, reject) {
-                Promise.all(promiseArray).then(function(decryptedArray) {
-                    var filename = new TextDecoder("utf-8").decode(decryptedArray[0]);
-                    SCA.e("download-label").innerHTML = filename;
-                    SCA.setDisplay("att-download", "inline");
-                    
-                    var bytesArray = [];
-                    for (var i = 1; i < decryptedArray.length; i++) {
-                        var slice = new Uint8Array(decryptedArray[i]);
-                        bytesArray.push(slice);
-                    }
-                    
-                    SCA.attBlob = new Blob(bytesArray, {type: "application/octet-stream"});
-                    SCA.attName = filename;
-                    
-                    resolve();
-                }).catch(function(reason) {
-                    reject(reason);
+            if (v < 1.4) {
+                // in this branch key is required to be a SJCL algorithum/password pair
+                var encryptedFilenameBits = sjcl.codec.base64.toBits(encData.cattname);
+                var decryptedFilenameBits = sjcl.mode[encData.mode].decrypt(key, encryptedFilenameBits, iv, adata, encData.ts);
+                var decryptedFilename = sjcl.codec.utf8String.fromBits(decryptedFilenameBits);
+                SCA.e("download-label").innerHTML = decryptedFilename;
+                SCA.setDisplay("att-download", "inline");
+
+                var byteArrays = [];
+                for (var i = 0; i < encData.catt.length; i++) {
+                    var sliceBits = sjcl.codec.base64.toBits(encData.catt[i]);
+                    var decryptedSlice = sjcl.mode[encData.mode].decrypt(key, sliceBits, iv, adata, encData.ts);
+                    var byteNumbersSlice = sjcl.codec.bytes.fromBits(decryptedSlice);
+                    var byteArraySlice = new Uint8Array(byteNumbersSlice);
+                    byteArrays.push(byteArraySlice);
+                }
+
+                SCA.attBlob = new Blob(byteArrays, {type: "application/octet-stream"});
+                SCA.attName = decryptedFilename;
+            } else {
+                // in this branch key is required to be a CryptoKey
+
+                var cryptoObj = window.crypto || window.msCrypto; // for IE 11
+                var sc = cryptoObj.subtle;
+
+                var promiseArray = [];
+
+                var filenameBuffer = me.convertStringToUint8Array(encData.cattname);
+                var filenameDecryptionPromise = sc.decrypt({'name': encData.cipherAlgorithm, 'iv': iv.buffer}, key, filenameBuffer);
+                promiseArray.push(filenameDecryptionPromise);
+
+                for (var i = 0; i < encData.catt.length; i++) {
+                    var sliceBuffer = me.convertStringToUint8Array(encData.catt[i]).buffer;
+                    var sliceDecryptionPromise = sc.decrypt({'name': encData.cipherAlgorithm, 'iv': iv.buffer}, key, sliceBuffer);
+                    promiseArray.push(sliceDecryptionPromise);
+                }
+
+                retval = new Promise(function (resolve, reject) {
+                    Promise.all(promiseArray).then(function (decryptedArray) {
+                        var filename = new TextDecoder("utf-8").decode(decryptedArray[0]);
+                        SCA.e("download-label").innerHTML = filename;
+                        SCA.setDisplay("att-download", "inline");
+
+                        var bytesArray = [];
+                        for (var i = 1; i < decryptedArray.length; i++) {
+                            var slice = new Uint8Array(decryptedArray[i]);
+                            bytesArray.push(slice);
+                        }
+
+                        SCA.attBlob = new Blob(bytesArray, {type: "application/octet-stream"});
+                        SCA.attName = filename;
+
+                        resolve();
+                    }).catch(function (reason) {
+                        reject(reason);
+                    });
                 });
-            });
-        }        
+            } // end else
+        } // end if (encData.cattname)
 
         return retval;
     });
@@ -192,6 +215,34 @@ SCA.decrypt = function() {
        console.log("Decryption failed due to: " + reason); 
     });
 };
+
+SCA.decryptSJCL = function () {
+    return this.decryptWith(function (v, prp, iv, adata, out) {
+        // Populate the message payload
+        SCA.e("payload").value = out;
+
+        // Check for an attachment, and decrypt it if present
+        if (encData.cattname) {
+            var encryptedFilenameBits = sjcl.codec.base64.toBits(encData.cattname);
+            var decryptedFilenameBits = sjcl.mode[encData.mode].decrypt(prp, encryptedFilenameBits, iv, adata, encData.ts);
+            var decryptedFilename = sjcl.codec.utf8String.fromBits(decryptedFilenameBits);
+            SCA.e("download-label").innerHTML = decryptedFilename;
+            SCA.setDisplay("att-download", "inline");
+
+            var byteArrays = [];
+            for (var i = 0; i < encData.catt.length; i++) {
+                var sliceBits = sjcl.codec.base64.toBits(encData.catt[i]);
+                var decryptedSlice = sjcl.mode[encData.mode].decrypt(prp, sliceBits, iv, adata, encData.ts);
+                var byteNumbersSlice = sjcl.codec.bytes.fromBits(decryptedSlice);
+                var byteArraySlice = new Uint8Array(byteNumbersSlice);
+                byteArrays.push(byteArraySlice);
+            }
+
+            SCA.attBlob = new Blob(byteArrays, {type: "application/octet-stream"});
+            SCA.attName = decryptedFilename;
+        }
+    });
+}
 
 /**
  * Downloads the stores attachment blob and filename.

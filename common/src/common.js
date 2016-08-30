@@ -51,10 +51,7 @@ var SCA = {
         var element = this.e(id);
         var value = element.value;
         element.value = "";
-//        try {
-            element.innerHtml = "";
-//        } catch (e) {
-//        }
+        element.innerHtml = "";
         return value;
     },
     /**
@@ -193,7 +190,10 @@ var SCA = {
 
             // Validates the cypher settings
             for (var key in CONST.cypherSettings) {
-                if (parsed[key] !== CONST.cypherSettings[key]) {
+                // new keys may have been added to CONST.cypherSettings in later versions,
+                // which should not cause an InvalidCypherSettings error. So
+                // testing for null for 'parsed[key]'.
+                if (parsed[key] != null && parsed[key] !== CONST.cypherSettings[key]) {
                     throw "<%= InvalidCypherSettings %>";
                 }
             }
@@ -246,7 +246,7 @@ var SCA = {
      * @param {type} uint8Array expected to be cypher bytes.
      * @returns {Base64 string} base64 string representation of the given cypher bytes.
      */
-    convertUint8ArrayToString: function(uint8Array) {
+    convertUint8ArrayToString: function (uint8Array) {
         var CHUNK_SIZE = 0x8000; //arbitrary number
         var index = 0;
         var length = uint8Array.length;
@@ -266,7 +266,7 @@ var SCA = {
      * @param {type} str the base64 string to convert.
      * @returns {Uint8Array} the return array, which is expected to be cypher bytes.
      */
-    convertStringToUint8Array: function(str) {
+    convertStringToUint8Array: function (str) {
         var array = window.atob(str);
         var retval = new Uint8Array(array.length);
         for (var i = 0; i < array.length; i++) {
@@ -285,22 +285,22 @@ var SCA = {
      * ready for persistence.
      */
     encryptWith: function (callback) {
-        
+
         var me = this;
-        
-        var retval = new Promise(function(resolve, reject) {
+
+        var retval = new Promise(function (resolve, reject) {
             if (me.getBrowserName() === "Safari") {
                 var browserTypeError = "<%= EncryptionNotSupportedOnSafari %>";
                 alert(browserTypeError);
                 reject(Error(browserTypeError));
             }
-            
+
             if (!me.checkEncPass()) {
-               reject(Error("User rejected Password."));
+                reject(Error("User rejected Password."));
             }
-            
+
             var textEncoder = new TextEncoder('utf-8');
-            
+
             var cryptoObj = window.crypto || window.msCrypto; // for IE 11
 
             var cs = me.getClonedCypherSettings();
@@ -310,7 +310,7 @@ var SCA = {
             cs.iv = me.convertUint8ArrayToString(iv);
 
             var password = me.getEncPass();
-            
+
             var adata = me.getEncHint();
             cs.adata = adata;
 
@@ -318,11 +318,11 @@ var SCA = {
                 opts: me.readOptions(),
                 pl: me.getPayload()
             };
-            
+
             var sc = cryptoObj.subtle;
 
             var cryptoKey;
-            
+
             var keyBuffer = textEncoder.encode(password);
             sc.digest(cs.keyHashAlgorithm, keyBuffer).then(function (keyHash) {
 
@@ -347,7 +347,7 @@ var SCA = {
 
                                 // Call the callback to do specific actions with encrypt parameters
                                 var callbackPromise = callback(cs, cryptoKey, iv, adata);
-                                callbackPromise.then(function() {
+                                callbackPromise.then(function () {
                                     // Embed encrypted data into the DOM
                                     var cypherData = "var encData=" + JSON.stringify(cs) + ";";
                                     me.e("encrypted-data").innerHTML = cypherData;
@@ -378,7 +378,7 @@ var SCA = {
                 );
             });
         });
-        
+
         return retval;
     },
     /**
@@ -391,12 +391,19 @@ var SCA = {
      * page fields populated.
      */
     decryptWith: function (callback) {
-        
+
+        // if prior to version 1.4 use SJCL to perform decryption.
+        if (encData.v < 1.4) {
+            // down this branch, the callback will be passed a SJCL algorithum/password pair.
+            return this.decryptWithSJCL(callback);
+        }
+        // on this main branch, callback will be passed a CryptoKey.
+
         var me = this;
-        
+
         var cryptoObj = window.crypto || window.msCrypto; // for IE 11
         var sc = cryptoObj.subtle;
-        
+
         // Setup decryption parameters
         var password = me.getDecPass();
         var iv = me.convertStringToUint8Array(encData.iv);
@@ -418,26 +425,23 @@ var SCA = {
 
                     decryptPromise.then(function (dec) {
                         var payload = new TextDecoder('utf-8').decode(dec); // would have used utf-16, but that was not working on firefox.
-                        var opts = me.getDefaultOptions();
 
-                        // Version 1.3 and onwards includes options as part of the payload
-                        if (encData.v > 1.2) {
-                            var parsed = JSON.parse(payload);
-                            opts = parsed.opts;
-                            payload = parsed.pl;
-                        }
+                        // Version 1.3 and onwards includes options as part of the payload (if here must be 1.4 or later)
+                        var parsed = JSON.parse(payload);
+                        var opts = parsed.opts;
+                        payload = parsed.pl;
 
                         // Call with the decrypted contents and parameters
                         var callbackPromise = callback(encData.v, key, iv, adata, payload);
 
-                        callbackPromise.then(function() {
+                        callbackPromise.then(function () {
                             me.setOptions(opts);
                             me.setUnlocked(true);
                             me.displayTimeout(true);
                             me.showDecryptError(false);
                             me.e("enc-password").value = password;
                             me.e("enc-hint").value = adata;
-                            
+
                             resolve(); // resolving retval.
                         });
                     });
@@ -450,6 +454,57 @@ var SCA = {
         });
 
         return retval;
+    },
+    /**
+     * Sets up and decrypts the cypher text, unlocking the user interface
+     * if successful.
+     * @param {function} callback - a callback to enable specific actions to be
+     * taken on the given decrypt parameters.
+     */
+    decryptWithSJCL: function (callback) {
+        var me = this;
+
+        // Setup decryption parameters
+        var password = this.getDecPass();
+        var salt = sjcl.codec.base64.toBits(encData.salt);
+        var iv = sjcl.codec.base64.toBits(encData.iv);
+        var adata = sjcl.codec.base64.toBits(encData.adata);
+        var t1 = sjcl.misc.pbkdf2(password, salt, encData.iter);
+        var prp = new sjcl.cipher[encData.cipher](t1);
+        var data = sjcl.codec.base64.toBits(encData.ct);
+
+        return new Promise(function (resolve, reject) {
+            try {
+                var dec = sjcl.mode[encData.mode].decrypt(prp, data, iv, adata, encData.ts);
+                var payload = sjcl.codec.utf8String.fromBits(dec);
+                var opts = me.getDefaultOptions();
+
+                // Version 1.3 and onwards includes options as part of the payload
+                if (encData.v > 1.2) {
+                    var parsed = JSON.parse(payload);
+                    opts = parsed.opts;
+                    payload = parsed.pl;
+                }
+
+                // Call with the decrypted contents and parameters
+                var callbackPromise = callback(encData.v, prp, iv, adata, payload);
+                callbackPromise.then(function () {
+                    me.setOptions(opts);
+                    me.setUnlocked(true);
+                    me.displayTimeout(true);
+                    me.showDecryptError(false);
+                    me.e("enc-password").value = password;
+                    me.e("enc-hint").value = sjcl.codec.utf8String.fromBits(adata);
+                    resolve();
+                }).catch(function (reason) {
+                    reject(reason);
+                });
+
+            } catch (e) {
+                me.showDecryptError(true);
+                reject(e);
+            }
+        });
     },
     /**
      * Validates the current encryption password, providing feedback
@@ -579,7 +634,8 @@ var SCA = {
      */
     displayOptions: function (isDisplay) {
         var display = isDisplay ? "block" : "none";
-        this.setDisplay("options-screen", display);   },
+        this.setDisplay("options-screen", display);
+    },
     /**
      * Handles all mouse click events in the app.
      * @param {type} source - the source of the event.
@@ -815,7 +871,6 @@ var SCA = {
      * Initialises the app.
      */
     doOnload: function () {
-        console.log("Setting display to nojavascript.");
         this.setDisplay("nojavascript", "none");
 
         if (document.addEventListener) {
@@ -835,31 +890,16 @@ var SCA = {
             }
 
             this.setDisplay("unsupported", "none");
-            
-            if (encData.ct) {
-                console.log("ct set");
-            } else {
-                console.log("ct NOT set");
-            }
-            
-            if (encData.iv) {
-                console.log("iv set");
-            } else {
-                console.log("iv NOT set");
-            }
 
-//            sjcl.random.startCollectors();
-            if (encData.ct && /*encData.salt &&*/ encData.iv) {
-                console.log("Setting Display locked!");
+            if (encData.ct && encData.iv) {
                 this.setUnlocked(false);
 
                 if (encData.adata) {
-                    var decodedHint = encData.adata; //sjcl.codec.utf8String.fromBits(sjcl.codec.base64.toBits(encData.adata));
+                    var decodedHint = encData.adata;
                     this.e("dec-hint").innerHTML = decodedHint;
                 }
                 this.e("dec-password").focus();
             } else {
-                console.log("Setting Display unlocked!");
                 this.setDefaultOptions();
                 this.setUnlocked(true);
                 this.displayHelp(true);
