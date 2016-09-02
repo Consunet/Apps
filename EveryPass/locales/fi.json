@@ -38,7 +38,6 @@
   "Salt": "Suolaa",
   "CypherText": "Cypher teksti",
   "IncorrectPassword": "Virheellinen salasana tai tiedot on vioittunut",
-  "EncryptionNotSupportedOnSafari": "Salausta ei tällä hetkellä tueta Safari standardien tuen puutteen. Käytä toista selainta [esimerkiksi Google Chrome ja Mozilla Firefox] Salli tiedostojen salaus.",
   "Empty": "Tyhjä",
   "Weak": "Heikko",
   "OK": "Okei",

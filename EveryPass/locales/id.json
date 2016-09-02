@@ -38,7 +38,6 @@
   "Salt": "Garam",
   "CypherText": "Teks Cypher",
   "IncorrectPassword": "Password salah, atau data telah rusak",
-  "EncryptionNotSupportedOnSafari": "Enkripsi ini tidak didukung di Safari karena kurangnya dukungan standar. Gunakan browser lain [misalnya Google Chrome atau Mozilla Firefox] untuk memungkinkan enkripsi file.",
   "Empty": "Kosong",
   "Weak": "Lemah",
   "OK": "Oke",

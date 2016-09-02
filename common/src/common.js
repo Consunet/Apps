@@ -289,23 +289,15 @@ var SCA = {
         var me = this;
 
         var retval = new Promise(function (resolve, reject) {
-            if (me.getBrowserName() === "Safari") {
-                var browserTypeError = "<%= EncryptionNotSupportedOnSafari %>";
-                alert(browserTypeError);
-                reject(Error(browserTypeError));
-            }
-
             if (!me.checkEncPass()) {
                 reject(Error("User rejected Password."));
             }
 
             var textEncoder = new TextEncoder('utf-8');
 
-            var cryptoObj = window.crypto || window.msCrypto; // for IE 11
-
             var cs = me.getClonedCypherSettings();
             var iv = new Uint8Array(16);
-            cryptoObj.getRandomValues(iv);
+            window.crypto.getRandomValues(iv);
             cs.v = CONST.version;
             cs.iv = me.convertUint8ArrayToString(iv);
 
@@ -319,7 +311,7 @@ var SCA = {
                 pl: me.getPayload()
             };
 
-            var sc = cryptoObj.subtle;
+            var sc = window.crypto.subtle;
 
             var cryptoKey;
 
@@ -401,8 +393,7 @@ var SCA = {
 
         var me = this;
 
-        var cryptoObj = window.crypto || window.msCrypto; // for IE 11
-        var sc = cryptoObj.subtle;
+        var sc = window.crypto.subtle;
 
         // Setup decryption parameters
         var password = me.getDecPass();
@@ -456,6 +447,10 @@ var SCA = {
         return retval;
     },
     /**
+     * This function exists to decrypt files which were encrypted in version 1.3
+     * or earlier. All new encryption from version 1.4 onwards shall use the 
+     * WebCrypto API.
+     * <p>
      * Sets up and decrypts the cypher text, unlocking the user interface
      * if successful.
      * @param {function} callback - a callback to enable specific actions to be
@@ -853,21 +848,6 @@ var SCA = {
         this.setTimeoutString();
     },
     /**
-     * @returns {Boolean} true if the user is using Safari or false otherwise.
-     */
-    getBrowserName: function () {
-        var N = navigator.appName, ua = navigator.userAgent, tem;
-        var M = ua.match(/(opera|chrome|safari|firefox|msie|phantomjs)\/?\s*(\.?\d+(\.\d+)*)/i);
-        if (M) {
-            tem = ua.match(/version\/([\.\d]+)/i);
-            if (tem !== null) {
-                M[2] = tem[1];
-            }
-        }
-        M = M ? [M[1], M[2]] : [N, navigator.appVersion, '-?'];
-        return M[0];
-    },
-    /**
      * Initialises the app.
      */
     doOnload: function () {
@@ -885,8 +865,10 @@ var SCA = {
             }
 
             // Allows automated tests to pass with PhantomJS / Blob incompatiblity for now.
-            if (this.getBrowserName() !== "PhantomJS") {
+            try {
                 new Blob();
+            } catch (e) {
+                // do nothing... PhantomJS lacks Blob constructor support.
             }
 
             this.setDisplay("unsupported", "none");

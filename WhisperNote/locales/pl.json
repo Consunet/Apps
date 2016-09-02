@@ -35,7 +35,6 @@
   "InvalidCypherSettings": "Nieprawidłowy szyfr ustawienia",
   "ImportFailed": "Importowanie nie powiodło się: ",
   "IncorrectPassword": "Nieprawidłowe hasło lub dane zostały uszkodzone",
-  "EncryptionNotSupportedOnSafari": "Szyfrowanie jest nie obecnie obsługiwane na polowanie w Afryce ze względu na brak standardów obsługi. Użyj innej przeglądarki [np. Google Chrome i Mozilla Firefox] umożliwia szyfrowanie plików.",
   "Empty": "Pusty",
   "OK": "Ok",
   "Strong": "Strong",

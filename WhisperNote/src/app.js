@@ -80,8 +80,7 @@ SCA.encryptAndEmbedData = function(arrayBuffer, filename) {
         var retval = Promise.resolve();
         
         if (arrayBuffer) {
-            var cryptoObj = window.crypto || window.msCrypto; // for IE 11
-            var sc = cryptoObj.subtle;
+            var sc = window.crypto.subtle;
             
             var sliceSize = CONST.attSliceSize;
             var encryptionPromisesArray = [];

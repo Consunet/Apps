@@ -35,7 +35,6 @@
   "InvalidCypherSettings": "Ongeldige cypher instellingen",
   "ImportFailed": "Importeren is mislukt: ",
   "IncorrectPassword": "Onjuist wachtwoord of data is beschadigd",
-  "EncryptionNotSupportedOnSafari": "Codering is niet momenteel ondersteund op Safari wegens gebrek aan ondersteuning voor standaarden. Gebruik een andere browser [bijvoorbeeld Google Chrome of Mozilla Firefox] om codering van bestanden toestaan.",
   "Empty": "Leeg",
   "OK": "OK",
   "Strong": "Strong",

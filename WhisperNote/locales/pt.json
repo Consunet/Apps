@@ -35,7 +35,6 @@
   "InvalidCypherSettings": "Configurações de cypher inválido",
   "ImportFailed": "Falha ao importar: ",
   "IncorrectPassword": "Senha incorreta, ou os dados foram corrompidos",
-  "EncryptionNotSupportedOnSafari": "Criptografia não é suportada atualmente no Safari devido à falta de apoio de padrões. Por favor use um navegador diferente [por exemplo, Google Chrome ou Mozilla Firefox] para permitir criptografia de arquivos.",
   "Empty": "Vazio",
   "OK": "Razoável",
   "Strong": "Strong",

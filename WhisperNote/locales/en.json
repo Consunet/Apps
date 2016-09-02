@@ -35,7 +35,6 @@
 	"InvalidCypherSettings": "Invalid cypher settings",
 	"ImportFailed": "Import failed: ",
 	"IncorrectPassword": "Incorrect password, or data has been corrupted",
-	"EncryptionNotSupportedOnSafari": "Encryption is not currently supported on Safari due to lack of standards support. Please use a different browser [e.g. Google Chrome or Mozilla Firefox] to allow encryption of files.",
 	"Empty": "Empty",
 	"OK": "OK",
 	"Strong": "Strong",

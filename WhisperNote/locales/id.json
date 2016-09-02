@@ -35,7 +35,6 @@
   "InvalidCypherSettings": "Pengaturan tidak valid cypher",
   "ImportFailed": "Impor gagal: ",
   "IncorrectPassword": "Password salah, atau data telah rusak",
-  "EncryptionNotSupportedOnSafari": "Enkripsi ini tidak didukung di Safari karena kurangnya dukungan standar. Gunakan browser lain [misalnya Google Chrome atau Mozilla Firefox] untuk memungkinkan enkripsi file.",
   "Empty": "Kosong",
   "OK": "Oke",
   "Strong": "Kuat",
