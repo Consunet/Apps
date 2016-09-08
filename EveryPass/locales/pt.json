@@ -52,5 +52,6 @@
   "TimeoutPeriod": "Período de tempo limite",
   "ConfirmPasswordDeletion": "Confirmar exclusão de senhas?",
   "more": "mais",
-  "less": "menos"
+  "less": "menos",
+  "WebCryptoAPINotSupported": "WebCrypto API is not supported by this web browser. Please switch to a more modern browser, such as current versions of Edge, Firefox or Chrome."
 }

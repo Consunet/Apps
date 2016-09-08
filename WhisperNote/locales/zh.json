@@ -42,5 +42,6 @@
   "InvalidTimeout": "无效的超时值，使用默认值",
   "FileOpsNotSupported": "不支持的文件操作",
   "more": "更多",
-  "less": "较少"
+  "less": "较少",
+  "WebCryptoAPINotSupported": "WebCrypto API is not supported by this web browser. Please switch to a more modern browser, such as current versions of Edge, Firefox or Chrome."
 }

@@ -50,6 +50,8 @@ SCA.encryptWithFile = function(arrayBuffer, filename) {
     var eaedPromise = this.encryptAndEmbedData(arrayBuffer, filename);
     eaedPromise.then(function() {
         me.saveDocument();
+        me.e('file').value = ""; // remove selected file.
+        SCA.setDisplay("att-download", "none"); // hide download button.
         me.doOnload();
     }).catch(function (reason) {
         var errstr = "Encryption failed due to: " + reason;
@@ -97,16 +99,16 @@ SCA.encryptAndEmbedData = function(arrayBuffer, filename) {
                     var encryptedBase64Slices = [];
                     encryptedArray.forEach(function (val) {
                         var byteArray = new Uint8Array(val);
-                        var encryptedBase64Slice = me.convertUint8ArrayToString(byteArray);
+                        var encryptedBase64Slice = me.convertUint8ArrayToBase64String(byteArray);
                         encryptedBase64Slices.push(encryptedBase64Slice);
                     });
                     cs.catt = encryptedBase64Slices;
                 }).then(function () {
-                    var filenameBuffer = new TextEncoder("utf-8").encode(filename);
+                    var filenameBuffer = me.convertUtf16StringToArrayBuffer(filename);
                     var encryptionPromise = sc.encrypt({'name': cs.cipherAlgorithm, 'iv': iv.buffer}, cryptoKey, filenameBuffer);
                     encryptionPromise.then(function (val) {
                         var byteArray = new Uint8Array(val);
-                        var encryptedBase64Filename = me.convertUint8ArrayToString(byteArray);
+                        var encryptedBase64Filename = me.convertUint8ArrayToBase64String(byteArray);
                         cs.cattname = encryptedBase64Filename;
                         resolve(); // retval
                     }).catch(function (reason) {
@@ -169,24 +171,23 @@ SCA.decrypt = function() {
             } else {
                 // in this branch key is required to be a CryptoKey
 
-                var cryptoObj = window.crypto || window.msCrypto; // for IE 11
-                var sc = cryptoObj.subtle;
+                var sc = window.crypto.subtle;
 
                 var promiseArray = [];
 
-                var filenameBuffer = me.convertStringToUint8Array(encData.cattname);
+                var filenameBuffer = me.convertBase64StringToUint8Array(encData.cattname);
                 var filenameDecryptionPromise = sc.decrypt({'name': encData.cipherAlgorithm, 'iv': iv.buffer}, key, filenameBuffer);
                 promiseArray.push(filenameDecryptionPromise);
 
                 for (var i = 0; i < encData.catt.length; i++) {
-                    var sliceBuffer = me.convertStringToUint8Array(encData.catt[i]).buffer;
+                    var sliceBuffer = me.convertBase64StringToUint8Array(encData.catt[i]).buffer;
                     var sliceDecryptionPromise = sc.decrypt({'name': encData.cipherAlgorithm, 'iv': iv.buffer}, key, sliceBuffer);
                     promiseArray.push(sliceDecryptionPromise);
                 }
 
                 retval = new Promise(function (resolve, reject) {
                     Promise.all(promiseArray).then(function (decryptedArray) {
-                        var filename = new TextDecoder("utf-8").decode(decryptedArray[0]);
+                        var filename = me.convertArrayBufferToUtf16String(decryptedArray[0]);
                         SCA.e("download-label").innerHTML = filename;
                         SCA.setDisplay("att-download", "inline");
 

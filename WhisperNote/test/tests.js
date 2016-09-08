@@ -2,7 +2,7 @@
 
 casper.test.begin('Can verify basic app details.', function suite(test) {
     casper.start(TEST_UNENCRYPTED_URL).then(function() {
-        test.assertTitle("WhisperNote Encrypted Note v1.3", "WhisperNote homepage title is the one expected");
+        test.assertTitle("WhisperNote Encrypted Note v1.4", "WhisperNote homepage title is the one expected");
         test.assertTextExists("WhisperNote", "Description exists");
     }).run(function() {
         test.done();

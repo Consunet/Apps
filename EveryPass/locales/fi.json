@@ -52,5 +52,6 @@
   "TimeoutPeriod": "Aikakatkaisun määräaika",
   "ConfirmPasswordDeletion": "Vahvista poisto salasanoja?",
   "more": "Lisää",
-  "less": "vähemmän"
+  "less": "vähemmän",
+  "WebCryptoAPINotSupported": "WebCrypto API is not supported by this web browser. Please switch to a more modern browser, such as current versions of Edge, Firefox or Chrome."
 }

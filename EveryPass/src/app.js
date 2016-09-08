@@ -362,7 +362,7 @@ SCA.filterPwds = function(event) {
  * Populates the password field for a new entry with a generated random base64 String.
  */
 SCA.generatePwd = function() {
-    var generated = SCA.convertUint8ArrayToString(window.crypto.getRandomValues(new Uint8Array(16)));
+    var generated = SCA.convertUint8ArrayToBase64String(window.crypto.getRandomValues(new Uint8Array(16)));
     generated = generated.substring(0, generated.length - 2);
     var replace = String.fromCharCode(97 + Math.round(Math.random() * 25));
     generated = generated.replace(/\+/g, replace);

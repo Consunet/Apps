@@ -52,5 +52,6 @@
   "TimeoutPeriod": "超时时间",
   "ConfirmPasswordDeletion": "确认删除的密码吗？",
   "more": "更多",
-  "less": "较少"
+  "less": "较少",
+  "WebCryptoAPINotSupported": "WebCrypto API is not supported by this web browser. Please switch to a more modern browser, such as current versions of Edge, Firefox or Chrome."
 }

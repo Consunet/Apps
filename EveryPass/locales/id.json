@@ -52,5 +52,6 @@
   "TimeoutPeriod": "Periode timeout",
   "ConfirmPasswordDeletion": "Konfirmasi penghapusan password?",
   "more": "lebih",
-  "less": "kurang"
+  "less": "kurang",
+  "WebCryptoAPINotSupported": "WebCrypto API is not supported by this web browser. Please switch to a more modern browser, such as current versions of Edge, Firefox or Chrome."
 }

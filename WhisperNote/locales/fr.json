@@ -42,5 +42,6 @@
   "InvalidTimeout": "Timeout non valide, en utilisant par défaut",
   "FileOpsNotSupported": "Opérations de fichier non pris en charge",
   "more": "plus",
-  "less": "moins"
+  "less": "moins",
+  "WebCryptoAPINotSupported": "WebCrypto API is not supported by this web browser. Please switch to a more modern browser, such as current versions of Edge, Firefox or Chrome."
 }

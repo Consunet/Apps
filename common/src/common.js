@@ -239,6 +239,44 @@ var SCA = {
     showAbout: function () {
         SCA.displayHelp(true);
     },
+    
+    /**
+     * Converts from an ArrayBuffer to a String.
+     * <p>
+     * Should be replaced by use of TextDecoder once that API is available in all
+     * browsers of interest...
+     * <p>
+     * Implementation of this function has been based on ab2str function at:
+     * https://developers.google.com/web/updates/2012/06/How-to-convert-ArrayBuffer-to-and-from-String?hl=en
+     * 
+     * @param {ArrayBuffer} arrayBuffer
+     * @returns {DOMString}
+     */
+    convertArrayBufferToUtf16String: function(arrayBuffer) {
+        return String.fromCharCode.apply(null, new Uint16Array(arrayBuffer));
+    },
+    
+    /**
+     * Converts from a String to an ArrayBuffer.
+     * <p>
+     * Should be replaced by use of TextEncoder once that API is available in all
+     * browsers of interest...
+     * <p>
+     * Implementation of this function has been based on str2ab function at:
+     * https://developers.google.com/web/updates/2012/06/How-to-convert-ArrayBuffer-to-and-from-String?hl=en
+     * 
+     * @param {DOMString} domString
+     * @returns {ArrayBuffer}
+     */
+    convertUtf16StringToArrayBuffer: function (utf16String) {
+        var buf = new ArrayBuffer(utf16String.length * 2); // 2 bytes for each char
+        var bufView = new Uint16Array(buf);
+        for (var i = 0, strLen = utf16String.length; i < strLen; i++) {
+            bufView[i] = utf16String.charCodeAt(i);
+        }
+        return buf;
+    },
+    
     /**
      * Converts a Uint8Array to a displayable, Base64 string:
      * (copied from "http://stackoverflow.com/questions/12710001/how-to-convert-uint8-array-to-base64-encoded-string")
@@ -246,7 +284,7 @@ var SCA = {
      * @param {type} uint8Array expected to be cypher bytes.
      * @returns {Base64 string} base64 string representation of the given cypher bytes.
      */
-    convertUint8ArrayToString: function (uint8Array) {
+    convertUint8ArrayToBase64String: function (uint8Array) {
         var CHUNK_SIZE = 0x8000; //arbitrary number
         var index = 0;
         var length = uint8Array.length;
@@ -261,13 +299,13 @@ var SCA = {
     },
     /**
      * Converts Base64 string, to a Uint8Array. Reversing the above 
-     * 'convertUint8ArrayToString()' function.
+     * 'convertUint8ArrayToBase64String()' function.
      * 
      * @param {type} str the base64 string to convert.
      * @returns {Uint8Array} the return array, which is expected to be cypher bytes.
      */
-    convertStringToUint8Array: function (str) {
-        var array = window.atob(str);
+    convertBase64StringToUint8Array: function (base64String) {
+        var array = window.atob(base64String);
         var retval = new Uint8Array(array.length);
         for (var i = 0; i < array.length; i++) {
             retval[i] = array.charCodeAt(i);
@@ -293,13 +331,11 @@ var SCA = {
                 reject(Error("User rejected Password."));
             }
 
-            var textEncoder = new TextEncoder('utf-8');
-
             var cs = me.getClonedCypherSettings();
             var iv = new Uint8Array(16);
             window.crypto.getRandomValues(iv);
             cs.v = CONST.version;
-            cs.iv = me.convertUint8ArrayToString(iv);
+            cs.iv = me.convertUint8ArrayToBase64String(iv);
 
             var password = me.getEncPass();
 
@@ -315,7 +351,7 @@ var SCA = {
 
             var cryptoKey;
 
-            var keyBuffer = textEncoder.encode(password);
+            var keyBuffer = me.convertUtf16StringToArrayBuffer(password);
             sc.digest(cs.keyHashAlgorithm, keyBuffer).then(function (keyHash) {
 
                 sc.importKey(
@@ -328,14 +364,14 @@ var SCA = {
                     cryptoKey = key;
 
                     var plainTextStr = JSON.stringify(plaintext);
-                    var plainTextBuffer = textEncoder.encode(plainTextStr); // would have used utf-16, but firefox only decodes successfully in utf-8.
+                    var plainTextBuffer = me.convertUtf16StringToArrayBuffer(plainTextStr);
                     var ivBuffer = iv.buffer;
                     var encryptPromise = sc.encrypt({'name': cs.cipherAlgorithm, 'iv': ivBuffer}, key, plainTextBuffer);
 
                     encryptPromise.then(
                             function (val) {
                                 var byteArray = new Uint8Array(val);
-                                cs.ct = me.convertUint8ArrayToString(byteArray);
+                                cs.ct = me.convertUint8ArrayToBase64String(byteArray);
 
                                 // Call the callback to do specific actions with encrypt parameters
                                 var callbackPromise = callback(cs, cryptoKey, iv, adata);
@@ -397,11 +433,11 @@ var SCA = {
 
         // Setup decryption parameters
         var password = me.getDecPass();
-        var iv = me.convertStringToUint8Array(encData.iv);
+        var iv = me.convertBase64StringToUint8Array(encData.iv);
         var adata = encData.adata;
 
         var retval = new Promise(function (resolve, reject) {
-            var keyBuffer = new TextEncoder('utf8').encode(password);
+            var keyBuffer = me.convertUtf16StringToArrayBuffer(password);
             sc.digest(encData.keyHashAlgorithm, keyBuffer).then(function (keyHash) {
                 sc.importKey('raw',
                         keyHash,
@@ -409,13 +445,13 @@ var SCA = {
                         false,
                         ['encrypt', 'decrypt']).then(function (key) {
                     var ivBuffer = iv.buffer;
-                    var data = me.convertStringToUint8Array(encData.ct);
+                    var data = me.convertBase64StringToUint8Array(encData.ct);
                     var dataBuffer = data.buffer;
 
                     var decryptPromise = sc.decrypt({'name': encData.cipherAlgorithm, 'iv': ivBuffer}, key, dataBuffer);
 
                     decryptPromise.then(function (dec) {
-                        var payload = new TextDecoder('utf-8').decode(dec); // would have used utf-16, but that was not working on firefox.
+                        var payload = me.convertArrayBufferToUtf16String(dec);
 
                         // Version 1.3 and onwards includes options as part of the payload (if here must be 1.4 or later)
                         var parsed = JSON.parse(payload);
@@ -848,6 +884,21 @@ var SCA = {
         this.setTimeoutString();
     },
     /**
+     * Gets the browser name, and returns it as a String.
+     * 
+     * @returns {String}
+     */
+    getBrowserName: function() {
+        var retval = "<unknown>";
+        var ua=navigator.userAgent;
+        var M = ua.match(/(opera|chrome|safari|firefox|msie|phantomjs)\/?\s*(\.?\d+(\.\d+)*)/i);
+        M = M ? [M[1], M[2]] : null;
+        if (M) {
+            retval = M[0];
+        }
+        return retval;
+    },
+    /**
      * Initialises the app.
      */
     doOnload: function () {
@@ -863,12 +914,14 @@ var SCA = {
             if (!(window.File && window.FileReader && window.FileList && window.Blob)) {
                 throw "<%= FileOpsNotSupported %>";
             }
-
-            // Allows automated tests to pass with PhantomJS / Blob incompatiblity for now.
-            try {
+            
+            // PhantomJS lacks WebCrypto API and Blob constructor.
+            if (this.getBrowserName() !== "PhantomJS") {
+                if (!(window.crypto && window.crypto.subtle)) {
+                    throw "<%= WebCryptoAPINotSupported %>";
+                }
+                
                 new Blob();
-            } catch (e) {
-                // do nothing... PhantomJS lacks Blob constructor support.
             }
 
             this.setDisplay("unsupported", "none");
