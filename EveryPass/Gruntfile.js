@@ -35,7 +35,8 @@ module.exports = function(grunt) {
                 src: [
                     '../common/src/css/bootstrap.css',
                     '../common/src/css/bootstrap-theme.css',
-                    '../common/src/css/app.css'
+                    '../common/src/css/app.css',
+                    'css/new-question.css'
                 ],
                 dest: 'dist/<%= pkg.name %>.css'
             }

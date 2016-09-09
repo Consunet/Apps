@@ -1,0 +1,8 @@
+/* 
+    Adds a 4 pixel margin to the bottom of the upper input field of the
+        Additional Info fields.
+    Created on : 09/09/2016, 2:31:44 PM
+*/
+input[id$="question"] {
+    margin-bottom: 4px;
+}
