@@ -35,7 +35,6 @@
   "InvalidCypherSettings": "Configuración no válida cypher",
   "ImportFailed": "Error al importar: ",
   "IncorrectPassword": "Contraseña incorrecta, o los datos se ha corrompido",
-  "EncryptionNotSupportedOnSafari": "Cifrado no es actualmente compatible con Safari debido a la falta de apoyo de las normas. Por favor utilice otro navegador [por ejemplo, Google Chrome o Mozilla Firefox] para permitir el cifrado de archivos.",
   "Empty": "Vacío",
   "OK": "Vale",
   "Strong": "Fuerte",
@@ -43,5 +42,6 @@
   "InvalidTimeout": "Tiempo de espera no válido, usando por defecto",
   "FileOpsNotSupported": "Operaciones de archivo no compatibles",
   "more": "más",
-  "less": "menos"
+  "less": "menos",
+  "WebCryptoAPINotSupported": "WebCrypto API is not supported by this web browser. Please switch to a more modern browser, such as current versions of Edge, Firefox or Chrome."
 }

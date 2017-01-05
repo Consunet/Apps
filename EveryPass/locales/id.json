@@ -38,7 +38,6 @@
   "Salt": "Garam",
   "CypherText": "Teks Cypher",
   "IncorrectPassword": "Password salah, atau data telah rusak",
-  "EncryptionNotSupportedOnSafari": "Enkripsi ini tidak didukung di Safari karena kurangnya dukungan standar. Gunakan browser lain [misalnya Google Chrome atau Mozilla Firefox] untuk memungkinkan enkripsi file.",
   "Empty": "Kosong",
   "Weak": "Lemah",
   "OK": "Oke",
@@ -53,5 +52,6 @@
   "TimeoutPeriod": "Periode timeout",
   "ConfirmPasswordDeletion": "Konfirmasi penghapusan password?",
   "more": "lebih",
-  "less": "kurang"
+  "less": "kurang",
+  "WebCryptoAPINotSupported": "WebCrypto API is not supported by this web browser. Please switch to a more modern browser, such as current versions of Edge, Firefox or Chrome."
 }

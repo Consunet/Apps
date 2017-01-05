@@ -35,7 +35,6 @@
   "InvalidCypherSettings": "Μη έγκυρη cypher ρυθμίσεις",
   "ImportFailed": "Η εισαγωγή απέτυχε: ",
   "IncorrectPassword": "Εσφαλμένος κωδικός πρόσβασης, ή δεδομένων έχει καταστραφεί",
-  "EncryptionNotSupportedOnSafari": "Κρυπτογράφησης δεν υποστηρίζεται σε σαφάρι λόγω έλλειψης υποστήριξη προτύπων. Παρακαλούμε να χρησιμοποιήσετε ένα διαφορετικό πρόγραμμα περιήγησης [π.χ. το Google Chrome ή Mozilla Firefox] για να επιτρέψει την κρυπτογράφηση των αρχείων.",
   "Empty": "Άδειο",
   "OK": "Ok",
   "Strong": "Ισχυρή",
@@ -43,5 +42,6 @@
   "InvalidTimeout": "Μη έγκυρο χρονικό όριο, χρησιμοποιώντας την προεπιλεγμένη",
   "FileOpsNotSupported": "Λειτουργίες διαχείρισης αρχείων που δεν υποστηρίζονται",
   "more": "περισσότερα",
-  "less": "λιγότερο"
+  "less": "λιγότερο",
+  "WebCryptoAPINotSupported": "WebCrypto API is not supported by this web browser. Please switch to a more modern browser, such as current versions of Edge, Firefox or Chrome."
 }

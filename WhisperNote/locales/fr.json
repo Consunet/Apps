@@ -35,7 +35,6 @@
   "InvalidCypherSettings": "Paramètres non valides cypher",
   "ImportFailed": "Échec de l'importation : ",
   "IncorrectPassword": "Mot de passe incorrect, ou les données ont été corrompues",
-  "EncryptionNotSupportedOnSafari": "Cryptage n'est pas supporté actuellement sur Safari due au manque de soutien des normes. Veuillez utiliser un navigateur différent [p. ex., Google Chrome ou Mozilla Firefox] pour permettre le cryptage des fichiers.",
   "Empty": "Vide",
   "OK": "Bien",
   "Strong": "Strong",
@@ -43,5 +42,6 @@
   "InvalidTimeout": "Timeout non valide, en utilisant par défaut",
   "FileOpsNotSupported": "Opérations de fichier non pris en charge",
   "more": "plus",
-  "less": "moins"
+  "less": "moins",
+  "WebCryptoAPINotSupported": "WebCrypto API is not supported by this web browser. Please switch to a more modern browser, such as current versions of Edge, Firefox or Chrome."
 }

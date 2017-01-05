@@ -38,7 +38,6 @@
   "Salt": "Соль",
   "CypherText": "Шифруют текст",
   "IncorrectPassword": "Неправильный пароль или данные повреждены",
-  "EncryptionNotSupportedOnSafari": "Шифрование не поддерживается в настоящее время на сафари из-за отсутствия поддержки стандартов. Пожалуйста, используйте другой браузер [например, Google Chrome или Mozilla Firefox] чтобы разрешить шифрование файлов.",
   "Empty": "Пустой",
   "Weak": "Слабый",
   "OK": "Хорошо",
@@ -53,5 +52,6 @@
   "TimeoutPeriod": "Период ожидания",
   "ConfirmPasswordDeletion": "Подтвердите удаление паролей?",
   "more": "больше",
-  "less": "меньше"
+  "less": "меньше",
+  "WebCryptoAPINotSupported": "WebCrypto API is not supported by this web browser. Please switch to a more modern browser, such as current versions of Edge, Firefox or Chrome."
 }

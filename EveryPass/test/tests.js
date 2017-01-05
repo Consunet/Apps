@@ -1,6 +1,6 @@
 casper.test.begin('Can verify basic app details.', function suite(test) {
     casper.start(TEST_UNENCRYPTED_URL).then(function() {
-        test.assertTitle("EveryPass Password Manager v1.3", "Password manager homepage title is the one expected");
+        test.assertTitle("EveryPass Password Manager v1.4", "Password manager homepage title is the one expected");
         test.assertTextExists("EveryPass", "Description exists");
     }).run(function() {
         test.done();
@@ -90,7 +90,7 @@ casper.test.begin('Can create multiple passwords and search for them case-insens
 });
 
 casper.test.begin('Can create a password, add more details to form without adding, then encrypt it.', function suite(test) {
-    casper.start(TEST_UNENCRYPTED_URL).then(function() {
+    casper.start(TEST_UNENCRYPTED_URL).then(function () {
         CPASS_TEST.addPassword(casper, test);
         var id = 'p0';
 
@@ -98,13 +98,16 @@ casper.test.begin('Can create a password, add more details to form without addin
         casper.fillSelectors('form#new-entry', CPASS_TEST.getTestData("abc"), false);
 
         // Do encrypt
-        C_TEST.encryptWith(casper, TEST_PASSWORD, TEST_HINT, "public_html/test_encrypted.html");
+        var encryptionPromise = C_TEST.encryptWith(casper, TEST_PASSWORD, TEST_HINT, "public_html/test_encrypted.html");
+        encryptionPromise.then(function () {
+            // Password should be deleted on encryption
+            CPASS_TEST.assertPasswordNotExists(test, id);
 
-        // Password should be deleted on encryption
-        CPASS_TEST.assertPasswordNotExists(test, id);
-    }).run(function() {
-        test.done();
-    });
+            test.done();
+        }).catch(function(reason) {
+            test.fail(reason);
+        });
+    }).run();
 });
 
 casper.test.begin('Does not import bad EveryPass data.', function suite(test) {

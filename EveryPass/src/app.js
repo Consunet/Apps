@@ -208,16 +208,30 @@ SCA.eachPwd = function(fn) {
 
 /**
  * Stores all password data as an encrypted object within the DOM and then writes it out to a file.
+ * <p>
+ * Encryption is performed asynchronously, and should not be assumed to be complete
+ * when this function returns.
  */
 SCA.encrypt = function() {
-    if (this.encryptAndEmbedData()) {
-        this.saveDocument();
-        this.doOnload();
-    }
+    var me = this;
+    var eaedPromise = me.encryptAndEmbedData();
+
+    eaedPromise.then(function() {
+        me.saveDocument();
+        me.doOnload();
+    }).catch(function(reason) {
+        var errstr = "Encryption failed due to: " + reason;
+        console.log(errstr);
+        alert(errstr);
+    });
 };
 
 /**
  * Encrypts all password data in the DOM and stores it as a JSON object within a script tag element.
+ * <p>
+ * This encryption is performed in an asynchronous manner via the returned Promise.
+ * 
+ * @return {Promise} when resolved, encryption is complete and data added to DOM.
  */
 SCA.encryptAndEmbedData = function() {
     // Check for existing uncommitted password data.
@@ -236,10 +250,12 @@ SCA.encryptAndEmbedData = function() {
         SCA.newPwd();
     }
     
-    return this.encryptWith(function(cs, prp, iv, adata) {
+    return this.encryptWith(function(cs, cryptoKey, iv, adata) {
         // Reset document specific elements
         SCA._divPwds().innerHTML = "";
         SCA.e("search").setAttribute("disabled", "");
+        
+        return Promise.resolve();
     });
 };
 
@@ -280,14 +296,23 @@ SCA.setUnlocked = function(isUnlocked) {
 /**
  * Decrypts the encrypted data with the credentials obtained from the form,
  * and unlocks the interface if successful.
+ * <p>
+ * Performs decryption in asynchronous manner, and it should not be assumed to
+ * be complete when function returns.
  */
 SCA.decrypt = function() {
-    this.decryptWith(function(v, prp, iv, adata, out) {
+    var decryptionPromise = this.decryptWith(function(v, prp, iv, adata, out) {
         // Handle decoding of versions older than 1.3 where options wasn't part of payload
         if (v === undefined || v <= 1.2) {
             out = JSON.parse(out);
         }
         SCA.addPwds(out);
+        
+        return Promise.resolve();
+    });
+    
+    decryptionPromise.catch(function(reason) {
+       console.log("Decryption failed due to: " + reason); 
     });
 };
 
@@ -337,7 +362,7 @@ SCA.filterPwds = function(event) {
  * Populates the password field for a new entry with a generated random base64 String.
  */
 SCA.generatePwd = function() {
-    var generated = sjcl.codec.base64.fromBits(sjcl.random.randomWords(4, 2));
+    var generated = SCA.convertUint8ArrayToBase64String(window.crypto.getRandomValues(new Uint8Array(16)));
     generated = generated.substring(0, generated.length - 2);
     var replace = String.fromCharCode(97 + Math.round(Math.random() * 25));
     generated = generated.replace(/\+/g, replace);

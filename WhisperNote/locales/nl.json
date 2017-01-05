@@ -35,7 +35,6 @@
   "InvalidCypherSettings": "Ongeldige cypher instellingen",
   "ImportFailed": "Importeren is mislukt: ",
   "IncorrectPassword": "Onjuist wachtwoord of data is beschadigd",
-  "EncryptionNotSupportedOnSafari": "Codering is niet momenteel ondersteund op Safari wegens gebrek aan ondersteuning voor standaarden. Gebruik een andere browser [bijvoorbeeld Google Chrome of Mozilla Firefox] om codering van bestanden toestaan.",
   "Empty": "Leeg",
   "OK": "OK",
   "Strong": "Strong",
@@ -43,5 +42,6 @@
   "InvalidTimeout": "Ongeldige time-out, met behulp van standaard",
   "FileOpsNotSupported": "Bestandsbewerkingen niet ondersteund",
   "more": "meer",
-  "less": "minder"
+  "less": "minder",
+  "WebCryptoAPINotSupported": "WebCrypto API is not supported by this web browser. Please switch to a more modern browser, such as current versions of Edge, Firefox or Chrome."
 }

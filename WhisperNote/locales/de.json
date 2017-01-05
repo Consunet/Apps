@@ -35,7 +35,6 @@
   "InvalidCypherSettings": "Ungültige Cypher-Einstellungen",
   "ImportFailed": "Fehler beim Importieren: ",
   "IncorrectPassword": "Falsches Kennwort oder Daten ist beschädigt",
-  "EncryptionNotSupportedOnSafari": "Verschlüsselung ist derzeit nicht auf Safari durch unterstützt mangelnder Unterstützung von Standards. Bitte benutzen Sie einen anderen Browser [z.B. Google Chrome oder Mozilla Firefox] Verschlüsselung von Dateien ermöglichen.",
   "Empty": "Leer",
   "OK": "Okay",
   "Strong": "Strong",
@@ -43,5 +42,6 @@
   "InvalidTimeout": "Ungültige Timeout, Standard verwenden",
   "FileOpsNotSupported": "Nicht unterstützte Dateioperationen",
   "more": "Weitere",
-  "less": "weniger"
+  "less": "weniger",
+  "WebCryptoAPINotSupported": "WebCrypto API is not supported by this web browser. Please switch to a more modern browser, such as current versions of Edge, Firefox or Chrome."
 }

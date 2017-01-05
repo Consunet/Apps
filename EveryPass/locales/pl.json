@@ -38,7 +38,6 @@
   "Salt": "Sól",
   "CypherText": "Szyfr tekst",
   "IncorrectPassword": "Nieprawidłowe hasło lub dane zostały uszkodzone",
-  "EncryptionNotSupportedOnSafari": "Szyfrowanie jest nie obecnie obsługiwane na polowanie w Afryce ze względu na brak standardów obsługi. Użyj innej przeglądarki [np. Google Chrome i Mozilla Firefox] umożliwia szyfrowanie plików.",
   "Empty": "Pusty",
   "Weak": "Słaby",
   "OK": "Ok",
@@ -53,5 +52,6 @@
   "TimeoutPeriod": "Limit czasu",
   "ConfirmPasswordDeletion": "Potwierdź usunięcie hasła?",
   "more": "Więcej",
-  "less": "mniej"
+  "less": "mniej",
+  "WebCryptoAPINotSupported": "WebCrypto API is not supported by this web browser. Please switch to a more modern browser, such as current versions of Edge, Firefox or Chrome."
 }

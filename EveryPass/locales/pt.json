@@ -38,7 +38,6 @@
   "Salt": "Sal",
   "CypherText": "Texto de Cypher",
   "IncorrectPassword": "Senha incorreta, ou os dados foram corrompidos",
-  "EncryptionNotSupportedOnSafari": "Criptografia não é suportada atualmente no Safari devido à falta de apoio de padrões. Por favor use um navegador diferente [por exemplo, Google Chrome ou Mozilla Firefox] para permitir criptografia de arquivos.",
   "Empty": "Vazio",
   "Weak": "Fraco",
   "OK": "Razoável",
@@ -53,5 +52,6 @@
   "TimeoutPeriod": "Período de tempo limite",
   "ConfirmPasswordDeletion": "Confirmar exclusão de senhas?",
   "more": "mais",
-  "less": "menos"
+  "less": "menos",
+  "WebCryptoAPINotSupported": "WebCrypto API is not supported by this web browser. Please switch to a more modern browser, such as current versions of Edge, Firefox or Chrome."
 }

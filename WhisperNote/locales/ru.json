@@ -35,7 +35,6 @@
   "InvalidCypherSettings": "Недопустимый cypher параметры",
   "ImportFailed": "Сбой импорта: ",
   "IncorrectPassword": "Неправильный пароль или данные повреждены",
-  "EncryptionNotSupportedOnSafari": "Шифрование не поддерживается в настоящее время на сафари из-за отсутствия поддержки стандартов. Пожалуйста, используйте другой браузер [например, Google Chrome или Mozilla Firefox] чтобы разрешить шифрование файлов.",
   "Empty": "Пустой",
   "OK": "Хорошо",
   "Strong": "Стронг",
@@ -43,5 +42,6 @@
   "InvalidTimeout": "Недопустимое время ожидания, по умолчанию",
   "FileOpsNotSupported": "Не поддерживаются операции с файлами",
   "more": "больше",
-  "less": "меньше"
+  "less": "меньше",
+  "WebCryptoAPINotSupported": "WebCrypto API is not supported by this web browser. Please switch to a more modern browser, such as current versions of Edge, Firefox or Chrome."
 }

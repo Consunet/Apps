@@ -20,6 +20,10 @@ module.exports = function(grunt) {
                     'lib/sjcl.js',
                     'lib/Blob.js',
                     'lib/FileSaver.js',
+                    'lib/es6-promise.js',
+                    'lib/encoding-indexes.js',
+                    'lib/encoding.js',
+                    'lib/webcrypto-shim.js',
                     '../common/src/constants.js',
                     '../common/src/common.js',
                     'src/constants.js',
@@ -31,7 +35,8 @@ module.exports = function(grunt) {
                 src: [
                     '../common/src/css/bootstrap.css',
                     '../common/src/css/bootstrap-theme.css',
-                    '../common/src/css/app.css'
+                    '../common/src/css/app.css',
+                    'css/new-question.css'
                 ],
                 dest: 'dist/<%= pkg.name %>.css'
             }

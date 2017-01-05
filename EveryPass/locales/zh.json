@@ -38,7 +38,6 @@
   "Salt": "盐",
   "CypherText": "塞弗文本",
   "IncorrectPassword": "密码不正确或数据已损坏",
-  "EncryptionNotSupportedOnSafari": "加密是目前不支持 Safari 到期日，缺乏标准的支持。请使用不同的浏览器 [例如谷歌浏览器或火狐浏览器] 允许加密的文件。",
   "Empty": "空",
   "Weak": "弱",
   "OK": "还行",
@@ -53,5 +52,6 @@
   "TimeoutPeriod": "超时时间",
   "ConfirmPasswordDeletion": "确认删除的密码吗？",
   "more": "更多",
-  "less": "较少"
+  "less": "较少",
+  "WebCryptoAPINotSupported": "WebCrypto API is not supported by this web browser. Please switch to a more modern browser, such as current versions of Edge, Firefox or Chrome."
 }
