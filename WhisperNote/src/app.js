@@ -44,7 +44,6 @@ SCA.encrypt = function() {
 SCA.encryptWithFile = function(arrayBuffer, filename) {
     if (this.encryptAndEmbedData(arrayBuffer, filename)) {
         this.saveDocument();
-    	this.e('file').value = "";
         this.doOnload();
     }
 };
