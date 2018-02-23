@@ -162,7 +162,15 @@ module.exports = function(grunt) {
                     spawn: true
                 }
             }
-        }
+        },
+        mochaTest: {
+            test: {
+              options: {
+                reporter: 'spec',      
+              },
+              src: ['test/mocha_tests.js']
+            } 
+        } 
     });
 
     grunt.loadNpmTasks('grunt-contrib-clean');
@@ -177,7 +185,8 @@ module.exports = function(grunt) {
     grunt.loadNpmTasks('grunt-text-replace');
     grunt.loadNpmTasks('grunt-i18n');
     grunt.loadNpmTasks('grunt-image-embed');
-
+    grunt.loadNpmTasks('grunt-mocha-test');
+    
     grunt.template.addDelimiters("curly", "{{", "}}");
 
     grunt.registerTask('buildhtml', 'Builds the app html.', function() {
@@ -201,6 +210,6 @@ module.exports = function(grunt) {
     });
 
     // Default task.
-    grunt.registerTask('default', ['clean', 'concat', 'uglify', 'uncss', 'imageEmbed', 'cssmin', 'replace', 'buildhtml', 'htmlmin', 'i18n', 'connect', 'casper']);
-    grunt.registerTask('debug', ['clean', 'concat', 'uncss', 'imageEmbed', 'replace', 'cssmin', 'builddebug', 'i18n', 'connect', 'casper']);
+    grunt.registerTask('default', ['clean', 'concat', 'uglify', 'uncss', 'imageEmbed', 'cssmin', 'replace', 'buildhtml', 'htmlmin', 'i18n', 'connect'/*, 'casper'*/, 'mochaTest']);
+    grunt.registerTask('debug', ['clean', 'concat', 'uncss', 'imageEmbed', 'replace', 'cssmin', 'builddebug', 'i18n', 'connect'/*, 'casper'*/, 'mochaTest']);
 };
