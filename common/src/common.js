@@ -327,9 +327,9 @@ var SCA = {
         var me = this;
 
         var retval = new Promise(function (resolve, reject) {
-            if (!me.checkEncPass()) {
-                reject(Error("User rejected Password."));
-            }
+//            if (!me.checkEncPass()) {
+//                reject(Error("User rejected Password."));
+//            }
 
             var cs = me.getClonedCypherSettings();
             var iv = new Uint8Array(16);
