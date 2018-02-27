@@ -1,6 +1,7 @@
 const webdriver = require('selenium-webdriver');
 const expect  = require("chai").expect;
 const assert  = require("chai").assert;
+var fs  = require('fs');
 
 const BASE_URL = "http://localhost:8000/public_html/";
 
@@ -10,7 +11,7 @@ exports.TEST_IMPORTED_URL = BASE_URL + "test_imported.html";
 exports.TEST_PASSWORD = "password";
 exports.TEST_HINT = "hint value";
 
-exports.addPassword = async function (driver, service, doClickAdd ,username, password, question, answer) {
+exports.addPassword = async function (driver, doClickAdd, service, username, password, question, answer) {
     
     service = service || 'test service';
     username = username || 'test username';
@@ -43,26 +44,43 @@ exports.addPassword = async function (driver, service, doClickAdd ,username, pas
      * @returns {Promise} when resolved the encryption will be complete. When
      *      rejected, there was a problem with encryption.
      */
-    exports.encryptWith = async function(casper, password, hint, writeToTarget) {
+    exports.encryptThenSaveToFile = async function(driver, password, hint, writeToTarget) {
         
-        var encForm = await driver.findElement(webdriver.By.id('new-entry'));
-        
-        var encValues = {"#enc-password": password, "#enc-hint": hint};
-        casper.fillSelectors('form#encrypt', encValues, false);
+        var encForm = await driver.findElement(webdriver.By.id('encrypt'));
+        await encForm.findElement(webdriver.By.id('enc-password')).sendKeys(password);
+        await encForm.findElement(webdriver.By.id('enc-hint')).sendKeys(hint);
         
         await new Promise(function(resolve, reject) {
-            casper.page.evaluate(function() {
-                var encryptionPromise = SCA.encryptAndEmbedData();
-                // Simulates the user clicking on Encrypt - like executing:
-                // this.click('#do-encrypt');
-                // Without the Casper test hanging at this point, waiting for User to save file
-                encryptionPromise.then(function() {
-                    var testEncryptedHtml = SCA.getDocumentHtml();
-                    fs.write(writeToTarget, testEncryptedHtml);
-                    resolve();
-                }).catch(function(reason) {
-                    reject(reason);
-                });
-            });
+                              
+            driver.executeScript(function() {
+                                     
+                var encryptPromise = SCA.encryptAndEmbedData();
+            
+                return encryptPromise;
+                
+            }).then(function() {
+                resolve(); 
+            });                                  
         });
+        
+        var htmlEnc = await new Promise(function(resolve, reject) {
+                              
+            driver.executeScript(function() {
+                              
+                var encStr = SCA.getDocumentHtml();
+                
+                return encStr;
+                
+            }).then(function(str) {
+                resolve(str); 
+            });                                  
+        });
+
+        await fs.writeFile(writeToTarget, htmlEnc, (err) => {  
+        // throws an error, you could also catch it here
+            if (err) throw err;
+
+            // success case, the file was saved
+            console.log('Encrypted File Saved');
+        });       
     };
