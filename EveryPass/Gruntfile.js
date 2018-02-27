@@ -168,7 +168,7 @@ module.exports = function(grunt) {
               options: {
                 reporter: 'spec',                   
               },
-              src: ['test/mocha_tests.js']
+              src: ['test/mocha_tests.js','../common/test/mocha_common_tests.js']
             } 
         } 
     });

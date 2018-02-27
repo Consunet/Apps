@@ -233,7 +233,9 @@ SCA.encrypt = function() {
  * 
  * @return {Promise} when resolved, encryption is complete and data added to DOM.
  */
-SCA.encryptAndEmbedData = function() {
+SCA.encryptAndEmbedData = function(ignorePwdWarning) {
+    ignorePwdWarning = ignorePwdWarning || false;
+    
     // Check for existing uncommitted password data.
     var newService = SCA.e("new-service").value;
     var newUser = SCA.e("new-username").value;
@@ -256,7 +258,7 @@ SCA.encryptAndEmbedData = function() {
         SCA.e("search").setAttribute("disabled", "");
         
         return Promise.resolve();
-    });
+    }, ignorePwdWarning);
 };
 
 /**
