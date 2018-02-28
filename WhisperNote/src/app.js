@@ -11,6 +11,8 @@
  * </p>
  */
 
+SCA.AppName = "WhisperNote";
+
 /**
  * Reads the chosen file to encrypt and performs the encryption once 
  * the data has been loaded.
@@ -68,10 +70,12 @@ SCA.encryptWithFile = function(arrayBuffer, filename) {
  * 
  * @param {ArrayBuffer} arrayBuffer - the file data to encrypt, if provided.
  * @param {string} filename - the name of the file, if provided.
+ * @param {boolean} skipPasswdWarning - if true, prevents confirmation dialogs related to password strength 
+ * from appearing and halting encryption testing.
  * @return {Promise} when retruned promise is resolved, page data will be 
  *      encrypted and embedded, ready for persistence.
  */
-SCA.encryptAndEmbedData = function(arrayBuffer, filename) {
+SCA.encryptAndEmbedData = function(arrayBuffer, filename, skipPasswdWarning) {
     
     var me = this;
     
@@ -121,7 +125,7 @@ SCA.encryptAndEmbedData = function(arrayBuffer, filename) {
         }
         
         return retval;
-    });
+    }, skipPasswdWarning);
 };
 
 /**
