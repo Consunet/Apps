@@ -31,7 +31,16 @@ exports.encryptWith = async function(driver, password, hint, writeToTarget) {
                               
             driver.executeScript(function() {
                                      
-                var encryptPromise = SCA.encryptAndEmbedData();
+                var encryptPromise; 
+                
+                if(SCA.AppName == "EveryPass")
+                {
+                    encryptPromise = SCA.encryptAndEmbedData(true);
+                }
+                else
+                {
+                    encryptPromise = SCA.encryptAndEmbedData(null, null, true);
+                }
             
                 return encryptPromise;
                 
