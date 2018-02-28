@@ -1,9 +1,8 @@
-const webdriver = require('selenium-webdriver');
-const firefox = require('selenium-webdriver/firefox');
-const logging = require('selenium-webdriver/lib/logging');
-const expect  = require("chai").expect;
-const assert  = require("chai").assert;
-//const SCA = require("../../common/src/common.js")
+
+const webdriver = require('../../common/node_modules/selenium-webdriver');
+const firefox = require('../../common/node_modules/selenium-webdriver/firefox');
+const expect  = require("../../common/node_modules/chai").expect;
+const assert  = require("../../common/node_modules/chai").assert;
 const support = require('./mocha_test_support.js');
 const comsupport = require('../../common/test/mocha_common_support.js');
 
@@ -12,8 +11,8 @@ describe('EveryPass Specific Testing', function() {
             
     var driver;
     
-    before(async function() {   
-                     
+    before(async function() {         
+             
        this.timeout(30000);
     
        console.log("--- launching headless browser and opening page ---");
@@ -23,7 +22,7 @@ describe('EveryPass Specific Testing', function() {
         .setFirefoxOptions(new firefox.Options().headless())
         .build();
     
-       await driver.get(support.TEST_UNENCRYPTED_URL);                                            
+       await driver.get(testVars.TEST_UNENCRYPTED_URL);                                            
     });
     
    after(async function() {
@@ -49,7 +48,7 @@ describe('EveryPass Specific Testing', function() {
         this.timeout(10000);
        
         //refresh the driver
-        await driver.get(support.TEST_UNENCRYPTED_URL);
+        await driver.get(testVars.TEST_UNENCRYPTED_URL);
 
         //getTestData();
         var data = await support.getTestData("www.consunet.com.au");
@@ -88,7 +87,7 @@ describe('EveryPass Specific Testing', function() {
         this.timeout(10000);
         
         //refresh the driver
-        await driver.get(support.TEST_UNENCRYPTED_URL);
+        await driver.get(testVars.TEST_UNENCRYPTED_URL);
 
     	var p0 = await support.getTestData("ABc");
     	var p1 = await support.getTestData("def");
@@ -142,7 +141,7 @@ describe('EveryPass Specific Testing', function() {
         
         this.timeout(10000);
        
-        await driver.get(support.TEST_UNENCRYPTED_URL);
+        await driver.get(testVars.TEST_UNENCRYPTED_URL);
        
         var id = 'p0';
        
@@ -151,7 +150,7 @@ describe('EveryPass Specific Testing', function() {
         //dont submit yet
         await support.addPassword(driver, false, support.getTestData('abc'));  
                       
-        await support.encryptThenSaveToFile(driver, support.TEST_PASSWORD, support.TEST_HINT, "public_html/test_encrypted.html");
+        await comsupport.encryptWith(driver, testVars.TEST_PASSWORD, testVars.TEST_HINT, "public_html/test_encrypted.html");
        
         await support.assertPasswordNotExists(driver, id);
        
@@ -164,7 +163,7 @@ describe('EveryPass Specific Testing', function() {
         this.timeout(10000);
         
         //refresh the driver
-        await driver.get(support.TEST_UNENCRYPTED_URL);
+        await driver.get(testVars.TEST_UNENCRYPTED_URL);
 
         driver.executeScript(async function() {
             var badText = '<meta name="sca-app-type" content="EveryPass">' + '<script id="encrypted-data" type="text/javascript">var encData={"v":1,"iter":100,"ks":256,"ts":128,"mode":"ocb2","cipher":"aes","iv":"3/fid049KhK4Yw/tGhRUGw==","salt":"yQVb651u3aY=","adata":"YSBh","ct":"SPTYJPHQEeE7kcsbTAUgugd+CZ6IaNIc7YXI1WvmcidiOz2dJ9/tn6DkvFBqlBFwPFvFhD5ganzdVeWA6H8Rytu94YbTCGBXzawVV+FFnRjGok53EQ6+I9uRCin95b3Lu4MSd2z+5Y1zAx3+xt5nVe0="};</script>';
@@ -182,7 +181,7 @@ describe('EveryPass Specific Testing', function() {
         this.timeout(10000);
         
         //refresh the driver
-        await driver.get(support.TEST_UNENCRYPTED_URL);
+        await driver.get(testVars.TEST_UNENCRYPTED_URL);
 
     	driver.executeScript(function() {
             var goodText = '<meta name="sca-app-type" content="EveryPass" />' + '<script id="encrypted-data" type="text/javascript">var encData={"v":1,"iter":1000,"ks":256,"ts":128,"mode":"ocb2","cipher":"aes","salt":"9crMqEZL+3I=","iv":"xPZr3cdl6FzORmsbajidRA==","adata":"YQ==","ct":"szz3oOygcA5dq885EWFZSJaCAP8YbJckeDRGlCgn1F5i529fnqFSJvxGaMfVy9nisZ967zgvr52rBA=="};</script>';
@@ -197,12 +196,17 @@ describe('EveryPass Specific Testing', function() {
         
         this.timeout(10000);      
         
-        await driver.get(support.TEST_ENCRYPTED_URL); 
+        await driver.get(testVars.TEST_ENCRYPTED_URL); 
         
+        //check for hint
+        var hintVal = await driver.findElements(webdriver.By.xpath("//*[text()[contains(.,'"+testVars.TEST_HINT+"')]]"));
+        expect(hintVal,"Hint doesn't exist").to.not.be.empty;
+        
+        //perform decrypt
         var encForm = await driver.findElement(webdriver.By.id('decrypt'));
-        await encForm.findElement(webdriver.By.id('dec-password')).sendKeys(support.TEST_PASSWORD);        
+        await encForm.findElement(webdriver.By.id('dec-password')).sendKeys(testVars.TEST_PASSWORD);        
         await encForm.findElement(webdriver.By.id('do-decrypt')).click();   
-        
+                        
         await comsupport.assertBrowserUnsupportedMessageIsShown(driver, false);
         
         var id = 'p0';

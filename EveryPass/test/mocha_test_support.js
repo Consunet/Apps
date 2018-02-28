@@ -1,22 +1,9 @@
-/* 
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
- const webdriver = require('selenium-webdriver');
- const firefox = require('selenium-webdriver/firefox');
- const expect  = require("chai").expect;
- const assert  = require("chai").assert;
- const until = require("selenium-webdriver").until;
- const fs  = require('fs');
 
-const BASE_URL = "http://localhost:8000/public_html/";
+const webdriver = require('../../common/node_modules/selenium-webdriver');
+const firefox = require('../../common/node_modules/selenium-webdriver/firefox');
+const expect  = require("../../common/node_modules/chai").expect;
+const assert  = require("../../common/node_modules/chai").assert;
 
-exports.TEST_UNENCRYPTED_URL = BASE_URL + "en/index.html";
-exports.TEST_ENCRYPTED_URL = BASE_URL + "test_encrypted.html";
-exports.TEST_IMPORTED_URL = BASE_URL + "test_imported.html";
-exports.TEST_PASSWORD = "password";
-exports.TEST_HINT = "hint value";
 
 exports.getTestData = function getTestData(service, username, password, question, answer) {
 		service = service || 'test service';
@@ -142,45 +129,4 @@ exports.search = async function search(driver,text,reset){
 	}
 	await searchBar.sendKeys(text);
 }
-
-exports.encryptThenSaveToFile = async function(driver, password, hint, writeToTarget) {
-        
-        var encForm = await driver.findElement(webdriver.By.id('encrypt'));
-        await encForm.findElement(webdriver.By.id('enc-password')).sendKeys(password);
-        await encForm.findElement(webdriver.By.id('enc-hint')).sendKeys(hint);
-        
-        await new Promise(function(resolve, reject) {
-                              
-            driver.executeScript(function() {
-                                     
-                var encryptPromise = SCA.encryptAndEmbedData(true);
-            
-                return encryptPromise;
-                
-            }).then(function() {
-                resolve(); 
-            });               
-        });
-        
-        var htmlEnc = await new Promise(function(resolve, reject) {
-                              
-            driver.executeScript(function() {
-                              
-                var encStr = SCA.getDocumentHtml();
-                
-                return encStr;
-                
-            }).then(function(str) {
-                resolve(str); 
-            });                                  
-        });
-
-        await fs.writeFile(writeToTarget, htmlEnc, (err) => {  
-        // throws an error, you could also catch it here
-            if (err) throw err;
-
-            // success case, the file was saved
-
-        });       
-};
 
