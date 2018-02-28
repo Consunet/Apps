@@ -12,6 +12,8 @@
  * </p>
  */
 
+SCA.AppName = "EveryPass";
+
 /**
  * An integer which is used to provide a unique ID for password elements.
  * 
@@ -231,10 +233,11 @@ SCA.encrypt = function() {
  * <p>
  * This encryption is performed in an asynchronous manner via the returned Promise.
  * 
- * @param {boolean} noPasswordWarn - if true, prevents errors related to password strength from appearing and halting encryption.
+ * @param {boolean} skipPasswdWarning - if true, prevents confirmation dialogsrelated to password 
+ * strength from appearing and halting encryption testing.
  * @return {Promise} when resolved, encryption is complete and data added to DOM.
  */
-SCA.encryptAndEmbedData = function() {
+SCA.encryptAndEmbedData = function(skipPasswdWarning) {
     
     // Check for existing uncommitted password data.
     var newService = SCA.e("new-service").value;
@@ -258,7 +261,7 @@ SCA.encryptAndEmbedData = function() {
         SCA.e("search").setAttribute("disabled", "");
         
         return Promise.resolve();
-    });
+    }, skipPasswdWarning);
 };
 
 /**

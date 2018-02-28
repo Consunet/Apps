@@ -20,9 +20,7 @@ describe('EveryPass Specific Testing', function() {
        driver = await new webdriver.Builder()
         .forBrowser('firefox')
         .setFirefoxOptions(new firefox.Options().headless())
-        .build();
-    
-       await driver.get(testVars.TEST_UNENCRYPTED_URL);                                            
+        .build();                                         
     });
     
    after(async function() {
@@ -34,11 +32,13 @@ describe('EveryPass Specific Testing', function() {
    it('Can verify basic app details.', async function(){                     
         this.timeout(10000);
        
+        await driver.get(testVars.TEST_UNENCRYPTED_URL); 
+       
         var title = await driver.getTitle();          
         assert.equal(title, 'EveryPass Password Manager v1.4', 'Password manager homepage title is NOT the one expected');
         var help = await driver.findElement(webdriver.By.id('help-screen'));
         var helpText = await help.getAttribute("innerHTML");
-        await assert.include(helpText,"is a Password Manager",'Description exists') 
+        assert.include(helpText,"is a Password Manager",'Description exists') 
    });
     
   
@@ -165,12 +165,14 @@ describe('EveryPass Specific Testing', function() {
         //refresh the driver
         await driver.get(testVars.TEST_UNENCRYPTED_URL);
 
-        driver.executeScript(async function() {
+        await driver.executeScript(async function() {
             var badText = '<meta name="sca-app-type" content="EveryPass">' + '<script id="encrypted-data" type="text/javascript">var encData={"v":1,"iter":100,"ks":256,"ts":128,"mode":"ocb2","cipher":"aes","iv":"3/fid049KhK4Yw/tGhRUGw==","salt":"yQVb651u3aY=","adata":"YSBh","ct":"SPTYJPHQEeE7kcsbTAUgugd+CZ6IaNIc7YXI1WvmcidiOz2dJ9/tn6DkvFBqlBFwPFvFhD5ganzdVeWA6H8Rytu94YbTCGBXzawVV+FFnRjGok53EQ6+I9uRCin95b3Lu4MSd2z+5Y1zAx3+xt5nVe0="};</script>';
             SCA.processImportedFileText(badText); 
         });
+        
         await driver.wait(webdriver.until.alertIsPresent())
         await driver.switchTo().alert().accept();
+        
         await comsupport.assertFormIsLocked(driver, false);
     });
     
@@ -183,7 +185,7 @@ describe('EveryPass Specific Testing', function() {
         //refresh the driver
         await driver.get(testVars.TEST_UNENCRYPTED_URL);
 
-    	driver.executeScript(function() {
+    	await driver.executeScript(function() {
             var goodText = '<meta name="sca-app-type" content="EveryPass" />' + '<script id="encrypted-data" type="text/javascript">var encData={"v":1,"iter":1000,"ks":256,"ts":128,"mode":"ocb2","cipher":"aes","salt":"9crMqEZL+3I=","iv":"xPZr3cdl6FzORmsbajidRA==","adata":"YQ==","ct":"szz3oOygcA5dq885EWFZSJaCAP8YbJckeDRGlCgn1F5i529fnqFSJvxGaMfVy9nisZ967zgvr52rBA=="};</script>';
             SCA.processImportedFileText(goodText);
         });
