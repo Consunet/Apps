@@ -1,0 +1,19 @@
+{
+  "name": "apps",
+  "title": "apps",
+  "homepage": "https://github.com/Consunet/Apps",
+  "author": {
+    "name": "Consunet Pty Ltd",
+    "url": "http://www.consunet.com.au"
+  },
+  "version": "1.2.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Consunet/Apps.git"
+  },
+  "description": "Common",
+  "devDependencies": {
+    "chai": "^4.1.2",
+    "selenium-webdriver": "^4.0.0-alpha.1"
+  }
+}

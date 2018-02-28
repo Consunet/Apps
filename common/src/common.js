@@ -319,20 +319,21 @@ var SCA = {
      * @param {function} callback - a callback to enable specific actions to be
      * taken on the given encrypt parameters. The callback is required to 
      * return a Promise.
+     * @param {boolean} noPasswordWarn - if true, prevents errors related to password strength from appearing and halting encryption.
      * @return {Promise} when resolved page values shall be encrypted and stored
      * ready for persistence.
      */
-    encryptWith: function (callback, ignorePwdWarning) {
+    encryptWith: function (callback) {
+        
 
         var me = this;
 
         var retval = new Promise(function (resolve, reject) {
-            if(!ignorePwdWarning)
-            {
-                if (!me.checkEncPass()) {
-                    reject(Error("User rejected Password."));
-                }
-            }
+       
+//            if (!me.checkEncPass()) {
+//                    reject(Error("User rejected Password."));
+//            }
+          
 
             var cs = me.getClonedCypherSettings();
             var iv = new Uint8Array(16);
