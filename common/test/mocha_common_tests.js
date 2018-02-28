@@ -27,7 +27,7 @@ describe('Common Testing', function() {
               
         driver = await new webdriver.Builder()
         .forBrowser('firefox')
-        //.setFirefoxOptions(new firefox.Options().headless())
+        .setFirefoxOptions(new firefox.Options().headless())
         .build();
 
         await driver.get(TEST_UNENCRYPTED_URL);                                        
@@ -39,6 +39,9 @@ describe('Common Testing', function() {
    });
 
     it('Can see various password strengths', async function(){                     
+        
+        this.timeout(10000);
+        
         await comsupport.setEncryptPass(driver, "asd");
         //test.assertTextExists("Password: Weak", "Weak password detected");
         var textField = await driver.findElements(webdriver.By.xpath("//*[text()[contains(.,'"+"Password: Weak"+"')]]"));
@@ -54,7 +57,11 @@ describe('Common Testing', function() {
         textField = await driver.findElements(webdriver.By.xpath("//*[text()[contains(.,'"+"Password: Strong"+"')]]"));
         await expect(textField,"Strong password not detected").to.not.be.empty;
     });
+    
     it('When bad options are set an error shows.', async function(){
+        
+        this.timeout(10000);
+        
         //refresh the driver
         await driver.get(TEST_UNENCRYPTED_URL);                     
         await comsupport.setCommonOptions(driver, "", "");
@@ -63,8 +70,12 @@ describe('Common Testing', function() {
         var textField = await driver.findElements(webdriver.By.xpath("//*[text()[contains(.,'"+"Invalid filename"+"')]]"));
         await expect(textField,"Bad save filename error doesn't exist").to.not.be.empty;
     });
+    
     //uses encrypted
     it('Can verify basic encrypted data details.', async function(){                     
+        
+        this.timeout(10000);
+        
         //use fresh TEST_ENCRYPTED_URL
         await driver.get(TEST_ENCRYPTED_URL);
         await comsupport.assertFormIsLocked(driver,true);
@@ -74,7 +85,11 @@ describe('Common Testing', function() {
         
         expect(doctype,"Doctype is not present").to.be.equal("html");
     });
+    
     it('Error returned when wrong decrypt password entered.', async function(){                     
+        
+        this.timeout(10000);
+        
         //use fresh TEST_ENCRYPTED_URL
         await driver.get(TEST_ENCRYPTED_URL);
         comsupport.decryptWith(driver, "wrongpassword");

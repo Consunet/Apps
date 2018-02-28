@@ -40,7 +40,7 @@ module.exports.assertFormIsLocked = async function assertFormIsLocked(driver, is
         }
 }
 
-module.exports.assertBrowserUnsupportedMessageIsShown = async function assertBrowserUnsupportedMessageIsShown(test, isShown) {
+module.exports.assertBrowserUnsupportedMessageIsShown = async function assertBrowserUnsupportedMessageIsShown(driver, isShown) {
         var unsupportedStyle = await driver.findElement(webdriver.By.id('unsupported')).getAttribute("style");
         
          if (isShown) {
