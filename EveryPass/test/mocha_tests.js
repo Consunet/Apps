@@ -51,9 +51,7 @@ describe('EveryPass Specific Testing', function() {
         await driver.get(testVars.TEST_UNENCRYPTED_URL);
 
         //getTestData();
-        var data = await support.getTestData("www.consunet.com.au");
-
-	var searchForm = await driver.findElement(webdriver.By.id('new-entry'));
+        var data = support.getTestData("www.consunet.com.au");
 
 	await support.addPassword(driver, true, data);
         var id = 'p0';
@@ -89,11 +87,11 @@ describe('EveryPass Specific Testing', function() {
         //refresh the driver
         await driver.get(testVars.TEST_UNENCRYPTED_URL);
 
-    	var p0 = await support.getTestData("ABc");
-    	var p1 = await support.getTestData("def");
-    	var p2 = await support.getTestData("ghi");
-    	var p3 = await support.getTestData("jkl");
-    	var p4 = await support.getTestData("abcd");
+    	var p0 = support.getTestData("ABc");
+    	var p1 = support.getTestData("def");
+    	var p2 = support.getTestData("ghi");
+    	var p3 = support.getTestData("jkl");
+    	var p4 = support.getTestData("abcd");
 
     	await support.addPassword(driver, true, p0);
     	await support.addPassword(driver, true, p1);
