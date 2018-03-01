@@ -19,9 +19,7 @@ describe('Common Testing', function() {
         driver = await new webdriver.Builder()
         .forBrowser('firefox')
         .setFirefoxOptions(new firefox.Options().headless())
-        .build();
-
-        await driver.get(testVars.TEST_UNENCRYPTED_URL);                                        
+        .build();                                           
     });
 
    after(async function() {
@@ -32,6 +30,8 @@ describe('Common Testing', function() {
     it('Can see various password strengths', async function(){                     
         
         this.timeout(10000);
+        
+        await driver.get(testVars.TEST_UNENCRYPTED_URL);   
         
         await comsupport.setEncryptPass(driver, "asd");
         //test.assertTextExists("Password: Weak", "Weak password detected");

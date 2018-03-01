@@ -13,14 +13,6 @@ module.exports.openOptions = async function openOptions(driver,confirmDel){
     }
 }
 
-//module.exports.encryptWith = async function encryptWith(driver, password, hint, writeToTarget){
-//    await driver.findElement(webdriver.By.id('enc-password')).sendKeys(password);
-//    await driver.findElement(webdriver.By.id('enc-hint')).sendKeys(hint);
-//
-//    //heres where casper simulates encryption and writes to file due to hanging
-//    await driver.findElement(webdriver.By.id('do-encrypt')).click();
-//}
-
 exports.encryptWith = async function(driver, password, hint, writeToTarget) {
         
         var encForm = await driver.findElement(webdriver.By.id('encrypt'));
