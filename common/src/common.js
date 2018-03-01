@@ -214,7 +214,7 @@ var SCA = {
             SCA.doOnload();
         } catch (e) {
             console.log(e);
-            alert("<%= ImportFailed %>:" + e);
+            alert("<%= ImportFailed %>" + e);
         }
     },
     /**
@@ -325,19 +325,18 @@ var SCA = {
      * ready for persistence.
      */
     encryptWith: function (callback, skipPasswdWarning) {
-        
 
         var me = this;
 
         var retval = new Promise(function (resolve, reject) {
-            
+       
             if(!skipPasswdWarning)
             {
                 if (!me.checkEncPass()) {
                     reject(Error("User rejected Password."));
                 }
             }
-                    
+
             var cs = me.getClonedCypherSettings();
             var iv = new Uint8Array(16);
             window.crypto.getRandomValues(iv);
@@ -871,16 +870,22 @@ var SCA = {
         var minutes = this.padNum(Math.floor(this.timeoutValueSecs / 60.0) % 60);
         var hours = this.padNum(Math.floor(this.timeoutValueSecs / 3600.0));
         var secs = this.padNum(this.timeoutValueSecs % 60);
-
+        if(secs<0 && this.getTimeout()!=0){
+            secs=padNum(0);
+        }
+        if(hours<0){
+            hours=padNum(0);
+        }
+        if(minutes<0){
+            minutes=padNum(0);
+        }
         var timeoutStr = hours + ":" + minutes + ":" + secs;
-
         // Make red if timeout is less than or equal to 30
         if (this.timeoutValueSecs <= 30) {
             this.addClass("timeout-value", "red");
         } else {
             this.removeClass("timeout-value", "red");
         }
-
         this.e("timeout-value").innerHTML = timeoutStr;
     },
     /**
