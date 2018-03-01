@@ -217,4 +217,5 @@ module.exports = function(grunt) {
     // Default task.
     grunt.registerTask('default', ['clean', 'concat', 'uglify', 'uncss', 'imageEmbed', 'cssmin', 'replace', 'buildhtml', 'htmlmin', 'i18n', 'connect'/*, 'casper'*/, 'mochaTest']);
     grunt.registerTask('debug', ['clean', 'concat', 'uncss', 'imageEmbed', 'replace', 'cssmin', 'builddebug', 'i18n', 'connect'/*, 'casper'*/, 'mochaTest']);
+    grunt.registerTask('notest', ['clean', 'concat', 'uglify', 'uncss', 'imageEmbed', 'cssmin', 'replace', 'buildhtml', 'htmlmin', 'i18n', 'connect']);
 };
