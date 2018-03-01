@@ -13,5 +13,5 @@ exports.assertNoteText = async function assertNoteText(driver, expectedText) {
             return document.getElementById("payload").value;
         });
         
-         expect(msg,"Couldn't find expected test message: " + expectedText).to.be.equal(expectedText);
+        expect(msg,"Couldn't find expected test message: " + expectedText).to.be.equal(expectedText);
 }
