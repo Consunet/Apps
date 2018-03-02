@@ -24,6 +24,9 @@ describe('EveryPass Specific Testing', function() {
     });
     
    after(async function() {
+       
+       await comsupport.refreshCoverage(driver);
+       
        console.log("------------ closing headless browser -------------");
        await driver.quit();
    });
@@ -48,6 +51,7 @@ describe('EveryPass Specific Testing', function() {
         this.timeout(10000);
        
         //refresh the driver
+        await comsupport.refreshCoverage(driver);
         await driver.get(testVars.TEST_UNENCRYPTED_URL);
 
         //getTestData();
@@ -85,6 +89,7 @@ describe('EveryPass Specific Testing', function() {
         this.timeout(10000);
         
         //refresh the driver
+        await comsupport.refreshCoverage(driver);
         await driver.get(testVars.TEST_UNENCRYPTED_URL);
 
     	var p0 = support.getTestData("ABc");
@@ -139,6 +144,7 @@ describe('EveryPass Specific Testing', function() {
         
         this.timeout(10000);
        
+        await comsupport.refreshCoverage(driver);
         await driver.get(testVars.TEST_UNENCRYPTED_URL);
        
         var id = 'p0';
@@ -148,7 +154,7 @@ describe('EveryPass Specific Testing', function() {
         //dont submit yet
         await support.addPassword(driver, false, support.getTestData('abc'));  
                       
-        await comsupport.encryptWith(driver, testVars.TEST_PASSWORD, testVars.TEST_HINT, "public_html/test_encrypted.html");
+        await comsupport.encryptWith(driver, testVars.TEST_PASSWORD, testVars.TEST_HINT, "public_html/en/test_encrypted.html");
        
         await support.assertPasswordNotExists(driver, id);
        
@@ -161,6 +167,7 @@ describe('EveryPass Specific Testing', function() {
         this.timeout(10000);
         
         //refresh the driver
+        await comsupport.refreshCoverage(driver);
         await driver.get(testVars.TEST_UNENCRYPTED_URL);
 
         await driver.executeScript(async function() {
@@ -181,6 +188,7 @@ describe('EveryPass Specific Testing', function() {
         this.timeout(10000);
         
         //refresh the driver
+        await comsupport.refreshCoverage(driver);
         await driver.get(testVars.TEST_UNENCRYPTED_URL);
 
     	await driver.executeScript(function() {
@@ -196,6 +204,7 @@ describe('EveryPass Specific Testing', function() {
         
         this.timeout(10000);      
         
+        await comsupport.refreshCoverage(driver);
         await driver.get(testVars.TEST_ENCRYPTED_URL); 
         
         //check for hint
@@ -220,7 +229,7 @@ describe('EveryPass Specific Testing', function() {
         await support.assertPasswordBodyHidden(driver, id);
         await support.togglePwd(driver, id);
         await support.assertPasswordBodyShown(driver, id);
-        await support.verifyDataMatches(driver, id, support.getTestData("abc"));        
+        await support.verifyDataMatches(driver, id, support.getTestData("abc"));               
     });
 });
 

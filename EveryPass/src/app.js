@@ -12,7 +12,6 @@
  * </p>
  */
 
-SCA.AppName = "EveryPass";
 
 /**
  * An integer which is used to provide a unique ID for password elements.

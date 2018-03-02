@@ -24,10 +24,10 @@ module.exports = function(grunt) {
                     'lib/encoding-indexes.js',
                     'lib/encoding.js',
                     'lib/webcrypto-shim.js',
-                    '../common/src/constants.js',
-                    '../common/src/common.js',
-                    'src/constants.js',
-                    'src/app.js'
+                    '../common/src/constants_instr.js',
+                    '../common/src/common_instr.js',
+                    'src/constants_instr.js',
+                    'src/app_instr.js'
                 ],
                 dest: 'dist/<%= pkg.name %>.js'
             },
@@ -170,12 +170,29 @@ module.exports = function(grunt) {
                 require: [
                    function(){ 
                         testVars = require('./test/mocha_test_vars.js');
-                   },
+                   },                                                        
                 ]
               },
               src: ['test/mocha_tests.js','../common/test/mocha_common_tests.js']
             } 
-        } 
+        }, 
+        express: {
+            options: {
+              // Override defaults here
+              port: 8888,
+            },
+            dev: {
+              options: {
+                script: '../common/coverage_server.js'
+              }
+            },           
+        },  
+        curl: {
+        'coverage-download': {
+          src: 'http://localhost:8888/coverage/download',
+          dest: 'test/EveryPass_coverage.zip'
+        }
+      }
     });
 
     grunt.loadNpmTasks('grunt-contrib-clean');
@@ -191,6 +208,9 @@ module.exports = function(grunt) {
     grunt.loadNpmTasks('grunt-i18n');
     grunt.loadNpmTasks('grunt-image-embed');
     grunt.loadNpmTasks('grunt-mocha-test');
+    grunt.loadNpmTasks('grunt-express-server');
+    grunt.loadNpmTasks('grunt-curl');
+        
     
     grunt.template.addDelimiters("curly", "{{", "}}");
 
@@ -215,7 +235,8 @@ module.exports = function(grunt) {
     });
 
     // Default task.
-    grunt.registerTask('default', ['clean', 'concat', 'uglify', 'uncss', 'imageEmbed', 'cssmin', 'replace', 'buildhtml', 'htmlmin', 'i18n', 'connect'/*, 'casper'*/, 'mochaTest']);
+    grunt.registerTask('default', ['clean', 'concat', 'uglify', 'uncss', 'imageEmbed', 'cssmin', 'replace', 'buildhtml', 'htmlmin', 'i18n', 'connect'/*, 'casper'*/, 'express:dev', 'mochaTest', 'curl:coverage-download']);
     grunt.registerTask('debug', ['clean', 'concat', 'uncss', 'imageEmbed', 'replace', 'cssmin', 'builddebug', 'i18n', 'connect'/*, 'casper'*/, 'mochaTest']);
+    grunt.registerTask('debugnotest', ['clean', 'concat', 'uncss', 'imageEmbed', 'replace', 'cssmin', 'builddebug', 'i18n', 'connect']);
     grunt.registerTask('notest', ['clean', 'concat', 'uglify', 'uncss', 'imageEmbed', 'cssmin', 'replace', 'buildhtml', 'htmlmin', 'i18n', 'connect']);
 };
