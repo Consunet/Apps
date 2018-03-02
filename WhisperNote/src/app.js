@@ -11,7 +11,6 @@
  * </p>
  */
 
-SCA.AppName = "WhisperNote";
 
 /**
  * Reads the chosen file to encrypt and performs the encryption once 

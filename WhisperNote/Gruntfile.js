@@ -24,10 +24,10 @@ module.exports = function(grunt) {
                     'lib/encoding-indexes.js',
                     'lib/encoding.js',
                     'lib/webcrypto-shim.js',
-                    '../common/src/constants.js',
-                    '../common/src/common.js',
-                    'src/constants.js',
-                    'src/app.js'
+                    '../common/src/constants_instr.js',
+                    '../common/src/common_instr.js',
+                    'src/constants_instr.js',
+                    'src/app_instr.js'
                 ],
                 dest: 'dist/<%= pkg.name %>.js'
             },
