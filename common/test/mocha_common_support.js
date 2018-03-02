@@ -2,6 +2,33 @@ const webdriver = require('selenium-webdriver');
 const expect  = require("chai").expect;
 const assert  = require("chai").assert;
 const fs  = require('fs');
+var http = require("http");
+
+
+module.exports.refreshCoverage = async function(driver)
+{
+      // post coverage info
+        await driver.switchTo().defaultContent();
+        await driver.executeScript("return window.__coverage__;").then(function (obj) {                  
+                        
+            var str = JSON.stringify(obj);                                  
+                                            
+            var options = {
+                port: 8888,
+                host: "localhost",
+                path: "/coverage/client",
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                }
+            };
+            var req = http.request(options, function (res) {
+                //done();
+            });
+            req.write(str);
+            req.end();
+       });
+}
 
 
 module.exports.openOptions = async function openOptions(driver,confirmDel){
@@ -25,13 +52,13 @@ exports.encryptWith = async function(driver, password, hint, writeToTarget) {
                                      
                 var encryptPromise; 
                 
-                if(SCA.AppName == "EveryPass")
-                {
-                    encryptPromise = SCA.encryptAndEmbedData(true);
-                }
-                else
+                if(CONST.appName == 'WhisperNote')
                 {
                     encryptPromise = SCA.encryptAndEmbedData(null, null, true);
+                }
+                else
+                {               
+                   encryptPromise = SCA.encryptAndEmbedData(true);
                 }
             
                 return encryptPromise;

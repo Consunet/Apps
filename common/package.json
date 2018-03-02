@@ -14,6 +14,8 @@
   "description": "Common",
   "devDependencies": {
     "chai": "^4.1.2",
+    "istanbul-middleware": "^0.2.2",
     "selenium-webdriver": "^4.0.0-alpha.1"
-  }
+  },
+  "dependencies": {}
 }
