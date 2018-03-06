@@ -14,7 +14,7 @@ describe('Common Testing', function() {
     before(async function() {   
            
        this.timeout(30000);
-       console.log("--- launching headless browser and opening page ---");
+       console.log("------------ opening headless browser -------------");
               
         driver = await new webdriver.Builder()
         .forBrowser('firefox')
@@ -24,7 +24,7 @@ describe('Common Testing', function() {
 
    after(async function() {
        
-       await comsupport.refreshCoverage(driver);
+       if(getCoverage){await comsupport.refreshCoverage(driver)};
        
        console.log("------------ closing headless browser -------------");
        await driver.quit();
@@ -57,7 +57,7 @@ describe('Common Testing', function() {
         this.timeout(10000);
         
         //refresh the driver
-        await comsupport.refreshCoverage(driver);
+        if(getCoverage){await comsupport.refreshCoverage(driver)};
         await driver.get(testVars.TEST_UNENCRYPTED_URL);                     
         await comsupport.setCommonOptions(driver, "", "");
         await comsupport.sendKeysOptionSaveFilename(driver, "#$*&Y");
@@ -72,7 +72,7 @@ describe('Common Testing', function() {
         this.timeout(10000);
         
         //use fresh TEST_ENCRYPTED_URL
-        await comsupport.refreshCoverage(driver);
+        if(getCoverage){await comsupport.refreshCoverage(driver)};
         await driver.get(testVars.TEST_ENCRYPTED_URL);
         await comsupport.assertFormIsLocked(driver,true);
         var doctype = await driver.executeScript(function() {
@@ -87,7 +87,7 @@ describe('Common Testing', function() {
         this.timeout(10000);
         
         //use fresh TEST_ENCRYPTED_URL
-        await comsupport.refreshCoverage(driver);
+        if(getCoverage){await comsupport.refreshCoverage(driver)};
         await driver.get(testVars.TEST_ENCRYPTED_URL);
         await comsupport.decryptWith(driver, "wrongpassword");
         //test.assertTextExists(TEST_HINT, "Hint exists");
