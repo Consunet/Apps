@@ -14,7 +14,7 @@ describe('WhisperNote Testing', function() {
     before(async function() {   
            
        this.timeout(30000);
-       console.log("--- launching headless browser and opening page ---");
+       console.log("------------ opening headless browser -------------");
               
        driver = await new webdriver.Builder()
        .forBrowser('firefox')
@@ -24,7 +24,7 @@ describe('WhisperNote Testing', function() {
 
    after(async function() {    
        
-       await comsupport.refreshCoverage(driver);
+       if(getCoverage){await comsupport.refreshCoverage(driver)};
        
        console.log("------------ closing headless browser -------------");
        await driver.quit();
@@ -64,7 +64,7 @@ describe('WhisperNote Testing', function() {
       this.timeout(10000);
       
       //refresh the driver
-      await comsupport.refreshCoverage(driver);
+      if(getCoverage){await comsupport.refreshCoverage(driver)};
       await driver.get(testVars.TEST_UNENCRYPTED_URL);
       
       await driver.executeScript(async function() {
@@ -83,7 +83,7 @@ describe('WhisperNote Testing', function() {
       this.timeout(10000);
         
       //refresh the driver
-      await comsupport.refreshCoverage(driver);
+      if(getCoverage){await comsupport.refreshCoverage(driver)};
       await driver.get(testVars.TEST_UNENCRYPTED_URL);
         
       await driver.executeScript(function() {
@@ -99,7 +99,7 @@ it('Can do decrypt of encrypted file.', async function(){
         this.timeout(10000);
     
         //use fresh TEST_ENCRYPTED_URL
-        await comsupport.refreshCoverage(driver);
+        if(getCoverage){await comsupport.refreshCoverage(driver)};
         await driver.get(testVars.TEST_ENCRYPTED_URL);
         
         await comsupport.decryptWith(driver, "password")

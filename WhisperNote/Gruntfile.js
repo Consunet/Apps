@@ -10,12 +10,12 @@ module.exports = function(grunt) {
                 '* Copyright (c) <%= grunt.template.today("yyyy") %> <%= pkg.author.name %>;' +
                 '*/\n',
         // Task configuration.
-        clean: ["dist/*", "public_html/*"],
+        clean: ["dist/*", "public_html/*", "coverage/*"],
         concat: {
             options: {
                 stripBanners: true
             },
-            js: {
+            no_coverage_js: {
                 src: [
                     'lib/sjcl.js',
                     'lib/Blob.js',
@@ -24,10 +24,26 @@ module.exports = function(grunt) {
                     'lib/encoding-indexes.js',
                     'lib/encoding.js',
                     'lib/webcrypto-shim.js',
-                    '../common/src/constants_instr.js',
-                    '../common/src/common_instr.js',
-                    'src/constants_instr.js',
-                    'src/app_instr.js'
+                    '../common/src/constants.js',
+                    '../common/src/common.js',
+                    'src/constants.js',
+                    'src/app.js'
+                ],
+                dest: 'dist/<%= pkg.name %>.js'
+            },
+            coverage_js: {
+                src: [
+                    'lib/sjcl.js',
+                    'lib/Blob.js',
+                    'lib/FileSaver.js',
+                    'lib/es6-promise.js',
+                    'lib/encoding-indexes.js',
+                    'lib/encoding.js',
+                    'lib/webcrypto-shim.js',
+                    '../common/coverage/_constants.js',
+                    '../common/coverage/_common.js',
+                    'coverage/_constants.js',
+                    'coverage/_app.js'
                 ],
                 dest: 'dist/<%= pkg.name %>.js'
             },
@@ -42,7 +58,11 @@ module.exports = function(grunt) {
         },
         uglify: {
             dist: {
-                src: '<%= concat.js.dest %>',
+                src: '<%= concat.no_coverage_js.dest %>',
+                dest: 'dist/<%= pkg.name %>.min.js'
+            },
+            coverage: {
+                src: '<%= concat.coverage_js.dest %>',
                 dest: 'dist/<%= pkg.name %>.min.js'
             }
         },
@@ -77,17 +97,6 @@ module.exports = function(grunt) {
                     output: 'public_html/',
                     format: 'default'
                 }
-            }
-        },
-        casper: {
-            options: {
-                test: true,
-                'log-level': 'warning',
-                'fail-fast': true,
-                includes: ['test/tests_support.js', '../common/test/common_support.js']
-            },
-            functionalTests: {
-                src: ['../common/test/common_tests.js', 'test/tests.js']
             }
         },
         connect: {
@@ -170,12 +179,61 @@ module.exports = function(grunt) {
                 require: [
                    function(){ 
                         testVars = require('./test/mocha_test_vars.js');
-                   },
+                        getCoverage = false;
+                   },                                                        
                 ]
               },
               src: ['test/mocha_tests.js','../common/test/mocha_common_tests.js']
-            } 
-        } 
+            }, 
+            testWithCoverage: {
+              options: {
+                reporter: 'spec',   
+                require: [
+                   function(){ 
+                        testVars = require('./test/mocha_test_vars.js');
+                        getCoverage = true;
+                   },                                                        
+                ]
+              },
+              src: ['test/mocha_tests.js','../common/test/mocha_common_tests.js']
+            }
+        },  
+        express: {
+            options: {
+              // Override defaults here
+              port: 8888,
+            },
+            dev: {
+              options: {
+                script: '../common/coverage_server.js'
+              }
+            },           
+        },  
+        curl: {
+            'coverage-download': {
+              src: 'http://localhost:8888/coverage/download',
+              dest: 'coverage/coverage_data.zip'
+            },
+        },
+  	shell: {      
+            instrumentScripts: {
+                command: [
+                    'cd src/',
+                    'istanbul instrument app.js --output ../coverage/_app.js --embed-source true',
+                    'istanbul instrument constants.js --output ../coverage/_constants.js --embed-source true',
+                    'cd ../../common/src',
+                    'istanbul instrument common.js --output ../coverage/_common.js --embed-source true',
+                    'istanbul instrument constants.js --output ../coverage/_constants.js --embed-source true'                      
+                ].join('&&')
+	    },
+            extractReport: {
+                command: [
+                    'cd coverage/',    
+                    'unzip -o coverage_data.zip -d report/',                                                      
+                    'sensible-browser report/lcov-report/index.html'
+                ].join('&&')
+	    }
+        }
     });
 
     grunt.loadNpmTasks('grunt-contrib-clean');
@@ -184,13 +242,15 @@ module.exports = function(grunt) {
     grunt.loadNpmTasks('grunt-contrib-htmlmin');
     grunt.loadNpmTasks('grunt-contrib-cssmin');
     grunt.loadNpmTasks('grunt-contrib-watch');
-    grunt.loadNpmTasks('grunt-contrib-connect');
-    grunt.loadNpmTasks('grunt-casper');
+    grunt.loadNpmTasks('grunt-contrib-connect');    
     grunt.loadNpmTasks('grunt-uncss');
     grunt.loadNpmTasks('grunt-text-replace');
     grunt.loadNpmTasks('grunt-i18n');
     grunt.loadNpmTasks('grunt-image-embed');
     grunt.loadNpmTasks('grunt-mocha-test');
+    grunt.loadNpmTasks('grunt-express-server');
+    grunt.loadNpmTasks('grunt-curl');
+    grunt.loadNpmTasks('grunt-shell');   
 
     grunt.template.addDelimiters("curly", "{{", "}}");
 
@@ -215,7 +275,8 @@ module.exports = function(grunt) {
     });
 
     // Default task.
-    grunt.registerTask('default', ['clean', 'concat', 'uglify', 'uncss', 'imageEmbed', 'cssmin', 'replace', 'buildhtml', 'htmlmin', 'i18n', 'connect'/*, 'casper'*/, 'mochaTest']);
-    grunt.registerTask('debug', ['clean', 'concat', 'uncss', 'imageEmbed', 'replace', 'cssmin', 'builddebug', 'i18n', 'connect'/*, 'casper'*/, 'mochaTest']);
-    grunt.registerTask('notest', ['clean', 'concat', 'uglify', 'uncss', 'imageEmbed', 'cssmin', 'replace', 'buildhtml', 'htmlmin', 'i18n', 'connect']);
+    grunt.registerTask('default', ['clean', 'concat:no_coverage_js', 'concat:css', 'uglify:dist', 'uncss', 'imageEmbed', 'cssmin', 'replace', 'buildhtml', 'htmlmin', 'i18n', 'connect', 'mochaTest:test']);
+    grunt.registerTask('coverage', ['clean', 'shell:instrumentScripts','concat:coverage_js', 'concat:css', 'uglify:coverage', 'uncss', 'imageEmbed', 'cssmin', 'replace', 'buildhtml', 'htmlmin', 'i18n', 'connect', 'express:dev', 'mochaTest:testWithCoverage', 'curl:coverage-download', 'shell:extractReport']);
+    grunt.registerTask('debug', ['clean', 'concat:no_coverage_js', 'concat:css', 'uncss', 'imageEmbed', 'replace', 'cssmin', 'builddebug', 'i18n', 'connect','mochaTest:test']);
+    grunt.registerTask('notest', ['clean', 'concat:no_coverage_js', 'concat:css', 'uglify:dist', 'uncss', 'imageEmbed', 'cssmin', 'replace', 'buildhtml', 'htmlmin', 'i18n', 'connect']);
 };
