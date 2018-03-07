@@ -196,6 +196,17 @@ module.exports = function(grunt) {
                 ]
               },
               src: ['test/mocha_tests.js','../common/test/mocha_common_tests.js']
+            },
+            manualCoverage: {
+              options: {
+                reporter: 'spec',   
+                require: [
+                   function(){ 
+                        testVars = require('./test/mocha_test_vars.js');
+                   },                                                        
+                ]
+              },
+              src: ['../common/test/manual_coverage.js']
             }
         },  
         express: {
@@ -277,6 +288,8 @@ module.exports = function(grunt) {
     // Default task.
     grunt.registerTask('default', ['clean', 'concat:no_coverage_js', 'concat:css', 'uglify:dist', 'uncss', 'imageEmbed', 'cssmin', 'replace', 'buildhtml', 'htmlmin', 'i18n', 'connect', 'mochaTest:test']);
     grunt.registerTask('coverage', ['clean', 'shell:instrumentScripts','concat:coverage_js', 'concat:css', 'uglify:coverage', 'uncss', 'imageEmbed', 'cssmin', 'replace', 'buildhtml', 'htmlmin', 'i18n', 'connect', 'express:dev', 'mochaTest:testWithCoverage', 'curl:coverage-download', 'shell:extractReport']);
+    grunt.registerTask('manualcoverage', ['clean', 'shell:instrumentScripts', 'concat:coverage_js', 'concat:css', 'uglify:coverage', 'uncss', 'imageEmbed', 'cssmin', 'replace', 'buildhtml', 'htmlmin', 'i18n', 'connect','express:dev', 'mochaTest:manualCoverage', 'curl:coverage-download', 'shell:extractReport']);
+    grunt.registerTask('dualcoverage', ['clean', 'shell:instrumentScripts', 'concat:coverage_js', 'concat:css', 'uglify:coverage', 'uncss', 'imageEmbed', 'cssmin', 'replace', 'buildhtml', 'htmlmin', 'i18n', 'connect','express:dev', 'mochaTest:testWithCoverage','mochaTest:manualCoverage', 'curl:coverage-download', 'shell:extractReport']);
     grunt.registerTask('debug', ['clean', 'concat:no_coverage_js', 'concat:css', 'uncss', 'imageEmbed', 'replace', 'cssmin', 'builddebug', 'i18n', 'connect','mochaTest:test']);
     grunt.registerTask('notest', ['clean', 'concat:no_coverage_js', 'concat:css', 'uglify:dist', 'uncss', 'imageEmbed', 'cssmin', 'replace', 'buildhtml', 'htmlmin', 'i18n', 'connect']);
 };
