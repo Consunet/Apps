@@ -38,7 +38,7 @@ describe('EveryPass Specific Testing', function () {
         while(!closedBrowser)
         {
             try
-            {          
+            {                 
                 await comsupport.refreshCoverage(driver);                
                 // browser is open
             }         
@@ -47,10 +47,8 @@ describe('EveryPass Specific Testing', function () {
                 closedBrowser = true;                                             
             }
             
-            sleep(1000);
-        }
-        
-        console.log("Browser Close Detected");
+            await sleep(1000);
+        }       
     });    
 });
 

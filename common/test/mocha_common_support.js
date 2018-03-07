@@ -30,9 +30,11 @@ module.exports.refreshCoverage = async function (driver)
             req.end();
         } catch (e)
         {
-            //fail likely due to closed browser
+           console.log("Error in coverage post:"+e);
         }
     });
+
+
 }
 
 

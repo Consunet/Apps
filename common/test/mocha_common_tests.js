@@ -116,6 +116,7 @@ describe('Common Testing', function () {
         var textField = await driver.findElements(webdriver.By.xpath("//*[text()[contains(.,'" + "Incorrect password, or data has been corrupted" + "')]]"));
         expect(textField, "Bad password error doesn't exists").to.not.be.empty;
     });
+    
     it('If help closed, it will reset after encrypt.', async function () {
 
         //sets test timeout to 10s
