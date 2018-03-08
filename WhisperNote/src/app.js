@@ -69,12 +69,10 @@ SCA.encryptWithFile = function(arrayBuffer, filename) {
  * 
  * @param {ArrayBuffer} arrayBuffer - the file data to encrypt, if provided.
  * @param {string} filename - the name of the file, if provided.
- * @param {boolean} skipPasswdWarning - if true, prevents confirmation dialogs related to password strength 
- * from appearing and halting encryption testing.
  * @return {Promise} when retruned promise is resolved, page data will be 
  *      encrypted and embedded, ready for persistence.
  */
-SCA.encryptAndEmbedData = function(arrayBuffer, filename, skipPasswdWarning) {
+SCA.encryptAndEmbedData = function(arrayBuffer, filename) {
     
     var me = this;
     
@@ -124,7 +122,7 @@ SCA.encryptAndEmbedData = function(arrayBuffer, filename, skipPasswdWarning) {
         }
         
         return retval;
-    }, skipPasswdWarning);
+    });
 };
 
 /**

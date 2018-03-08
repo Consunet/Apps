@@ -16,9 +16,15 @@ describe('WhisperNote Testing', function () {
         this.timeout(30000);
         console.log("------------ opening headless browser -------------");
 
+        var fxoptions = new firefox.Options()
+        fxoptions.setProfile(comsupport.commonFullPath()+"/Firefox_profile")
+        fxoptions.setPreference("browser.download.dir", __dirname+"/test_downloads"); 
+        fxoptions.setPreference("browser.download.folderList",2);
+        fxoptions.headless();
+              
         driver = await new webdriver.Builder()
                 .forBrowser('firefox')
-                .setFirefoxOptions(new firefox.Options().headless())
+                .setFirefoxOptions(fxoptions)
                 .build();
     });
 
@@ -31,6 +37,12 @@ describe('WhisperNote Testing', function () {
 
         console.log("------------ closing headless browser -------------");
         await driver.quit();
+    });
+
+    afterEach(async function () {
+        if (getCoverage) {
+            await comsupport.refreshCoverage(driver)
+        }        
     });
 
     it('Can verify basic app details.', async function () {
@@ -51,12 +63,19 @@ describe('WhisperNote Testing', function () {
         //sets test timeout to 10s
         this.timeout(10000);
 
+        await comsupport.setCommonOptions(driver, "test_encrypted", 2);
+
         await support.addNote(driver, testVars.TEST_MESSAGE);
 
         // Do encrypt
-        await comsupport.encryptWith(driver, testVars.TEST_PASSWORD, testVars.TEST_HINT, "public_html/test_encrypted.html");
+        await comsupport.encryptWith(driver, testVars.TEST_PASSWORD, testVars.TEST_HINT);
+        
+        await sleep(1000);
+        
         // Note should be deleted on encryption
         await support.assertNoteText(driver, '');
+        
+        require('fs').copyFileSync('test/test_downloads/test_encrypted.html', 'public_html/test_encrypted.html');
     });
 
     //The test 'Can verify basic encrypted data details.' is done in common test already. Was not brought over from casper.
@@ -66,11 +85,7 @@ describe('WhisperNote Testing', function () {
         //sets test timeout to 10s
         this.timeout(10000);
 
-        //refresh the driver
-        if (getCoverage) {
-            await comsupport.refreshCoverage(driver)
-        }
-        
+            
         await driver.get(testVars.TEST_UNENCRYPTED_URL);
 
         await driver.executeScript(async function () {
@@ -89,10 +104,7 @@ describe('WhisperNote Testing', function () {
         this.timeout(10000);
 
         //refresh the driver
-        if (getCoverage) {
-            await comsupport.refreshCoverage(driver)
-        }
-        
+     
         await driver.get(testVars.TEST_UNENCRYPTED_URL);
 
         await driver.executeScript(function () {
@@ -108,9 +120,7 @@ describe('WhisperNote Testing', function () {
         this.timeout(10000);
 
         //use fresh TEST_ENCRYPTED_URL
-        if (getCoverage) {
-            await comsupport.refreshCoverage(driver)
-        }        
+          
         await driver.get(testVars.TEST_ENCRYPTED_URL);
 
         await comsupport.decryptWith(driver, "password")
@@ -127,9 +137,7 @@ describe('WhisperNote Testing', function () {
         this.timeout(10000);
         
         //refresh the driver
-        if (getCoverage) {
-            await comsupport.refreshCoverage(driver)
-        }    
+         
         await driver.get(testVars.TEST_UNENCRYPTED_URL);
 
         //import v1.2 file
@@ -155,9 +163,7 @@ describe('WhisperNote Testing', function () {
         this.timeout(10000);
         
         //refresh the driver
-        if (getCoverage) {
-            await comsupport.refreshCoverage(driver)
-        }    
+       
         await driver.get(testVars.TEST_UNENCRYPTED_URL);
 
         //uses the import from import good test above but twice
@@ -177,3 +183,7 @@ describe('WhisperNote Testing', function () {
     });
 
 });
+
+function sleep(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}

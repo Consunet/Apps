@@ -10,7 +10,7 @@ module.exports = function(grunt) {
                 '* Copyright (c) <%= grunt.template.today("yyyy") %> <%= pkg.author.name %>;' +
                 '*/\n',
         // Task configuration.
-        clean: ["dist/*", "public_html/*", "coverage/*"],
+        clean: ["dist/*", "public_html/*", "coverage/*", "test/test_downloads/*"],
         concat: {
             options: {
                 stripBanners: true
@@ -237,6 +237,18 @@ module.exports = function(grunt) {
                     'istanbul instrument constants.js --output ../coverage/_constants.js --embed-source true'                      
                 ].join('&&')
 	    },
+            extractFirefoxProfile: {
+                command: [
+                    'cd ../common/test/',                    
+                    'unzip -o Firefox_profile.zip', 
+                ].join('&&')
+	    },
+            cleanupFirefoxProfile: {
+                command: [
+                    'cd ../common/test/',                    
+                    'rm Firefox_profile -r', 
+                ].join('&&')
+	    },
             extractReport: {
                 command: [
                     'cd coverage/',    
@@ -286,10 +298,10 @@ module.exports = function(grunt) {
     });
 
     // Default task.
-    grunt.registerTask('default', ['clean', 'concat:no_coverage_js', 'concat:css', 'uglify:dist', 'uncss', 'imageEmbed', 'cssmin', 'replace', 'buildhtml', 'htmlmin', 'i18n', 'connect', 'mochaTest:test']);
-    grunt.registerTask('coverage', ['clean', 'shell:instrumentScripts','concat:coverage_js', 'concat:css', 'uglify:coverage', 'uncss', 'imageEmbed', 'cssmin', 'replace', 'buildhtml', 'htmlmin', 'i18n', 'connect', 'express:dev', 'mochaTest:testWithCoverage', 'curl:coverage-download', 'shell:extractReport']);
-    grunt.registerTask('manualcoverage', ['clean', 'shell:instrumentScripts', 'concat:coverage_js', 'concat:css', 'uglify:coverage', 'uncss', 'imageEmbed', 'cssmin', 'replace', 'buildhtml', 'htmlmin', 'i18n', 'connect','express:dev', 'mochaTest:manualCoverage', 'curl:coverage-download', 'shell:extractReport']);
-    grunt.registerTask('dualcoverage', ['clean', 'shell:instrumentScripts', 'concat:coverage_js', 'concat:css', 'uglify:coverage', 'uncss', 'imageEmbed', 'cssmin', 'replace', 'buildhtml', 'htmlmin', 'i18n', 'connect','express:dev', 'mochaTest:testWithCoverage','mochaTest:manualCoverage', 'curl:coverage-download', 'shell:extractReport']);
-    grunt.registerTask('debug', ['clean', 'concat:no_coverage_js', 'concat:css', 'uncss', 'imageEmbed', 'replace', 'cssmin', 'builddebug', 'i18n', 'connect','mochaTest:test']);
+    grunt.registerTask('default', ['clean', 'concat:no_coverage_js', 'concat:css', 'uglify:dist', 'uncss', 'imageEmbed', 'cssmin', 'replace', 'buildhtml', 'htmlmin', 'i18n', 'connect', 'shell:extractFirefoxProfile', 'mochaTest:test', 'shell:cleanupFirefoxProfile']);
+    grunt.registerTask('coverage', ['clean', 'shell:instrumentScripts','concat:coverage_js', 'concat:css', 'uglify:coverage', 'uncss', 'imageEmbed', 'cssmin', 'replace', 'buildhtml', 'htmlmin', 'i18n', 'connect', 'express:dev', 'shell:extractFirefoxProfile', 'mochaTest:testWithCoverage', 'curl:coverage-download', 'shell:extractReport', 'shell:cleanupFirefoxProfile']);
+    grunt.registerTask('manualcoverage', ['clean', 'shell:instrumentScripts', 'concat:coverage_js', 'concat:css', 'uglify:coverage', 'uncss', 'imageEmbed', 'cssmin', 'replace', 'buildhtml', 'htmlmin', 'i18n', 'connect','express:dev', 'shell:extractFirefoxProfile','mochaTest:manualCoverage', 'curl:coverage-download', 'shell:extractReport', 'shell:cleanupFirefoxProfile']);
+    grunt.registerTask('dualcoverage', ['clean', 'shell:instrumentScripts', 'concat:coverage_js', 'concat:css', 'uglify:coverage', 'uncss', 'imageEmbed', 'cssmin', 'replace', 'buildhtml', 'htmlmin', 'i18n', 'connect','express:dev', 'shell:extractFirefoxProfile', 'mochaTest:testWithCoverage','mochaTest:manualCoverage', 'curl:coverage-download', 'shell:extractReport', 'shell:cleanupFirefoxProfile']);
+    grunt.registerTask('debug', ['clean', 'concat:no_coverage_js', 'concat:css', 'uncss', 'imageEmbed', 'replace', 'cssmin', 'builddebug', 'i18n', 'connect', 'shell:extractFirefoxProfile','mochaTest:test', 'shell:cleanupFirefoxProfile']);
     grunt.registerTask('notest', ['clean', 'concat:no_coverage_js', 'concat:css', 'uglify:dist', 'uncss', 'imageEmbed', 'cssmin', 'replace', 'buildhtml', 'htmlmin', 'i18n', 'connect']);
 };
