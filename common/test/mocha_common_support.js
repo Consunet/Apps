@@ -4,6 +4,10 @@ const assert = require("chai").assert;
 const fs = require('fs');
 var http = require("http");
 
+module.exports.commonFullPath = function ()
+{
+    return __dirname;
+}
 
 module.exports.refreshCoverage = async function (driver)
 {
@@ -30,13 +34,12 @@ module.exports.refreshCoverage = async function (driver)
             req.end();
         } catch (e)
         {
-           console.log("Error in coverage post:"+e);
+            console.log("Error in coverage post:" + e);
         }
     });
 
 
 }
-
 
 module.exports.openOptions = async function openOptions(driver, confirmDel) {
     await driver.findElement(webdriver.By.id('menu-button')).click();
@@ -47,55 +50,16 @@ module.exports.openOptions = async function openOptions(driver, confirmDel) {
     }
 }
 
-exports.encryptWith = async function (driver, password, hint, writeToTarget) {
+exports.encryptWith = async function (driver, password, hint) {
 
-    var encForm = await driver.findElement(webdriver.By.id('encrypt'));
     await driver.findElement(webdriver.By.id('enc-password')).sendKeys(password);
     await driver.findElement(webdriver.By.id('enc-hint')).sendKeys(hint);
 
-    await new Promise(function (resolve, reject) {
+    await driver.findElement(webdriver.By.id('do-encrypt')).click();
 
-        driver.executeScript(function () {
-
-            var encryptPromise;
-
-            if (CONST.appName == 'WhisperNote')
-            {
-                encryptPromise = SCA.encryptAndEmbedData(null, null, true);
-            } else
-            {
-                encryptPromise = SCA.encryptAndEmbedData(true);
-            }
-
-            return encryptPromise;
-
-        }).then(function () {
-            resolve();
-        });
-    });
-
-    var htmlEnc = await new Promise(function (resolve, reject) {
-
-        driver.executeScript(function () {
-
-            var encStr = SCA.getDocumentHtml();
-
-            return encStr;
-
-        }).then(function (str) {
-            resolve(str);
-        });
-    });
-
-    await fs.writeFile(writeToTarget, htmlEnc, (err) => {
-        // throws an error, you could also catch it here
-        if (err)
-            throw err;
-
-        // success case, the file was saved
-
-    });
-};
+    await driver.wait(webdriver.until.alertIsPresent())
+    await driver.switchTo().alert().accept();
+}
 
 
 module.exports.assertFormIsLocked = async function assertFormIsLocked(driver, isLocked) {
@@ -120,11 +84,12 @@ module.exports.assertBrowserUnsupportedMessageIsShown = async function assertBro
     } else {
         expect(unsupportedStyle, "Browser unsupported div is hidden").to.be.equal("display: none;");
     }
-},
-        module.exports.decryptWith = async function decryptWith(driver, password) {
-            await driver.findElement(webdriver.By.id('dec-password')).sendKeys(password);
-            await driver.findElement(webdriver.By.id('do-decrypt')).click();
-        }
+}
+
+module.exports.decryptWith = async function decryptWith(driver, password) {
+    await driver.findElement(webdriver.By.id('dec-password')).sendKeys(password);
+    await driver.findElement(webdriver.By.id('do-decrypt')).click();
+}
 
 module.exports.setEncryptPass = async function setEncryptPass(driver, password) {
     var encPass = await driver.findElement(webdriver.By.id('enc-password'))
@@ -135,8 +100,9 @@ module.exports.setEncryptPass = async function setEncryptPass(driver, password) 
 module.exports.setCommonOptions = async function setCommonOptions(driver, saveFilename, timeout) {
     await this.openOptions(driver);
     await driver.findElement(webdriver.By.id('opt-timeout')).clear();
-    await driver.findElement(webdriver.By.id('opt-save-filename')).sendKeys(saveFilename);
+    await driver.findElement(webdriver.By.id('opt-save-filename')).clear();
     await driver.findElement(webdriver.By.id('opt-timeout')).sendKeys(timeout);
+        await driver.findElement(webdriver.By.id('opt-save-filename')).sendKeys(saveFilename);
 }
 
 

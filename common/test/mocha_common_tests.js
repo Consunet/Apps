@@ -31,8 +31,7 @@ describe('Common Testing', function () {
     afterEach(async function () {
         if (getCoverage) {
             await comsupport.refreshCoverage(driver)
-        }
-        
+        }        
     });
 
     it('Can see various password strengths', async function () {
@@ -67,10 +66,7 @@ describe('Common Testing', function () {
         this.timeout(10000);
 
         //refresh the driver
-        if (getCoverage) {
-            await comsupport.refreshCoverage(driver)
-        }
-        
+           
         await driver.get(testVars.TEST_UNENCRYPTED_URL);
         await comsupport.setCommonOptions(driver, "", "");
         await comsupport.sendKeysOptionSaveFilename(driver, "#$*&Y");
@@ -85,10 +81,7 @@ describe('Common Testing', function () {
         this.timeout(10000);
 
         //use fresh TEST_ENCRYPTED_URL
-        if (getCoverage) {
-            await comsupport.refreshCoverage(driver)
-        }
-        
+            
         await driver.get(testVars.TEST_ENCRYPTED_URL);
         await comsupport.assertFormIsLocked(driver, true);
         var doctype = await driver.executeScript(function () {
@@ -103,10 +96,7 @@ describe('Common Testing', function () {
         this.timeout(10000);
 
         //use fresh TEST_ENCRYPTED_URL
-        if (getCoverage) {
-            await comsupport.refreshCoverage(driver)
-        }
-        ;
+            
         await driver.get(testVars.TEST_ENCRYPTED_URL);
         await comsupport.decryptWith(driver, "wrongpassword");
         //test.assertTextExists(TEST_HINT, "Hint exists");
@@ -155,4 +145,22 @@ describe('Common Testing', function () {
         timeoutVal = await driver.findElement(webdriver.By.id('opt-timeout')).getAttribute("value");
         expect(timeoutVal).to.be.equal('111');
     });
+    
+    it('Help can be closed and re-opened.', async function(){ 
+
+      //sets test timeout to 10s
+      this.timeout(10000);
+
+      //refresh the driver
+      await driver.get(testVars.TEST_UNENCRYPTED_URL);
+
+      //close help
+      var helpBox = await driver.findElement(webdriver.By.id('help-screen')) //since multiple close class, we define inside help
+      await helpBox.findElement(webdriver.By.className('close')).click(); //closes help box
+
+      //open help
+      await driver.findElement(webdriver.By.id('menu-button')).click();
+      await driver.findElement(webdriver.By.id('menu-about')).click();
+    });
+    
 });

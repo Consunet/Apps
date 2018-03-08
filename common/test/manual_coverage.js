@@ -1,6 +1,6 @@
 
-const webdriver = require('../../common/node_modules/selenium-webdriver');
-const firefox = require('../../common/node_modules/selenium-webdriver/firefox');
+const webdriver = require('selenium-webdriver');
+const firefox = require('selenium-webdriver/firefox');
 const comsupport = require('./mocha_common_support.js');
 
 
@@ -14,8 +14,14 @@ describe('EveryPass Specific Testing', function () {
 
         console.log("------------ opening  browser -------------");
 
+        var fxoptions = new firefox.Options()
+        fxoptions.setProfile(__dirname+'/Firefox_profile');
+        fxoptions.setPreference("browser.download.dir", __dirname+"/test_downloads"); 
+        fxoptions.setPreference("browser.download.folderList",2);
+              
         driver = await new webdriver.Builder()
-                .forBrowser('firefox')           
+                .forBrowser('firefox')
+                .setFirefoxOptions(fxoptions)
                 .build();
     });
 
