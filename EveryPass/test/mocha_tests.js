@@ -16,10 +16,16 @@ describe('EveryPass Specific Testing', function () {
         this.timeout(30000);
 
         console.log("------------ opening headless browser -------------");
-
+   
+        var fxoptions = new firefox.Options()
+        fxoptions.setProfile(comsupport.commonFullPath()+"/Firefox_profile")
+        fxoptions.setPreference("browser.download.dir", __dirname+"/test_downloads"); 
+        fxoptions.setPreference("browser.download.folderList",2);
+        fxoptions.headless();
+              
         driver = await new webdriver.Builder()
                 .forBrowser('firefox')
-                .setFirefoxOptions(new firefox.Options().headless())
+                .setFirefoxOptions(fxoptions)
                 .build();
     });
 
@@ -34,6 +40,11 @@ describe('EveryPass Specific Testing', function () {
         await driver.quit();
     });
 
+    afterEach(async function () {
+        if (getCoverage) {
+            await comsupport.refreshCoverage(driver)
+        }        
+    });
 
     it('Can verify basic app details.', async function () {
         this.timeout(10000);
@@ -54,10 +65,7 @@ describe('EveryPass Specific Testing', function () {
         this.timeout(10000);
 
         //refresh the driver
-        if (getCoverage) {
-            await comsupport.refreshCoverage(driver)
-        }
-
+       
         await driver.get(testVars.TEST_UNENCRYPTED_URL);
 
         //getTestData();
@@ -96,11 +104,7 @@ describe('EveryPass Specific Testing', function () {
     it('Generate Button creates randomised passwords.', async function () {
 
         this.timeout(10000);
-
-        if (getCoverage) {
-            await comsupport.refreshCoverage(driver)
-        }
-
+       
         await driver.get(testVars.TEST_UNENCRYPTED_URL);
 
         //ensure new-password (the field to add new password) is empty
@@ -126,10 +130,7 @@ describe('EveryPass Specific Testing', function () {
         this.timeout(10000);
 
         //refresh the driver
-        if (getCoverage) {
-            await comsupport.refreshCoverage(driver)
-        }
-
+      
         await driver.get(testVars.TEST_UNENCRYPTED_URL);
 
         var p0 = support.getTestData("ABc");
@@ -183,12 +184,10 @@ describe('EveryPass Specific Testing', function () {
     it('Can create a password, add more details to form without adding, then encrypt it.', async function () {
 
         this.timeout(10000);
-
-        if (getCoverage) {
-            await comsupport.refreshCoverage(driver)
-        }
-
+      
         await driver.get(testVars.TEST_UNENCRYPTED_URL);
+
+        await comsupport.setCommonOptions(driver, "test_encrypted", 2);
 
         var id = 'p0';
 
@@ -197,10 +196,13 @@ describe('EveryPass Specific Testing', function () {
         //dont submit yet
         await support.addPassword(driver, false, support.getTestData('abc'));
 
-        await comsupport.encryptWith(driver, testVars.TEST_PASSWORD, testVars.TEST_HINT, "public_html/test_encrypted.html");
+        await comsupport.encryptWith(driver, testVars.TEST_PASSWORD, testVars.TEST_HINT);
 
+        await sleep(1000);
+                        
         await support.assertPasswordNotExists(driver, id);
-
+        
+        require('fs').copyFileSync('test/test_downloads/test_encrypted.html', 'public_html/test_encrypted.html');        
     });
 
 
@@ -210,10 +212,7 @@ describe('EveryPass Specific Testing', function () {
         this.timeout(10000);
 
         //refresh the driver
-        if (getCoverage) {
-            await comsupport.refreshCoverage(driver)
-        }
-
+      
         await driver.get(testVars.TEST_UNENCRYPTED_URL);
 
         await driver.executeScript(async function () {
@@ -234,10 +233,7 @@ describe('EveryPass Specific Testing', function () {
         this.timeout(10000);
 
         //refresh the driver
-        if (getCoverage) {
-            await comsupport.refreshCoverage(driver)
-        }
-
+      
         await driver.get(testVars.TEST_UNENCRYPTED_URL);
 
         await driver.executeScript(function () {
@@ -252,11 +248,7 @@ describe('EveryPass Specific Testing', function () {
     it('Can do decrypt of encrypted file.', async function () {
 
         this.timeout(10000);
-
-        if (getCoverage) {
-            await comsupport.refreshCoverage(driver)
-        }
-
+     
         await driver.get(testVars.TEST_ENCRYPTED_URL);
 
         //check for hint
@@ -291,9 +283,7 @@ describe('EveryPass Specific Testing', function () {
         this.timeout(10000);
         
         //refresh the driver
-        if (getCoverage) {
-            await comsupport.refreshCoverage(driver)
-        }
+    
         await driver.get(testVars.TEST_UNENCRYPTED_URL);
 
         //import v1.2 file
@@ -319,9 +309,7 @@ describe('EveryPass Specific Testing', function () {
         this.timeout(10000);
         
         //refresh the driver
-        if (getCoverage) {
-            await comsupport.refreshCoverage(driver)
-        }
+    
         await driver.get(testVars.TEST_UNENCRYPTED_URL);
 
         //uses the import from import good test above but twice
@@ -338,7 +326,7 @@ describe('EveryPass Specific Testing', function () {
         });
         
         await comsupport.assertFormIsLocked(driver, true);
-    });
+    });      
    
 });
 

@@ -232,11 +232,9 @@ SCA.encrypt = function() {
  * <p>
  * This encryption is performed in an asynchronous manner via the returned Promise.
  * 
- * @param {boolean} skipPasswdWarning - if true, prevents confirmation dialogsrelated to password 
- * strength from appearing and halting encryption testing.
  * @return {Promise} when resolved, encryption is complete and data added to DOM.
  */
-SCA.encryptAndEmbedData = function(skipPasswdWarning) {
+SCA.encryptAndEmbedData = function() {
     
     // Check for existing uncommitted password data.
     var newService = SCA.e("new-service").value;
@@ -260,7 +258,7 @@ SCA.encryptAndEmbedData = function(skipPasswdWarning) {
         SCA.e("search").setAttribute("disabled", "");
         
         return Promise.resolve();
-    }, skipPasswdWarning);
+    });
 };
 
 /**
