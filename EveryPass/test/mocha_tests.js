@@ -18,7 +18,7 @@ describe('EveryPass Specific Testing', function () {
         console.log("------------ opening headless browser -------------");
    
         var fxoptions = new firefox.Options()
-        fxoptions.setProfile(comsupport.commonFullPath()+"/Firefox_profile")
+        fxoptions.setProfile(comsupport.commonFullPath()+"/firefox_profile")
         fxoptions.setPreference("browser.download.dir", __dirname+"/test_downloads"); 
         fxoptions.setPreference("browser.download.folderList",2);
         fxoptions.headless();
@@ -226,7 +226,6 @@ describe('EveryPass Specific Testing', function () {
         await comsupport.assertFormIsLocked(driver, false);
     });
 
-
     it('Does import good EveryPass data.', async function () {
 
         //sets test timeout to 10s
@@ -244,8 +243,42 @@ describe('EveryPass Specific Testing', function () {
         await comsupport.assertFormIsLocked(driver, true);
     });
 
+  
+    it('Can do decrypt of encrypted file via import.', async function () {
 
-    it('Can do decrypt of encrypted file.', async function () {
+        this.timeout(10000);
+     
+        await driver.get(testVars.TEST_UNENCRYPTED_URL);
+                    
+        await driver.findElement(webdriver.By.id('import')).sendKeys(__dirname+"/test_downloads/test_encrypted.html");
+        
+        await sleep(100);
+        
+        //check for hint
+        var hintVal = await driver.findElements(webdriver.By.xpath("//*[text()[contains(.,'" + testVars.TEST_HINT + "')]]"));
+        expect(hintVal, "Hint doesn't exist").to.not.be.empty;       
+        
+        await comsupport.decryptWith(driver, "password");
+
+        await comsupport.assertBrowserUnsupportedMessageIsShown(driver, false);
+
+        var id = 'p0';
+        await support.assertPasswordBodyHidden(driver, id);
+
+        await support.togglePwd(driver, id);
+        await support.assertPasswordBodyShown(driver, id);
+        await support.verifyDataMatches(driver, id, support.getTestData());
+
+        id = 'p1';
+        await support.assertPasswordBodyHidden(driver, id);
+        await support.togglePwd(driver, id);
+        await support.assertPasswordBodyShown(driver, id);
+        await support.verifyDataMatches(driver, id, support.getTestData("abc"));
+        
+    });
+
+
+    it('Can do decrypt of encrypted file via URL', async function () {
 
         this.timeout(10000);
      
@@ -256,9 +289,7 @@ describe('EveryPass Specific Testing', function () {
         expect(hintVal, "Hint doesn't exist").to.not.be.empty;
 
         //perform decrypt
-        var encForm = await driver.findElement(webdriver.By.id('decrypt'));
-        await encForm.findElement(webdriver.By.id('dec-password')).sendKeys(testVars.TEST_PASSWORD);
-        await encForm.findElement(webdriver.By.id('do-decrypt')).click();
+        await comsupport.decryptWith(driver, "password");        
 
         await comsupport.assertBrowserUnsupportedMessageIsShown(driver, false);
 
@@ -297,8 +328,7 @@ describe('EveryPass Specific Testing', function () {
         var decHint = await driver.findElement(webdriver.By.id('dec-hint')).getAttribute("innerHTML");
         expect(decHint,"dec-hint does not match expected.").to.be.equal("test");
 
-        await driver.findElement(webdriver.By.id('dec-password')).sendKeys("test");
-        await driver.findElement(webdriver.By.id('do-decrypt')).click();   
+        await comsupport.decryptWith(driver, "test");  
 
         await comsupport.assertFormIsLocked(driver, false);
     });

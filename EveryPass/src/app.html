@@ -12,8 +12,6 @@
         
         <script id="encrypted-data" type="text/javascript">var encData={"v":1.4,"iter":1000,"ks":256,"ts":128,"mode":"ocb2","cipher":"aes","salt":"","iv":"","adata":"","ct":""};</script>
         <script>{{= js }}</script>
-<!--        <script src="../../src/constants.js"></script>
-        <script src="../../src/app_instr.js"></script>-->
         
         <link rel="stylesheet" href="../dist/everypass.css"/>
     </head>
@@ -34,7 +32,7 @@
                     <input id="search" name="search" type="search" class="form-control srch" onkeydown="SCA.filterPwds(event);" onkeyup="SCA.filterPwds(event);" placeholder="<%= Search %>..." disabled="">
                     <button id="menu-button" type="button" class="btn btn-sm btn-default menu-icon">&equiv;</button>
                     <ul id="menu" class="menu" role="menu" style=" display: none;">
-                        <li role="presentation"><a id="menu-import" role="menuitem" onclick="SCA.clickImport();" href="#"><%= Import %></a></li>
+                        <li role="presentation"><a id="menu-import" role="menuitem" onclick="SCA.e('import').click();" href="#"><%= Import %></a></li>
                         <li role="presentation"><a id="menu-options" role="menuitem" onclick="SCA.displayOptions(true);" href="#"><%= Options %></a></li>
                         <li role="presentation"><a id="menu-about" role="menuitem" onclick="SCA.showAbout();" href="#"><%= Help %></a></li>
                     </ul>
