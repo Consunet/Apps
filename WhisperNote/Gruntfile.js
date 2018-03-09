@@ -240,13 +240,13 @@ module.exports = function(grunt) {
             extractFirefoxProfile: {
                 command: [
                     'cd ../common/test/',                    
-                    'unzip -o Firefox_profile.zip', 
+                    'unzip -o firefox_profile.zip', 
                 ].join('&&')
 	    },
             cleanupFirefoxProfile: {
                 command: [
                     'cd ../common/test/',                    
-                    'rm Firefox_profile -r', 
+                    'rm firefox_profile -r', 
                 ].join('&&')
 	    },
             extractReport: {

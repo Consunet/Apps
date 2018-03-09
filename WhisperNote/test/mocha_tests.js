@@ -1,10 +1,18 @@
 const webdriver = require('../../common/node_modules/selenium-webdriver');
 const firefox = require('../../common/node_modules/selenium-webdriver/firefox');
-const expect = require("../../common/node_modules/chai").expect;
-const assert = require("../../common/node_modules/chai").assert;
-const until = require("../../common/node_modules/selenium-webdriver").until;
+const chai = require('../../common/node_modules/chai');
+const expect = chai.expect;
+const assert = chai.assert;
+const chaiFiles = require('chai-files');
+const file = chaiFiles.file;
+const dir = chaiFiles.dir;
+const until = webdriver.until;
+const fs = require('fs')
 const support = require('./mocha_test_support.js');
 const comsupport = require('../../common/test/mocha_common_support.js');
+
+chai.use(chaiFiles);
+ 
 
 
 describe('WhisperNote Testing', function () {
@@ -17,7 +25,7 @@ describe('WhisperNote Testing', function () {
         console.log("------------ opening headless browser -------------");
 
         var fxoptions = new firefox.Options()
-        fxoptions.setProfile(comsupport.commonFullPath()+"/Firefox_profile")
+        fxoptions.setProfile(comsupport.commonFullPath()+"/firefox_profile")
         fxoptions.setPreference("browser.download.dir", __dirname+"/test_downloads"); 
         fxoptions.setPreference("browser.download.folderList",2);
         fxoptions.headless();
@@ -75,7 +83,9 @@ describe('WhisperNote Testing', function () {
         // Note should be deleted on encryption
         await support.assertNoteText(driver, '');
         
-        require('fs').copyFileSync('test/test_downloads/test_encrypted.html', 'public_html/test_encrypted.html');
+        expect(file('test/test_downloads/test_encrypted.html')).to.exist;
+        
+        fs.copyFileSync('test/test_downloads/test_encrypted.html', 'public_html/test_encrypted.html');
     });
 
     //The test 'Can verify basic encrypted data details.' is done in common test already. Was not brought over from casper.
@@ -115,7 +125,25 @@ describe('WhisperNote Testing', function () {
         await comsupport.assertFormIsLocked(driver, true);
     });
 
-    it('Can do decrypt of encrypted file.', async function () {
+    it('Can do decrypt of encrypted file via import.', async function () {
+
+        this.timeout(10000);
+
+        await driver.get(testVars.TEST_UNENCRYPTED_URL);
+                    
+        await driver.findElement(webdriver.By.id('import')).sendKeys(__dirname+"/test_downloads/test_encrypted.html");
+        
+        await sleep(100);        
+        
+        await comsupport.decryptWith(driver, "password")
+
+        await comsupport.assertBrowserUnsupportedMessageIsShown(driver, false);
+
+        // Reveal the decrypted message
+        await support.assertNoteText(driver, testVars.TEST_MESSAGE);
+    });
+
+    it('Can do decrypt of encrypted file via URL.', async function () {
 
         this.timeout(10000);
 
@@ -151,8 +179,7 @@ describe('WhisperNote Testing', function () {
         var decHint = await driver.findElement(webdriver.By.id('dec-hint')).getAttribute("innerHTML");
         expect(decHint,"dec-hint does not match expected.").to.be.equal("test");
 
-        await driver.findElement(webdriver.By.id('dec-password')).sendKeys("test");
-        await driver.findElement(webdriver.By.id('do-decrypt')).click();   
+        await comsupport.decryptWith(driver, "test"); 
 
         await comsupport.assertFormIsLocked(driver, false);
     });
@@ -182,6 +209,49 @@ describe('WhisperNote Testing', function () {
         await comsupport.assertFormIsLocked(driver, true);
     });
 
+    it('Can import and encrypt attachment text file', async function(){
+                //sets test timeout to 10s
+        this.timeout(30000);
+        
+        //refresh the driver       
+        await driver.get(testVars.TEST_UNENCRYPTED_URL);
+        
+        await comsupport.setCommonOptions(driver, "test_encrypted_attachment", 2);
+                      
+        await driver.findElement(webdriver.By.id('file')).sendKeys(__dirname+"/testmessage.txt");
+        
+        await sleep(100);           
+       
+        // Do encrypt
+        await comsupport.encryptWith(driver, testVars.TEST_PASSWORD, testVars.TEST_HINT);              
+        
+        await sleep(1000);                            
+    });
+    
+    it('Can do decrypt of encrypted file with attachment via import.', async function () {
+
+        this.timeout(10000);
+
+        await driver.get(testVars.TEST_UNENCRYPTED_URL);
+                    
+        await driver.findElement(webdriver.By.id('import')).sendKeys(__dirname+"/test_downloads/test_encrypted_attachment.html");
+        
+        await sleep(100);        
+        
+        await comsupport.decryptWith(driver, "password")
+
+        await sleep(100); 
+        
+        await driver.findElement(webdriver.By.id('download')).click();
+
+        //await sleep(30000); 
+
+        //await comsupport.assertBrowserUnsupportedMessageIsShown(driver, false);
+
+        // Reveal the decrypted message
+        //await support.assertNoteText(driver, testVars.TEST_MESSAGE);
+    });
+    
 });
 
 function sleep(ms) {
