@@ -93,7 +93,7 @@ module.exports.decryptWith = async function decryptWith(driver, password) {
 
 module.exports.setEncryptPass = async function setEncryptPass(driver, password) {
     var encPass = await driver.findElement(webdriver.By.id('enc-password'))
-    encPass.clear();
+    await encPass.clear();
     await encPass.sendKeys(password);
 }
 

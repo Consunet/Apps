@@ -141,13 +141,7 @@ var SCA = {
      */
     getClonedCypherSettings: function () {
         return JSON.parse(JSON.stringify(CONST.cypherSettings));
-    },
-    /**
-     * Performs a click on the "import" file input.
-     */
-    clickImport: function () {
-        this.e("import").click();
-    },
+    },   
     /**
      * Reads the selected file input and performs the import.
      */
