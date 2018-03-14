@@ -237,3 +237,25 @@ SCA.setUnlocked = function(isUnlocked) {
     this.setDisplay("locked", lockedDisplay);
     this.setDisplay("unlocked", unlockedDisplay);
 };
+
+/**
+* Sets the options items.
+* @param {type} opts the options JSON object to set.
+*/
+SCA.setOptions = function (opts) {
+        this.e("opt-save-filename").value = opts.saveFileName;
+        this.e("opt-timeout").value = opts.timeoutPeriodMins;
+};
+
+/**
+ * Reads options from the User interface.
+ * @returns a JSON object containing the read options
+ */
+SCA.readOptions = function () {
+    var sfn = this.getSaveFilename();
+    var timeout = this.getTimeout();
+    return {
+        saveFileName: sfn,
+        timeoutPeriodMins: timeout
+    };
+};

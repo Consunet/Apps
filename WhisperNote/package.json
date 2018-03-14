@@ -13,7 +13,6 @@
   },
   "description": "Encrypted note",
   "devDependencies": {
-    "chai-files": "^1.4.0",
     "grunt": "~0.4.1",
     "grunt-contrib-clean": "0.5.0",
     "grunt-contrib-concat": "0.4.0",
