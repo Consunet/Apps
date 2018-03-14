@@ -15,7 +15,7 @@ describe('EveryPass Specific Testing', function () {
         console.log("------------ opening  browser -------------");
 
         var fxoptions = new firefox.Options()
-        fxoptions.setProfile(__dirname+'/Firefox_profile');
+        fxoptions.setProfile(__dirname+'/firefox_profile');
         fxoptions.setPreference("browser.download.dir", __dirname+"/test_downloads"); 
         fxoptions.setPreference("browser.download.folderList",2);
               

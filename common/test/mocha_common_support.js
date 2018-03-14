@@ -41,12 +41,13 @@ module.exports.refreshCoverage = async function (driver)
 
 }
 
-module.exports.openOptions = async function openOptions(driver, confirmDel) {
+module.exports.openOptions = async function openOptions(driver, skipConfirmDel) {
     await driver.findElement(webdriver.By.id('menu-button')).click();
     await driver.findElement(webdriver.By.id('menu-options')).click();
-    //var optionsForm = await driver.findElement(webdriver.By.id('options'));
-    if (confirmDel == true) {
-        await driver.findElement(webdriver.By.id('opt-confirm-del')).click();
+ 
+    if (skipConfirmDel && await driver.findElement(webdriver.By.id('opt-confirm-del')).isSelected()) {     
+        //deselect
+        await driver.findElement(webdriver.By.id('opt-confirm-del')).click();      
     }
 }
 
@@ -86,6 +87,17 @@ module.exports.assertBrowserUnsupportedMessageIsShown = async function assertBro
     }
 }
 
+module.exports.assertHelpIsShown = async function assertHelpIsShown(driver, isShown) {
+    
+    var helpDisplayed = await driver.findElement(webdriver.By.id('help-screen')).isDisplayed();
+
+    if (isShown) {
+        expect(helpDisplayed, "Help is hidden").to.equal(true);
+    } else {
+        expect(helpDisplayed, "Help is shown").to.equal(false);
+    }
+}
+
 module.exports.decryptWith = async function decryptWith(driver, password) {
     await driver.findElement(webdriver.By.id('dec-password')).sendKeys(password);
     await driver.findElement(webdriver.By.id('do-decrypt')).click();
@@ -102,9 +114,9 @@ module.exports.setCommonOptions = async function setCommonOptions(driver, saveFi
     await driver.findElement(webdriver.By.id('opt-timeout')).clear();
     await driver.findElement(webdriver.By.id('opt-save-filename')).clear();
     await driver.findElement(webdriver.By.id('opt-timeout')).sendKeys(timeout);
-        await driver.findElement(webdriver.By.id('opt-save-filename')).sendKeys(saveFilename);
+    await driver.findElement(webdriver.By.id('opt-save-filename')).sendKeys(saveFilename);
+    await driver.findElement(webdriver.By.id('opt-save-filename')).click(); //updates the timeout
 }
-
 
 module.exports.sendKeysOptionSaveFilename = async function sendKeysOptionSaveFilename(driver, saveFilename) {
     await this.openOptions(driver);

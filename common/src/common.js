@@ -99,14 +99,6 @@ var SCA = {
         return this.getAndClear("dec-password");
     },
     /**
-     * Gets and clears the decryption hint field.
-     * 
-     * @returns {string} the decryption hint.
-     */
-    getDecHint: function () {
-        return this.getAndClear("dec-hint");
-    },
-    /**
      * Returns the entire document HTML including DOCTYPE.
      * @returns {String} - the document HTML.
      */
@@ -471,12 +463,17 @@ var SCA = {
 
                             resolve(); // resolving retval.
                         });
-                    });
-                });
+                    }).catch(
+                        function (reason) {
+                            me.showDecryptError(true); 
+                            reject(reason);
+                        }
+                    );
+                });                
             }).catch(
-                    function (reason) {
-                        reject(reason);
-                    }
+                function (reason) {      
+                    reject(reason);
+                }
             );
         });
 
@@ -695,16 +692,7 @@ var SCA = {
         var ele = this.e(id);
         ele.classList.add(className);
     },
-    /**
-     * Checks for a class on a particular element
-     * @param {type} id the id of the element to check
-     * @param {type} className the class to check for
-     * @return {Boolean} true if the element has that class, false otherwise.
-     */
-    hasClass: function (id, className) {
-        var ele = this.e(id);
-        return ele.classList.contains(className);
-    },
+
     /**
      * Removes a class from a particular element
      * @param {type} id the id of the element to remove from
@@ -769,26 +757,6 @@ var SCA = {
     isSaveFilenameValid: function () {
         var saveFilename = this.e("opt-save-filename").value;
         return saveFilename.match(/\w+/) && !saveFilename.match(/\W+/);
-    },
-    /**
-     * Reads options from the User interface.
-     * @returns a JSON object containing the read options
-     */
-    readOptions: function () {
-        var sfn = this.getSaveFilename();
-        var timeout = this.getTimeout();
-        return {
-            saveFileName: sfn,
-            timeoutPeriodMins: timeout
-        };
-    },
-    /**
-     * Sets the options items.
-     * @param {type} opts the options JSON object to set.
-     */
-    setOptions: function (opts) {
-        this.e("opt-save-filename").value = opts.saveFileName;
-        this.e("opt-timeout").value = opts.timeoutPeriodMins;
     },
     /**
      * Shows/Hides the timeout display
