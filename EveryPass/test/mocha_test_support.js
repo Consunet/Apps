@@ -44,12 +44,12 @@ exports.togglePwd = async function togglePwd(driver, id) {
 }
 
 exports.assertPasswordHidden = async function assertPasswordHidden(driver, id) {
-    var passwordDisplayed = await driver.findElement(webdriver.By.id(id + '-password')).isDisplayed();
+    var passwordDisplayed = await driver.findElement(webdriver.By.id(id + '-service')).isDisplayed();
     expect(passwordDisplayed, "Password is shown for " + id).to.equal(false);
 }
 
 exports.assertPasswordShown = async function assertPasswordHidden(driver, id) {
-    var passwordDisplayed = await driver.findElement(webdriver.By.id(id + '-password')).isDisplayed();
+    var passwordDisplayed = await driver.findElement(webdriver.By.id(id + '-service')).isDisplayed();
     expect(passwordDisplayed, "Password is hidden for " + id).to.equal(true);
 }
 
