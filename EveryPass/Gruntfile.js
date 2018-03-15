@@ -241,10 +241,13 @@ module.exports = function(grunt) {
   	shell: {      
             instrumentScripts: {
                 command: [
-                    'cd src/',
+                    'mkdir -p coverage',
+                    'cd src/',                    
                     'istanbul instrument app.js --output ../coverage/_app.js --embed-source true',
                     'istanbul instrument constants.js --output ../coverage/_constants.js --embed-source true',
-                    'cd ../../common/src',
+                    'cd ../../common/',
+                    'mkdir -p coverage',
+                    'cd src',
                     'istanbul instrument common.js --output ../coverage/_common.js --embed-source true',
                     'istanbul instrument constants.js --output ../coverage/_constants.js --embed-source true'                      
                 ].join('&&')
