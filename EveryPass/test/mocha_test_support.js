@@ -1,3 +1,6 @@
+/**
+ * @file browser interface functions to support specific testing for EveryPass application
+ */
 
 const webdriver = require('../../common/node_modules/selenium-webdriver');
 const firefox = require('../../common/node_modules/selenium-webdriver/firefox');
