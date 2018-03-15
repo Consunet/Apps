@@ -259,3 +259,14 @@ SCA.readOptions = function () {
         timeoutPeriodMins: timeout
     };
 };
+
+/**
+* Get a set of default options.
+* @returns
+*/
+SCA.getDefaultOptions = function () {
+    return {
+        saveFileName: CONST.appName,
+        timeoutPeriodMins: CONST.defaultTimeoutPeriodMins
+    };
+};

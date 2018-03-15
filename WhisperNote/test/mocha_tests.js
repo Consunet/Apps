@@ -1,3 +1,7 @@
+/**
+ * @file specific testing for WhisperNote application
+ */
+
 const webdriver = require('../../common/node_modules/selenium-webdriver');
 const firefox = require('../../common/node_modules/selenium-webdriver/firefox');
 const chai = require('../../common/node_modules/chai');
@@ -172,7 +176,7 @@ describe('WhisperNote Testing', function () {
 
             expect(file('test/test_downloads/testmessage.txt')).to.exist;
 
-            expect(file('test/test_downloads/testmessage.txt')).to.equal(file(__dirname + "/testmessage.txt"));
+            expect(file('test/test_downloads/testmessage.txt')).to.equal(file("test/testmessage.txt"));
         });
 
         it('Can do decrypt of encrypted file via import (no attachment).', async function () {
@@ -221,13 +225,15 @@ describe('WhisperNote Testing', function () {
             //check file attached
             expect(await driver.findElement(webdriver.By.id('download-label')).getText(), "Expected file not attached").to.equal('testmessage.txt');
 
+            fs.unlinkSync('test/test_downloads/testmessage.txt');
+            
             await driver.findElement(webdriver.By.id('download')).click();
 
             await sleep(1000);
 
             expect(file('test/test_downloads/testmessage.txt')).to.exist;
 
-            expect(file('test/test_downloads/testmessage.txt')).to.equal(file(__dirname + "/testmessage.txt"));
+            expect(file('test/test_downloads/testmessage.txt')).to.equal(file("test/testmessage.txt"));
         });
 
         it('Can do decrypt of legacy (1.3) encrypted file via import.', async function () {

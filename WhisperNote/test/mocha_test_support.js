@@ -1,3 +1,7 @@
+/**
+ * @file browser interface functions to support specific testing for WhisperNote application
+ */
+
 const webdriver = require('../../common/node_modules/selenium-webdriver');
 const firefox = require('../../common/node_modules/selenium-webdriver/firefox');
 const expect = require("../../common/node_modules/chai").expect;
