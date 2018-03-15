@@ -1,6 +1,7 @@
 /**
- * Holds tests common to both apps
+ * @file holds tests common to both apps
  */
+
 const webdriver = require('selenium-webdriver');
 const firefox = require('selenium-webdriver/firefox');
 const expect = require("chai").expect;
@@ -139,7 +140,7 @@ describe('Common Testing', function () {
             var helpText = await helpBox.getAttribute("innerHTML");
             assert.include(helpText, " is free to use, open source, free from app stores and compatible with most modern devices (computers, tablets, phones).", 'Description exists');
 
-            await driver.executeScript(async function () { //await driver.findElement(webdriver.By.id('help-toggle')).click(); wasnt working.
+            await driver.executeScript(async function () { 
                 SCA.toggleHelpDetail();
             });
 

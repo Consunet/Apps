@@ -1,3 +1,7 @@
+/**
+ * @file browser interface functions to support common testing
+ */
+
 const webdriver = require('selenium-webdriver');
 const expect = require("chai").expect;
 const assert = require("chai").assert;

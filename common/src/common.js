@@ -714,16 +714,6 @@ var SCA = {
         return true;
     },
     /**
-     * Get a set of default options.
-     * @returns
-     */
-    getDefaultOptions: function () {
-        return {
-            saveFileName: CONST.appName,
-            timeoutPeriodMins: CONST.defaultTimeoutPeriodMins
-        };
-    },
-    /**
      * Sets the options to reasonable default values.
      */
     setDefaultOptions: function () {
