@@ -134,6 +134,7 @@
                     <%= HelpDetailString %>
                     </div>
                 </div>
+                <div id="grps"></div>
                 <div id="pwds"></div>
                 <form id="new-entry" class="form-horizontal" role="form" autocomplete="off" onsubmit="return false;">
                     <div class="panel panel-info">
@@ -180,6 +181,21 @@
                         </div>
                     </div>
                 </form>
+                <form id="new-group" class="form-horizontal" role="form" autocomplete="off" onsubmit="return false;">
+                    <div class="panel panel-info" >
+                        <div class="panel-heading">
+                            <div class="row">
+                                <div class="col-xs-8 col-md-6">
+                                    <label class="sr-only" for="new-group-name">Group Name</label>
+                                    <input type="text" class="form-control input-sm" id="new-group-name" name="new-group-name" placeholder="New group name">
+                                </div>
+                                <div class="col-xs-4 col-md-6">
+                                    <button id="add-new-group" type="button" onclick="SCA.newGrp();" class="btn btn-xs btn-primary pull-right">Add Group</button>
+                                </div>
+                            </div>
+                        </div>                 
+                    </div>
+                </form>
                 <nav class="navbar navbar-default navbar-fixed-bottom">
                    <form id="encrypt" class="navbar-form" role="form" onsubmit="return false;">
                         <div id="enc-password-group" class="form-group">
@@ -209,7 +225,7 @@
                                 <label class="sr-only" for="new-service"><%= Service %></label>
                                 <input id="pwid-service" name="pwid-service" type="text" class="form-control input-sm pull-left" onkeydown="SCA.checkGo('pwid');" onkeyup="SCA.checkGo('pwid');"></input>
                             </div> 
-                            <div id="pwid-drag" style="cursor: ns-resize;" draggable="true" ondragstart="SCA.dragStartPwd(event);" ondragover="SCA.dragOverPwd(event);" ondragenter="SCA.dragEnterPwd(event);" ondragleave="SCA.dragLeavePwd(event);" ondrop="SCA.dragDrop(event);" ondragend="SCA.dragEndPwd(event);">
+                            <div id="pwid-drag" style="cursor: ns-resize;" draggable="true" ondragstart="SCA.dragStartPwd(event);" ondragover="SCA.dragOverPwd(event);" ondragenter="SCA.dragEnterPwd(event);" ondragleave="SCA.dragLeavePwd(event);" ondrop="SCA.dragDropPwd(event);" ondragend="SCA.dragEnd(event);">
                                 <div class="col-xs-4 col-sm-4 col-md-2 col-lg-2 btn-toolbar">
                                     <button id="pwid-toggle" type="button" onclick="SCA.togglePwd('pwid');" class="btn btn-xs btn-primary pull-left"><%= Show %></button>
                                     <button id="pwid-go" type="button" onclick="SCA.go('pwid');" class="btn btn-xs btn-success pull-left"><%= Go %></button>
@@ -241,7 +257,7 @@
                                     <label for="question" class="col-lg-2 control-label"><%= AdditionalInfo %></label>
                                     <div class="col-lg-10">
                                         <input id="pwid-question" name="pwid-question" type="text" class="form-control input-sm"></input>
-                    <input id="pwid-answer" name="pwid-answer" type="text" class="form-control input-sm"></input>
+                                        <input id="pwid-answer" name="pwid-answer" type="text" class="form-control input-sm"></input>
                                     </div>
                                 </div>
                             </div>
@@ -249,6 +265,32 @@
                     </div>
                 </div>
             </form>
+        </div>
+                
+        <div id="grp-data" class="container" style="display: none;">
+            <form id="grpid-form" class="form-horizontal" role="form" autocomplete="off" onsubmit="return false;">
+                <div id="grpid-glow" class="panel panel-default">
+                    <div class="panel-heading">
+                        <div class="row">
+                            <div class="col-xs-6 col-sm-7 col-md-8 col-lg-8">
+                                <label class="sr-only" for="grpid-name">Group name</label>
+                                <input id="grpid-name" name="grpid-name" type="text" class="form-control input-sm pull-left" onkeydown="" onkeyup=""></input>
+                            </div> 
+                            <div id="grpid-drag" style="cursor: ns-resize;" draggable="true" ondragstart="SCA.dragStartGrp(event);" ondragover="SCA.dragOverGrp(event);" ondragenter="SCA.dragEnterGrp(event);" ondragleave="SCA.dragLeaveGrp(event);" ondrop="SCA.dragDropGrp(event);" ondragend="SCA.dragEnd(event);">
+                                <div class="col-xs-4 col-sm-4 col-md-2 col-lg-2 btn-toolbar">
+                                    <button id="grpid-toggle" type="button" onclick="SCA.toggleGrp('grpid');" class="btn btn-xs btn-primary pull-left">Hide Group</button>  
+                                </div>                            
+                                <div class="col-xs-2 col-sm-1 col-md-2 col-lg-2">
+                                    <button id="grpid-delete" type="button" onclick="SCA.delGrp('grpid');" class="btn btn-xs btn-danger pull-right">Del Group</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>                    
+                </div>
+            </form>
+            <div id="grpid-pwds" class="panel-body">
+                
+            </div>
         </div>
     </body>
 </html>
