@@ -11,6 +11,7 @@
  * </p>
  */
 
+
 /**
  * Reads the chosen file to encrypt and performs the encryption once 
  * the data has been loaded.
@@ -216,34 +217,6 @@ SCA.decrypt = function() {
     });
 };
 
-SCA.decryptSJCL = function () {
-    return this.decryptWith(function (v, prp, iv, adata, out) {
-        // Populate the message payload
-        SCA.e("payload").value = out;
-
-        // Check for an attachment, and decrypt it if present
-        if (encData.cattname) {
-            var encryptedFilenameBits = sjcl.codec.base64.toBits(encData.cattname);
-            var decryptedFilenameBits = sjcl.mode[encData.mode].decrypt(prp, encryptedFilenameBits, iv, adata, encData.ts);
-            var decryptedFilename = sjcl.codec.utf8String.fromBits(decryptedFilenameBits);
-            SCA.e("download-label").innerHTML = decryptedFilename;
-            SCA.setDisplay("att-download", "inline");
-
-            var byteArrays = [];
-            for (var i = 0; i < encData.catt.length; i++) {
-                var sliceBits = sjcl.codec.base64.toBits(encData.catt[i]);
-                var decryptedSlice = sjcl.mode[encData.mode].decrypt(prp, sliceBits, iv, adata, encData.ts);
-                var byteNumbersSlice = sjcl.codec.bytes.fromBits(decryptedSlice);
-                var byteArraySlice = new Uint8Array(byteNumbersSlice);
-                byteArrays.push(byteArraySlice);
-            }
-
-            SCA.attBlob = new Blob(byteArrays, {type: "application/octet-stream"});
-            SCA.attName = decryptedFilename;
-        }
-    });
-}
-
 /**
  * Downloads the stores attachment blob and filename.
  */
@@ -263,4 +236,37 @@ SCA.setUnlocked = function(isUnlocked) {
 
     this.setDisplay("locked", lockedDisplay);
     this.setDisplay("unlocked", unlockedDisplay);
+};
+
+/**
+* Sets the options items.
+* @param {type} opts the options JSON object to set.
+*/
+SCA.setOptions = function (opts) {
+        this.e("opt-save-filename").value = opts.saveFileName;
+        this.e("opt-timeout").value = opts.timeoutPeriodMins;
+};
+
+/**
+ * Reads options from the User interface.
+ * @returns a JSON object containing the read options
+ */
+SCA.readOptions = function () {
+    var sfn = this.getSaveFilename();
+    var timeout = this.getTimeout();
+    return {
+        saveFileName: sfn,
+        timeoutPeriodMins: timeout
+    };
+};
+
+/**
+* Get a set of default options.
+* @returns
+*/
+SCA.getDefaultOptions = function () {
+    return {
+        saveFileName: CONST.appName,
+        timeoutPeriodMins: CONST.defaultTimeoutPeriodMins
+    };
 };

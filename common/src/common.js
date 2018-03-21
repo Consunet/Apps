@@ -99,14 +99,6 @@ var SCA = {
         return this.getAndClear("dec-password");
     },
     /**
-     * Gets and clears the decryption hint field.
-     * 
-     * @returns {string} the decryption hint.
-     */
-    getDecHint: function () {
-        return this.getAndClear("dec-hint");
-    },
-    /**
      * Returns the entire document HTML including DOCTYPE.
      * @returns {String} - the document HTML.
      */
@@ -141,13 +133,7 @@ var SCA = {
      */
     getClonedCypherSettings: function () {
         return JSON.parse(JSON.stringify(CONST.cypherSettings));
-    },
-    /**
-     * Performs a click on the "import" file input.
-     */
-    clickImport: function () {
-        this.e("import").click();
-    },
+    },   
     /**
      * Reads the selected file input and performs the import.
      */
@@ -211,10 +197,14 @@ var SCA = {
                 }
             }
             encData = clonedCypherSettings;
+            
+            var encDataMatches = CONST.regexEncryptedData.exec("");
+            var appTypeMatches = CONST.regexAppType.exec("");
+            
             SCA.doOnload();
         } catch (e) {
             console.log(e);
-            alert("<%= ImportFailed %>:" + e);
+            alert("<%= ImportFailed %>" + e);
         }
     },
     /**
@@ -239,7 +229,7 @@ var SCA = {
     showAbout: function () {
         SCA.displayHelp(true);
     },
-    
+
     /**
      * Converts from an ArrayBuffer to a String.
      * <p>
@@ -252,10 +242,10 @@ var SCA = {
      * @param {ArrayBuffer} arrayBuffer
      * @returns {DOMString}
      */
-    convertArrayBufferToUtf16String: function(arrayBuffer) {
+    convertArrayBufferToUtf16String: function (arrayBuffer) {
         return String.fromCharCode.apply(null, new Uint16Array(arrayBuffer));
     },
-    
+
     /**
      * Converts from a String to an ArrayBuffer.
      * <p>
@@ -276,7 +266,7 @@ var SCA = {
         }
         return buf;
     },
-    
+
     /**
      * Converts a Uint8Array to a displayable, Base64 string:
      * (copied from "http://stackoverflow.com/questions/12710001/how-to-convert-uint8-array-to-base64-encoded-string")
@@ -327,9 +317,11 @@ var SCA = {
         var me = this;
 
         var retval = new Promise(function (resolve, reject) {
+       
             if (!me.checkEncPass()) {
                 reject(Error("User rejected Password."));
             }
+            
 
             var cs = me.getClonedCypherSettings();
             var iv = new Uint8Array(16);
@@ -471,12 +463,17 @@ var SCA = {
 
                             resolve(); // resolving retval.
                         });
-                    });
-                });
+                    }).catch(
+                        function (reason) {
+                            me.showDecryptError(true); 
+                            reject(reason);
+                        }
+                    );
+                });                
             }).catch(
-                    function (reason) {
-                        reject(reason);
-                    }
+                function (reason) {      
+                    reject(reason);
+                }
             );
         });
 
@@ -695,16 +692,7 @@ var SCA = {
         var ele = this.e(id);
         ele.classList.add(className);
     },
-    /**
-     * Checks for a class on a particular element
-     * @param {type} id the id of the element to check
-     * @param {type} className the class to check for
-     * @return {Boolean} true if the element has that class, false otherwise.
-     */
-    hasClass: function (id, className) {
-        var ele = this.e(id);
-        return ele.classList.contains(className);
-    },
+
     /**
      * Removes a class from a particular element
      * @param {type} id the id of the element to remove from
@@ -724,16 +712,6 @@ var SCA = {
         if (charCode > 31 && (charCode < 48 || charCode > 57))
             return false;
         return true;
-    },
-    /**
-     * Get a set of default options.
-     * @returns
-     */
-    getDefaultOptions: function () {
-        return {
-            saveFileName: CONST.appName,
-            timeoutPeriodMins: CONST.defaultTimeoutPeriodMins
-        };
     },
     /**
      * Sets the options to reasonable default values.
@@ -771,26 +749,6 @@ var SCA = {
         return saveFilename.match(/\w+/) && !saveFilename.match(/\W+/);
     },
     /**
-     * Reads options from the User interface.
-     * @returns a JSON object containing the read options
-     */
-    readOptions: function () {
-        var sfn = this.getSaveFilename();
-        var timeout = this.getTimeout();
-        return {
-            saveFileName: sfn,
-            timeoutPeriodMins: timeout
-        };
-    },
-    /**
-     * Sets the options items.
-     * @param {type} opts the options JSON object to set.
-     */
-    setOptions: function (opts) {
-        this.e("opt-save-filename").value = opts.saveFileName;
-        this.e("opt-timeout").value = opts.timeoutPeriodMins;
-    },
-    /**
      * Shows/Hides the timeout display
      * @param {Boolean} isDisplay true if the timeout should be displayed, false otherwise.
      */
@@ -798,6 +756,7 @@ var SCA = {
         if (isDisplay) {
             this.resetTimeout();
             this.isTimingOut = true;
+            clearInterval(this.timeoutHandler);
             this.timeoutHandler = setInterval("SCA.decrement()", 1000);
         } else {
             clearInterval(this.timeoutHandler);
@@ -864,16 +823,22 @@ var SCA = {
         var minutes = this.padNum(Math.floor(this.timeoutValueSecs / 60.0) % 60);
         var hours = this.padNum(Math.floor(this.timeoutValueSecs / 3600.0));
         var secs = this.padNum(this.timeoutValueSecs % 60);
-
+        if (secs < 0 && this.getTimeout() != 0) {
+            secs = padNum(0);
+        }
+        if (hours < 0) {
+            hours = padNum(0);
+        }
+        if (minutes < 0) {
+            minutes = padNum(0);
+        }
         var timeoutStr = hours + ":" + minutes + ":" + secs;
-
         // Make red if timeout is less than or equal to 30
         if (this.timeoutValueSecs <= 30) {
             this.addClass("timeout-value", "red");
         } else {
             this.removeClass("timeout-value", "red");
         }
-
         this.e("timeout-value").innerHTML = timeoutStr;
     },
     /**
@@ -888,9 +853,9 @@ var SCA = {
      * 
      * @returns {String}
      */
-    getBrowserName: function() {
+    getBrowserName: function () {
         var retval = "<unknown>";
-        var ua=navigator.userAgent;
+        var ua = navigator.userAgent;
         var M = ua.match(/(opera|chrome|safari|firefox|msie|phantomjs)\/?\s*(\.?\d+(\.\d+)*)/i);
         M = M ? [M[1], M[2]] : null;
         if (M) {
@@ -914,13 +879,13 @@ var SCA = {
             if (!(window.File && window.FileReader && window.FileList && window.Blob)) {
                 throw "<%= FileOpsNotSupported %>";
             }
-            
+
             // PhantomJS lacks WebCrypto API and Blob constructor.
             if (this.getBrowserName() !== "PhantomJS") {
                 if (!(window.crypto && window.crypto.subtle)) {
                     throw "<%= WebCryptoAPINotSupported %>";
                 }
-                
+
                 new Blob();
             }
 
@@ -930,9 +895,19 @@ var SCA = {
                 this.setUnlocked(false);
 
                 if (encData.adata) {
-                    var decodedHint = encData.adata;
-                    this.e("dec-hint").innerHTML = decodedHint;
+                    if (encData.v < 1.4) {
+                        var decodedHint =
+                        sjcl.codec.utf8String.fromBits(sjcl.codec.base64.toBits(encData.adata));
+                        this.e("dec-hint").innerHTML = decodedHint;
+                    } 
+                    else
+                    {
+                        //1.4 or after
+                        var decodedHint = encData.adata;
+                        this.e("dec-hint").innerHTML = decodedHint;
+                    }
                 }
+
                 this.e("dec-password").focus();
             } else {
                 this.setDefaultOptions();
@@ -945,5 +920,5 @@ var SCA = {
             console.log(e);
             this.setDisplay("unsupported", "inline");
         }
-    }
+    }  
 };

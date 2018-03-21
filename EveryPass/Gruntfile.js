@@ -10,24 +10,52 @@ module.exports = function(grunt) {
                 '* Copyright (c) <%= grunt.template.today("yyyy") %> <%= pkg.author.name %>;' +
                 '*/\n',
         // Task configuration.
-        clean: ["dist/*", "public_html/*"],
-        concat: {
+        clean: {
+            options: {
+              'force': true
+            },
+            build: ["dist/*", "public_html/*"],
+            test_cleanup: [
+                "coverage/*", 
+                "test/test_downloads/*",
+                "../common/coverage/*", 
+                "../common/test/test_downloads/*", 
+                "../common/test/firefox_profile/"
+            ],
+        },
+        concat: {                        
             options: {
                 stripBanners: true
             },
-            js: {
+            no_coverage_js: {
                 src: [
-                    'lib/sjcl.js',
-                    'lib/Blob.js',
-                    'lib/FileSaver.js',
-                    'lib/es6-promise.js',
-                    'lib/encoding-indexes.js',
-                    'lib/encoding.js',
-                    'lib/webcrypto-shim.js',
-                    '../common/src/constants.js',
-                    '../common/src/common.js',
-                    'src/constants.js',
-                    'src/app.js'
+                   'lib/sjcl.js',
+                   'lib/Blob.js',
+                   'lib/FileSaver.js',
+                   'lib/es6-promise.js',
+                   'lib/encoding-indexes.js',
+                   'lib/encoding.js',
+                   'lib/webcrypto-shim.js',
+                   '../common/src/constants.js',
+                   '../common/src/common.js',
+                   'src/constants.js',
+                   'src/app.js'
+                ],
+                dest: 'dist/<%= pkg.name %>.js'
+            },
+            coverage_js: {
+                src: [
+                   'lib/sjcl.js',
+                   'lib/Blob.js',
+                   'lib/FileSaver.js',
+                   'lib/es6-promise.js',
+                   'lib/encoding-indexes.js',
+                   'lib/encoding.js',
+                   'lib/webcrypto-shim.js',
+                   '../common/coverage/_constants.js',
+                   '../common/coverage/_common.js',
+                   'coverage/_constants.js',
+                   'coverage/_app.js'
                 ],
                 dest: 'dist/<%= pkg.name %>.js'
             },
@@ -43,7 +71,11 @@ module.exports = function(grunt) {
         },
         uglify: {
             dist: {
-                src: '<%= concat.js.dest %>',
+                src: '<%= concat.no_coverage_js.dest %>',
+                dest: 'dist/<%= pkg.name %>.min.js'
+            },
+            coverage: {
+                src: '<%= concat.coverage_js.dest %>',
                 dest: 'dist/<%= pkg.name %>.min.js'
             }
         },
@@ -87,17 +119,6 @@ module.exports = function(grunt) {
                 options: {
                     deleteAfterEncoding : false
                 }
-            }
-        },
-        casper: {
-            options: {
-                test: true,
-                'log-level': 'warning',
-                'fail-fast': true,
-                includes: ['test/tests_support.js', '../common/test/common_support.js']
-            },
-            functionalTests: {
-                src: ['../common/test/common_tests.js', 'test/tests.js'],
             }
         },
         connect: {
@@ -162,7 +183,90 @@ module.exports = function(grunt) {
                     spawn: true
                 }
             }
-        }
+        },
+        mochaTest: {
+            test: {
+              options: {
+                reporter: 'spec',   
+                require: [
+                   function(){ 
+                        testVars = require('./test/mocha_test_vars.js');
+                        getCoverage = false;
+                   },                                                        
+                ]
+              },
+              src: ['test/mocha_tests.js','../common/test/mocha_common_tests.js']
+            }, 
+            testWithCoverage: {
+              options: {
+                reporter: 'spec',   
+                require: [
+                   function(){ 
+                        testVars = require('./test/mocha_test_vars.js');
+                        getCoverage = true;
+                   },                                                        
+                ]
+              },
+              src: ['test/mocha_tests.js','../common/test/mocha_common_tests.js']
+            },
+            manualCoverage: {
+              options: {
+                reporter: 'spec',   
+                require: [
+                   function(){ 
+                        testVars = require('./test/mocha_test_vars.js');
+                   },                                                        
+                ]
+              },
+              src: ['../common/test/manual_coverage.js']
+            }
+        }, 
+        express: {
+            options: {
+              // Override defaults here
+              port: 8888,
+            },
+            dev: {
+              options: {
+                script: '../common/coverage_server.js'
+              }
+            },           
+        },  
+        curl: {
+            'coverage-download': {
+              src: 'http://localhost:8888/coverage/download',
+              dest: 'coverage/coverage_data.zip'
+            },
+        },
+  	shell: {      
+            instrumentScripts: {
+                command: [
+                    'mkdir -p coverage',
+                    'cd src/',                    
+                    'istanbul instrument app.js --output ../coverage/_app.js --embed-source true',
+                    'istanbul instrument constants.js --output ../coverage/_constants.js --embed-source true',
+                    'cd ../../common/',
+                    'mkdir -p coverage',
+                    'cd src',
+                    'istanbul instrument common.js --output ../coverage/_common.js --embed-source true',
+                    'istanbul instrument constants.js --output ../coverage/_constants.js --embed-source true'                      
+                ].join('&&')
+	    },
+            extractFirefoxProfile: {
+                command: [
+                    'cd ../common/test/',                    
+                    'unzip -o firefox_profile.zip', 
+                ].join('&&')
+	    },
+            extractReport: {
+                command: [
+                    'cd coverage/',    
+                    'unzip -o coverage_data.zip -d report/', 
+                    'rm coverage_data.zip',
+                    'sensible-browser  report/lcov-report/index.html'
+                ].join('&&')
+	    }
+	}
     });
 
     grunt.loadNpmTasks('grunt-contrib-clean');
@@ -172,12 +276,16 @@ module.exports = function(grunt) {
     grunt.loadNpmTasks('grunt-contrib-cssmin');
     grunt.loadNpmTasks('grunt-contrib-watch');
     grunt.loadNpmTasks('grunt-contrib-connect');
-    grunt.loadNpmTasks('grunt-casper');
     grunt.loadNpmTasks('grunt-uncss');
     grunt.loadNpmTasks('grunt-text-replace');
     grunt.loadNpmTasks('grunt-i18n');
     grunt.loadNpmTasks('grunt-image-embed');
-
+    grunt.loadNpmTasks('grunt-mocha-test');
+    grunt.loadNpmTasks('grunt-express-server');
+    grunt.loadNpmTasks('grunt-curl');
+    grunt.loadNpmTasks('grunt-shell');     
+    
+    
     grunt.template.addDelimiters("curly", "{{", "}}");
 
     grunt.registerTask('buildhtml', 'Builds the app html.', function() {
@@ -200,7 +308,12 @@ module.exports = function(grunt) {
         grunt.file.write('public_html/index.html', processedTemplate);
     });
 
+    
     // Default task.
-    grunt.registerTask('default', ['clean', 'concat', 'uglify', 'uncss', 'imageEmbed', 'cssmin', 'replace', 'buildhtml', 'htmlmin', 'i18n', 'connect', 'casper']);
-    grunt.registerTask('debug', ['clean', 'concat', 'uncss', 'imageEmbed', 'replace', 'cssmin', 'builddebug', 'i18n', 'connect', 'casper']);
+    grunt.registerTask('default', ['clean', 'concat:no_coverage_js', 'concat:css', 'uglify:dist', 'uncss', 'imageEmbed', 'cssmin', 'replace', 'buildhtml', 'htmlmin', 'i18n', 'connect', 'shell:extractFirefoxProfile', 'mochaTest:test', 'clean:test_cleanup']);
+    grunt.registerTask('coverage', ['clean', 'shell:instrumentScripts', 'concat:coverage_js', 'concat:css', 'uglify:coverage', 'uncss', 'imageEmbed', 'cssmin', 'replace', 'buildhtml', 'htmlmin', 'i18n', 'connect','express:dev', 'shell:extractFirefoxProfile','mochaTest:testWithCoverage', 'clean:test_cleanup', 'curl:coverage-download', 'shell:extractReport']);
+    grunt.registerTask('manualcoverage', ['clean', 'shell:instrumentScripts', 'concat:coverage_js', 'concat:css', 'uglify:coverage', 'uncss', 'imageEmbed', 'cssmin', 'replace', 'buildhtml', 'htmlmin', 'i18n', 'connect','express:dev', 'shell:extractFirefoxProfile', 'mochaTest:manualCoverage', 'clean:test_cleanup', 'curl:coverage-download', 'shell:extractReport']);
+    grunt.registerTask('dualcoverage', ['clean', 'shell:instrumentScripts', 'concat:coverage_js', 'concat:css', 'uglify:coverage', 'uncss', 'imageEmbed', 'cssmin', 'replace', 'buildhtml', 'htmlmin', 'i18n', 'connect','express:dev', 'shell:extractFirefoxProfile', 'mochaTest:testWithCoverage','mochaTest:manualCoverage', 'clean:test_cleanup', 'curl:coverage-download', 'shell:extractReport']);
+    grunt.registerTask('debug', ['clean', 'concat:no_coverage_js', 'concat:css', 'uncss', 'imageEmbed', 'replace', 'cssmin', 'builddebug', 'i18n', 'connect', 'shell:extractFirefoxProfile','mochaTest:test', 'clean:test_cleanup']);
+    grunt.registerTask('notest', ['clean', 'concat:no_coverage_js', 'concat:css', 'uglify:dist', 'uncss', 'imageEmbed', 'cssmin', 'replace', 'buildhtml', 'htmlmin', 'i18n', 'connect']);
 };

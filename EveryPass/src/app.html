@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <title>EveryPass Password Manager v1.4</title>
+        <title>EveryPass Password Manager v1.5</title>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
         <meta http-equiv="cache-control" content="max-age=0"/>
         <meta http-equiv="cache-control" content="no-cache"/>
@@ -12,6 +12,7 @@
         
         <script id="encrypted-data" type="text/javascript">var encData={"v":1.4,"iter":1000,"ks":256,"ts":128,"mode":"ocb2","cipher":"aes","salt":"","iv":"","adata":"","ct":""};</script>
         <script>{{= js }}</script>
+        
         <link rel="stylesheet" href="../dist/everypass.css"/>
     </head>
     <body onload="SCA.doOnload();">
@@ -31,7 +32,7 @@
                     <input id="search" name="search" type="search" class="form-control srch" onkeydown="SCA.filterPwds(event);" onkeyup="SCA.filterPwds(event);" placeholder="<%= Search %>..." disabled="">
                     <button id="menu-button" type="button" class="btn btn-sm btn-default menu-icon">&equiv;</button>
                     <ul id="menu" class="menu" role="menu" style=" display: none;">
-                        <li role="presentation"><a id="menu-import" role="menuitem" onclick="SCA.clickImport();" href="#"><%= Import %></a></li>
+                        <li role="presentation"><a id="menu-import" role="menuitem" onclick="SCA.e('import').click();" href="#"><%= Import %></a></li>
                         <li role="presentation"><a id="menu-options" role="menuitem" onclick="SCA.displayOptions(true);" href="#"><%= Options %></a></li>
                         <li role="presentation"><a id="menu-about" role="menuitem" onclick="SCA.showAbout();" href="#"><%= Help %></a></li>
                     </ul>
@@ -63,7 +64,7 @@
                 <div class="jumbotron">
                     <div class="container">
                         <div class="row">
-                            <div class="col-sm-9 col-md-10">
+                            <div class="col-sm-10 col-md-10">
                                 <div class="pull-left">
                                     <h2><%= ContentProtected %></h2>
                                     <h3><%= PleaseEnterPassword %></h3>
@@ -138,14 +139,11 @@
                     <div class="panel panel-info">
                         <div class="panel-heading">
                             <div class="row">
-                                <div class="col-xs-6 col-md-8">
+                                <div class="col-xs-8 col-md-6">
                                     <label class="sr-only" for="new-service"><%= Service %></label>
                                     <input type="text" class="form-control input-sm" id="new-service" name="new-service" placeholder="<%= NewPasswordFor %>">
                                 </div>
-                                <div class="col-xs-4 col-md-2">
-                                    <button id="generate-pwd" type="button" onclick="SCA.generatePwd();" class="btn btn-xs btn-success pull-left"><%= Generate %></button>
-                                </div>
-                                <div class="col-xs-2 col-md-2">
+                                <div class="col-xs-4 col-md-6">
                                     <button id="add-new-pwd" type="button" onclick="SCA.newPwd();" class="btn btn-xs btn-primary pull-right"><%= Add %></button>
                                 </div>
                             </div>
@@ -160,9 +158,12 @@
                                         </div>
                                     </div>
                                     <div class="form-group">
-                                        <label for="password" class="col-lg-2 control-label"><%= Password %></label>
-                                        <div class="col-lg-10">
+                                        <label for="password" class="col-md-2 col-sm-8 col-xs-6 pull-left" style="padding-top: 7px;"><%= Password %></label>
+                                        <div class="col-md-8 col-sm-8 col-xs-8">
                                             <input type="text" class="form-control input-sm" id="new-password" name="new-password" placeholder="<%= Password %>">
+                                        </div>
+                                        <div class="col-md-2 col-sm-4 col-xs-4">
+                                            <button id="generate-pwd" type="button" onclick="SCA.generatePwd();" class="btn btn-sm btn-success pull-right"><%= Generate %></button>
                                         </div>
                                     </div>
                                 </div>
@@ -209,11 +210,11 @@
                                 <input id="pwid-service" name="pwid-service" type="text" class="form-control input-sm pull-left" onkeydown="SCA.checkGo('pwid');" onkeyup="SCA.checkGo('pwid');"></input>
                             </div> 
                             <div id="pwid-drag" style="cursor: ns-resize;" draggable="true" ondragstart="SCA.dragStartPwd(event);" ondragover="SCA.dragOverPwd(event);" ondragenter="SCA.dragEnterPwd(event);" ondragleave="SCA.dragLeavePwd(event);" ondrop="SCA.dragDrop(event);" ondragend="SCA.dragEndPwd(event);">
-                                <div class="col-xs-5 col-sm-4 col-md-2 col-lg-2 btn-toolbar">
+                                <div class="col-xs-4 col-sm-4 col-md-2 col-lg-2 btn-toolbar">
                                     <button id="pwid-toggle" type="button" onclick="SCA.togglePwd('pwid');" class="btn btn-xs btn-primary pull-left"><%= Show %></button>
                                     <button id="pwid-go" type="button" onclick="SCA.go('pwid');" class="btn btn-xs btn-success pull-left"><%= Go %></button>
                                 </div>
-                                <div class="col-xs-1 col-sm-1 col-md-2 col-lg-2">
+                                <div class="col-xs-2 col-sm-1 col-md-2 col-lg-2">
                                     <button id="pwid-delete" type="button" onclick="SCA.delPwd('pwid');" class="btn btn-xs btn-danger pull-right">Del</button>
                                 </div>
                             </div>
@@ -240,7 +241,7 @@
                                     <label for="question" class="col-lg-2 control-label"><%= AdditionalInfo %></label>
                                     <div class="col-lg-10">
                                         <input id="pwid-question" name="pwid-question" type="text" class="form-control input-sm"></input>
-					<input id="pwid-answer" name="pwid-answer" type="text" class="form-control input-sm"></input>
+                    <input id="pwid-answer" name="pwid-answer" type="text" class="form-control input-sm"></input>
                                     </div>
                                 </div>
                             </div>
