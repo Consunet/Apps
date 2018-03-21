@@ -137,7 +137,7 @@
                 <div id="grps"></div>
                 <div id="pwds"></div>
                 <form id="new-entry" class="form-horizontal" role="form" autocomplete="off" onsubmit="return false;">
-                    <div class="panel panel-info">
+                    <div class="panel panel-primary">
                         <div class="panel-heading">
                             <div class="row">
                                 <div class="col-xs-8 col-md-6">
@@ -182,7 +182,7 @@
                     </div>
                 </form>
                 <form id="new-group" class="form-horizontal" role="form" autocomplete="off" onsubmit="return false;">
-                    <div class="panel panel-info" >
+                    <div class="panel panel-primary">                
                         <div class="panel-heading">
                             <div class="row">
                                 <div class="col-xs-8 col-md-6">
@@ -225,7 +225,7 @@
                                 <label class="sr-only" for="new-service"><%= Service %></label>
                                 <input id="pwid-service" name="pwid-service" type="text" class="form-control input-sm pull-left" onkeydown="SCA.checkGo('pwid');" onkeyup="SCA.checkGo('pwid');"></input>
                             </div> 
-                            <div id="pwid-drag" style="cursor: ns-resize;" draggable="true" ondragstart="SCA.dragStartPwd(event);" ondragover="SCA.dragOverPwd(event);" ondragenter="SCA.dragEnterPwd(event);" ondragleave="SCA.dragLeavePwd(event);" ondrop="SCA.dragDropPwd(event);" ondragend="SCA.dragEnd(event);">
+                            <div id="pwid-drag" class="pwd-drag" style="cursor: ns-resize;" draggable="true" ondragstart="SCA.dragStart(event);" ondragover="SCA.dragOver(event);" ondragenter="SCA.dragEnter(event);" ondragleave="SCA.dragLeave(event);" ondrop="SCA.dragDropPwd(event);" ondragend="SCA.dragEnd(event);">
                                 <div class="col-xs-4 col-sm-4 col-md-2 col-lg-2 btn-toolbar">
                                     <button id="pwid-toggle" type="button" onclick="SCA.togglePwd('pwid');" class="btn btn-xs btn-primary pull-left"><%= Show %></button>
                                     <button id="pwid-go" type="button" onclick="SCA.go('pwid');" class="btn btn-xs btn-success pull-left"><%= Go %></button>
@@ -267,16 +267,16 @@
             </form>
         </div>
                 
-        <div id="grp-data" class="container" style="display: none;">
-            <form id="grpid-form" class="form-horizontal" role="form" autocomplete="off" onsubmit="return false;">
-                <div id="grpid-glow" class="panel panel-default">
-                    <div class="panel-heading">
+        <div id="grp-data" class="container" style="display: none;">           
+            <div id="grpid-glow" class="panel panel-info">
+                <div class="panel-heading">
+                    <form id="grpid-form" class="form-horizontal" role="form" autocomplete="off" onsubmit="return false;">
                         <div class="row">
                             <div class="col-xs-6 col-sm-7 col-md-8 col-lg-8">
                                 <label class="sr-only" for="grpid-name">Group name</label>
                                 <input id="grpid-name" name="grpid-name" type="text" class="form-control input-sm pull-left" onkeydown="" onkeyup=""></input>
                             </div> 
-                            <div id="grpid-drag" style="cursor: ns-resize;" draggable="true" ondragstart="SCA.dragStartGrp(event);" ondragover="SCA.dragOverGrp(event);" ondragenter="SCA.dragEnterGrp(event);" ondragleave="SCA.dragLeaveGrp(event);" ondrop="SCA.dragDropGrp(event);" ondragend="SCA.dragEnd(event);">
+                             <div id="grpid-drag" class="grp-drag" style="cursor: ns-resize;" draggable="true" ondragstart="SCA.dragStart(event);" ondragover="SCA.dragOver(event);" ondragenter="SCA.dragEnter(event);" ondragleave="SCA.dragLeave(event);" ondrop="SCA.dragDropGrp(event);" ondragend="SCA.dragEnd(event);">
                                 <div class="col-xs-4 col-sm-4 col-md-2 col-lg-2 btn-toolbar">
                                     <button id="grpid-toggle" type="button" onclick="SCA.toggleGrp('grpid');" class="btn btn-xs btn-primary pull-left">Hide Group</button>  
                                 </div>                            
@@ -285,12 +285,12 @@
                                 </div>
                             </div>
                         </div>
-                    </div>                    
-                </div>
-            </form>
-            <div id="grpid-pwds" class="panel-body">
+                    </form>
+                </div> 
+                <div id="grpid-pwds" class="panel-body">
                 
-            </div>
+                </div>                    
+            </div>              
         </div>
     </body>
 </html>

@@ -593,34 +593,16 @@ SCA.checkGo = function(id) {
 /**
  * Stores the current password being dragged - greyed out.
  */
-SCA.currentDraggablePwd = "";
+SCA.currentDraggable = "";
 
-/**
- * Stores the current password being dragged - greyed out.
- */
-SCA.currentDraggableGrp = "";
 
 /**
  * Handles ondragstart events for passwords.
  */
-SCA.dragStartPwd = function(ev) {
-    console.log("dragStartPwd()");
+SCA.dragStart = function(ev) {
+  
     var id = ev.target.id;
-    SCA.currentDraggablePwd = id;
-    var glowId = id.replace("-drag", "-glow");
-    SCA.addClass(glowId, "dragged");
-    // Required by Firefox to allow drag and drop events to fire
-    ev.dataTransfer.setData("id", id);
-    ev.dataTransfer.effectAllowed = 'move';
-};
-
-/**
- * Handles ondragstart events for passwords.
- */
-SCA.dragStartGrp = function(ev) {
-    console.log("dragStartGrp()");
-    var id = ev.target.id;
-    SCA.currentDraggableGrp = id;
+    SCA.currentDraggable = id;
     var glowId = id.replace("-drag", "-glow");
     SCA.addClass(glowId, "dragged");
     // Required by Firefox to allow drag and drop events to fire
@@ -631,8 +613,8 @@ SCA.dragStartGrp = function(ev) {
 /**
  * Handles drag over events for passwords.
  */
-SCA.dragOverPwd = function(ev) {
-    console.log("dragOverPwd()");
+SCA.dragOver = function(ev) {
+    
     if (ev.preventDefault) {
         ev.preventDefault(); // Necessary. Allows us to drop.
     }
@@ -641,34 +623,12 @@ SCA.dragOverPwd = function(ev) {
     return false;
 };
 
-/**
- * Handles drag over events for passwords.
- */
-SCA.dragOverGrp = function(ev) {
-    console.log("dragOverGrp()");
-    if (ev.preventDefault) {
-        ev.preventDefault(); // Necessary. Allows us to drop.
-    }
-
-    ev.dataTransfer.dropEffect = 'move';
-    return false;
-};
 
 /**
  * Handles drag enter events for passwords - highlights targets.
  */
-SCA.dragEnterPwd = function(ev) {
-    console.log("dragEnterPwd()");
-    var id = ev.currentTarget.id;
-    var glowId = id.replace("-drag", "-glow");
-    SCA.addClass(glowId, "drag-target");
-};
-
-/**
- * Handles drag enter events for passwords - highlights targets.
- */
-SCA.dragEnterGrp = function(ev) {
-    console.log("dragEnterGrp()");
+SCA.dragEnter = function(ev) {
+    
     var id = ev.currentTarget.id;
     var glowId = id.replace("-drag", "-glow");
     SCA.addClass(glowId, "drag-target");
@@ -677,18 +637,8 @@ SCA.dragEnterGrp = function(ev) {
 /**
  * Handles drag leave events for passwords - unhighlights targets.
  */
-SCA.dragLeavePwd = function(ev) {
-    console.log("dragLeavePwd()");
-    var id = ev.currentTarget.id;
-    var glowId = id.replace("-drag", "-glow");
-    SCA.removeClass(glowId, "drag-target");
-};
-
-/**
- * Handles drag leave events for passwords - unhighlights targets.
- */
-SCA.dragLeaveGrp = function(ev) {
-    console.log("dragLeaveGrp()");
+SCA.dragLeave = function(ev) {
+  
     var id = ev.currentTarget.id;
     var glowId = id.replace("-drag", "-glow");
     SCA.removeClass(glowId, "drag-target");
@@ -698,7 +648,9 @@ SCA.dragLeaveGrp = function(ev) {
  * Handles drag end events for passwords - resets state.
  */
 SCA.dragEnd = function(ev) {
-    console.log("dragEnd");
+  
+    SCA.currentDraggable = "";
+  
     // Reset all passwords - to cater for Firefox case where multiple selections take place.
     // Also makes it more robust.
     this.eachPwd(function(id, pwd) {
@@ -706,9 +658,7 @@ SCA.dragEnd = function(ev) {
         SCA.removeClass(form, "dragged");
         SCA.removeClass(form, "drag-target");
     });
-    
-    SCA.currentDraggablePwd = "";
-    
+            
     this.eachGrp(function(id, grp) {
         var form = id + "-glow";
         SCA.removeClass(form, "dragged");
@@ -722,9 +672,7 @@ SCA.dragEnd = function(ev) {
             SCA.removeClass(form, "dragged");
             SCA.removeClass(form, "drag-target");
         },grpPwdContainer);
-    });
-    
-    SCA.currentDraggableGrp = "";
+    });       
 };
 
     
@@ -732,7 +680,7 @@ SCA.dragEnd = function(ev) {
  * Handles drop events for passwords - performs the reshuffling if required.
  */
 SCA.dragDropPwd = function(ev) { //password onto password
-    console.log("dragDropPwd()");
+
     // Stops some browsers from redirecting.
     if (ev.stopPropagation) {
         ev.stopPropagation(); 
@@ -741,7 +689,7 @@ SCA.dragDropPwd = function(ev) { //password onto password
         ev.preventDefault(); 
     }
     
-    var srcIdForm = SCA.currentDraggablePwd;
+    var srcIdForm = SCA.currentDraggable;
     var destIdForm = ev.currentTarget.id;
     var srcId = srcIdForm.replace("-drag", "");
     var destId = destIdForm.replace("-drag", "");
@@ -753,46 +701,55 @@ SCA.dragDropPwd = function(ev) { //password onto password
     var src = this.e(srcId);
     var dest = this.e(destId);
     
-    var srcParent = src.parentNode;
-    var destParent = dest.parentNode;
-    //console.log("Src contain:" + srcParent + " Dest contain:" +destParent);
+    if(this.e(SCA.currentDraggable).classList.contains("pwd-drag"))
+    {          
+        var srcParent = src.parentNode;
+        var destParent = dest.parentNode;
+
+        if(srcParent === destParent)
+        {
+            var pwds = srcParent;
+
+            var pos = this.getPwdPositions(srcId, destId, pwds);
+
+            // Swap src and dest (ensure src is before dest)
+            pwds.removeChild(src);
+            pwds.insertBefore(src, dest);
+
+            // If Src was before dest, then swap src and dest position - make dest before src.
+            if (pos[0] < pos[1]) { 
+                pwds.removeChild(dest);
+                pwds.insertBefore(dest, src);
+            }          
+        }
+        else
+        {
+            var pos = this.getGrpPositions(srcParent.id.replace("-pwds", ""), destParent.id.replace("-pwds", ""));
+
+            // Swap src and dest (ensure src is before dest)
+            destParent.insertBefore(src, dest);
+
+            // If Src was before dest, then swap src and dest position - make dest before src.
+            if (pos[0] < pos[1]) { 
+                destParent.removeChild(dest);
+                destParent.insertBefore(dest, src);
+            }
+
+        }
+    }
+    else //this.e(SCA.currentDraggable).classList.contains("grp-drag")
+    {
+        var srcIdForm = ev.currentTarget.id;
+        var destIdForm = SCA.currentDraggable;
+        var srcId = srcIdForm.replace("-drag", "");
+        var destId = destIdForm.replace("-drag", "");
+       
+        var src = this.e(srcId);                       
+      
+        this.e(destId+"-pwds").appendChild(src);
+    }  
     
-    if(srcParent === destParent)
-    {
-        var pwds = srcParent;
-
-        var pos = this.getPwdPositions(srcId, destId, pwds);
-
-        // Swap src and dest (ensure src is before dest)
-        pwds.removeChild(src);
-        pwds.insertBefore(src, dest);
-
-        // If Src was before dest, then swap src and dest position - make dest before src.
-        if (pos[0] < pos[1]) { 
-            pwds.removeChild(dest);
-            pwds.insertBefore(dest, src);
-        }
-
-        return false;
-    }
-    else
-    {
-        var pos = this.getGrpPositions(srcParent.id, destParent.id);
-
-        // Swap src and dest (ensure src is before dest)
-        //srcParent.removeChild(src);
-        destParent.insertBefore(src, dest);
-
-        // If Src was before dest, then swap src and dest position - make dest before src.
-        if (pos[0] < pos[1]) { 
-            destParent.removeChild(dest);
-            destParent.insertBefore(dest, src);
-            console.log("!!!!!!!!!!swap!!!!!!!!!");
-        }
-        
-        
-        //destParent.appendChild(src);
-    }
+    return false;
 };
 
 
@@ -800,9 +757,7 @@ SCA.dragDropPwd = function(ev) { //password onto password
  * Handles drop events for passwords - performs the reshuffling if required.
  */
 SCA.dragDropGrp = function(ev) { //Group onto group or password onto group
-    
-    console.log("dragDropGrp()");
-    
+            
     // Stops some browsers from redirecting.
     if (ev.stopPropagation) {
         ev.stopPropagation(); 
@@ -812,30 +767,20 @@ SCA.dragDropGrp = function(ev) { //Group onto group or password onto group
     }
 
 
-    if(SCA.currentDraggablePwd != "")
+    if(this.e(SCA.currentDraggable).classList.contains("pwd-drag"))
     {
-        var srcIdForm = SCA.currentDraggablePwd;
+        var srcIdForm = SCA.currentDraggable;
         var destIdForm = ev.currentTarget.id;
         var srcId = srcIdForm.replace("-drag", "");
         var destId = destIdForm.replace("-drag", "");
        
-        var src = this.e(srcId);     
-                   
-        // Swap src and dest (ensure src is before dest)        
-       
-        this.e(destId+"-pwds").appendChild(src);
-           
-        // If Src was before dest, then swap src and dest position - make dest before src.
-        //if (pos[0] < pos[1]) { 
-            //grps.removeChild(dest);
-            //grps.insertBefore(dest, src);
-        //}
-
-        return false;
+        var src = this.e(srcId);                       
+      
+        this.e(destId+"-pwds").appendChild(src);           
     }
-    else //SCA.currentDraggableGrp != ""
+    else //this.e(SCA.currentDraggable).classList.contains("grp-drag")
     {
-        var srcIdForm = SCA.currentDraggableGrp;
+        var srcIdForm = SCA.currentDraggable;
         var destIdForm = ev.currentTarget.id;
         var srcId = srcIdForm.replace("-drag", "");
         var destId = destIdForm.replace("-drag", "");
@@ -859,10 +804,10 @@ SCA.dragDropGrp = function(ev) { //Group onto group or password onto group
         if (pos[0] < pos[1]) { 
             grps.removeChild(dest);
             grps.insertBefore(dest, src);
-        }
-
-        return false;
+        }   
     }
+    
+    return false;    
 };
 
 
