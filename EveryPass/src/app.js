@@ -29,6 +29,8 @@ SCA._nextPwdId = 0;
  */
 SCA._nextGrpId = 0;
 
+SCA._currentDefaultGrpId = "";
+
 /**
  * Gets the pw-data hidden template for passwords, and caches its value for future use.
  * 
@@ -129,7 +131,7 @@ SCA.newGrp = function() {
  * 
  * @param {object} item - the password JSON object to add
  */
-SCA.addPwd = function(item, group) {
+SCA.addPwd = function(item) {
     
     var id = "p" + this._nextPwdId;
     
@@ -142,9 +144,9 @@ SCA.addPwd = function(item, group) {
     div.id = id;
     div.innerHTML = replaced;
     
-    if(group)
+    if(this._currentDefaultGrpId != "")
     {
-        this._grpPwds(group).appendChild(div);
+        this._grpPwds(this._currentDefaultGrpId).appendChild(div);
     }
     else
     {
@@ -197,7 +199,8 @@ SCA.addPwds = function(pwds) {
 SCA.delPwd = function(id) {
     var canDelete = true;
     if (this.isConfirmPwdDelete()) {
-        var pwdName = this.e(id + "-service").value;
+        var pwdName = this.e(id + "-service").value;          
+        
         canDelete = confirm("<%= DeletePasswordFor %> " + pwdName + "?");
     }
     
@@ -213,12 +216,40 @@ SCA.delPwd = function(id) {
  */
 SCA.delGrp = function(id) {
     var canDelete = true;
-    if (this.isConfirmPwdDelete()) {
+    if (this.isConfirmPwdDelete()) {       
         var grpName = this.e(id + "-name").value;
-        canDelete = confirm("Delete Group " + grpName + "?");
-    }
-    
+        
+        var pwdMessage;
+        
+        if(this.isKeepPwdsOfDeletedGrp())
+        {
+            pwdMessage = "(Passwords in the Group will be kept.)";
+        }
+        else
+        {
+            pwdMessage = "(Passwords in the Group will be deleted.)";
+        }
+        
+        canDelete = confirm("Delete Group '" + grpName + "'?\n\n"+pwdMessage);
+    }       
+            
     if (canDelete) {
+        
+        if(this._currentDefaultGrpId == id)
+        {
+            this._currentDefaultGrpId = "";
+        }
+        
+        if(this.isKeepPwdsOfDeletedGrp())
+        {
+            var grpPwdContainer = SCA.e(id+"-pwds");          
+
+            while(grpPwdContainer.firstChild)
+            {
+                this._divPwds().appendChild(grpPwdContainer.firstChild);
+            }
+        }
+        
         this.e(id).outerHTML = "";
     }
 };
@@ -291,6 +322,32 @@ SCA.toggleGrp = function(id) {
     this.showGrpBody(id, isHidden);
 };
 
+SCA.setGrpAsDefault = function(grpId) {
+    
+    var toggleButton = this.e(grpId + "-setdefault");
+    
+            
+    if(this._currentDefaultGrpId == grpId)
+    {
+        this._currentDefaultGrpId = "";
+        toggleButton.innerHTML = "Make Default Group";    
+        toggleButton.setAttribute("style", "border: 2px solid transparent;");
+    }
+    else
+    {
+        if(this._currentDefaultGrpId != "")
+        {
+            var prevToggleButton = this.e(this._currentDefaultGrpId + "-setdefault");
+            prevToggleButton.innerHTML = "Make Default Group";    
+            prevToggleButton.setAttribute("style", "border: 2px solid transparent;");
+        }
+        
+        this._currentDefaultGrpId = grpId;
+        toggleButton.innerHTML = "Clear Default Group";
+        toggleButton.setAttribute("style", "border: 2px dashed yellow;");
+    }           
+};
+
 /**
  * Selects password text for a particular password..
  * 
@@ -316,7 +373,6 @@ SCA.getPwd = function(id) {
         a: this.e(id + "-answer").value
     };
 };
-
 
 /**
  * Reads the password information from the DOM into a JSON object for the supplied id.
@@ -857,12 +913,18 @@ SCA.getGrpPositions = function(srcId, destId) {
     return [srcPos, destPos];
 };
 
-
 /**
  * @returns true if the confirm password checkbox is checked, false otherwise
  */
 SCA.isConfirmPwdDelete = function() {
   return this.e("opt-confirm-del").checked;
+};
+
+/**
+ * @returns true if the confirm password checkbox is checked, false otherwise
+ */
+SCA.isKeepPwdsOfDeletedGrp = function() {
+  return this.e("opt-keep-grp-pwds").checked;
 };
 
 /**
@@ -873,7 +935,8 @@ SCA.getDefaultOptions = function() {
     return {
         saveFileName: CONST.appName,
         timeoutPeriodMins: CONST.defaultTimeoutPeriodMins,
-        confirmPwdDelete: true
+        confirmPwdDelete: true,
+        keepPwdsOfDeletedGrp: true
     };
 };
 
@@ -884,6 +947,11 @@ SCA.setOptions = function(opts) {
     this.e("opt-save-filename").value = opts.saveFileName;
     this.e("opt-timeout").value = opts.timeoutPeriodMins;
     this.e("opt-confirm-del").checked = opts.confirmPwdDelete;
+    
+    if('keepPwdsOfDeletedGrp' in opts)
+    {
+        this.e("opt-keep-grp-pwds").checked = opts.keepPwdsOfDeletedGrp;
+    }
 };
 
 /**
@@ -894,10 +962,13 @@ SCA.readOptions = function() {
     var sfn = this.getSaveFilename();
     var timeout = this.getTimeout();
     var pwdDelete = this.isConfirmPwdDelete();
+    var keepGrpPwds = this.isKeepPwdsOfDeletedGrp();
 
     return {
         saveFileName: sfn,
         timeoutPeriodMins: timeout,
-        confirmPwdDelete: pwdDelete
+        confirmPwdDelete: pwdDelete,
+        keepPwdsOfDeletedGrp: keepGrpPwds
     };
 };
+

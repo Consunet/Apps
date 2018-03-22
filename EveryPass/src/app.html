@@ -118,10 +118,19 @@
                         </div>
                         <div id="opt-confirm-del-group" class="form-group">
                             <label for="opt-timeout" class="col-md-2 col-lg-2 control-label">
-                                <%= ConfirmPasswordDeletion %>
+<!--                                <%= ConfirmPasswordDeletion %>-->
+                                    Confirm deletion of passwords and groups?
                             </label>
                             <div class="col-md-1 col-lg-1">
                                 <input id="opt-confirm-del" name="opt-confirm-del" type="checkbox" class="form-control" value=""></input>
+                            </div>
+                        </div>                        
+                        <div id="opt-confirm-del-group" class="form-group">
+                            <label for="opt-timeout" class="col-md-2 col-lg-2 control-label">
+                                Keep passwords from deleted group? 
+                            </label>
+                            <div class="col-md-1 col-lg-1">
+                                <input id="opt-keep-grp-pwds" name="opt-keep-grp-pwds" type="checkbox" class="form-control" value=""></input>
                             </div>
                         </div>
                     </form>
@@ -272,14 +281,17 @@
                 <div class="panel-heading">
                     <form id="grpid-form" class="form-horizontal" role="form" autocomplete="off" onsubmit="return false;">
                         <div class="row">
-                            <div class="col-xs-6 col-sm-7 col-md-8 col-lg-8">
+                            <div class="col-xs-6 col-sm-6 col-md-6 col-lg-6">
                                 <label class="sr-only" for="grpid-name">Group name</label>
                                 <input id="grpid-name" name="grpid-name" type="text" class="form-control input-sm pull-left" onkeydown="" onkeyup=""></input>
                             </div> 
                              <div id="grpid-drag" class="grp-drag" style="cursor: ns-resize;" draggable="true" ondragstart="SCA.dragStart(event);" ondragover="SCA.dragOver(event);" ondragenter="SCA.dragEnter(event);" ondragleave="SCA.dragLeave(event);" ondrop="SCA.dragDropGrp(event);" ondragend="SCA.dragEnd(event);">
                                 <div class="col-xs-4 col-sm-4 col-md-2 col-lg-2 btn-toolbar">
                                     <button id="grpid-toggle" type="button" onclick="SCA.toggleGrp('grpid');" class="btn btn-xs btn-primary pull-left">Hide Group</button>  
-                                </div>                            
+                                </div>  
+                                <div class="col-xs-4 col-sm-4 col-md-2 col-lg-2 btn-toolbar">
+                                    <button id="grpid-setdefault" type="button" onclick="SCA.setGrpAsDefault('grpid');" class="btn btn-xs btn-info" style="border: 2px solid transparent;">Make Default Group</button>  
+                                </div>  
                                 <div class="col-xs-2 col-sm-1 col-md-2 col-lg-2">
                                     <button id="grpid-delete" type="button" onclick="SCA.delGrp('grpid');" class="btn btn-xs btn-danger pull-right">Del Group</button>
                                 </div>
@@ -291,6 +303,7 @@
                 
                 </div>                    
             </div>              
-        </div>
+        </div>        
+        
     </body>
 </html>
