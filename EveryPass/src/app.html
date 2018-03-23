@@ -154,7 +154,7 @@
                                     <input type="text" class="form-control input-sm" id="new-service" name="new-service" placeholder="<%= NewPasswordFor %>">
                                 </div>
                                 <div class="col-xs-4 col-md-6">
-                                    <button id="add-new-pwd" type="button" onclick="SCA.newPwd();" class="btn btn-xs btn-primary pull-right"><%= Add %></button>
+                                    <button id="add-new-pwd" type="button" onclick="SCA.newPwd();" class="btn btn-xs btn-success pull-right"><%= Add %></button>
                                 </div>
                             </div>
                         </div>
@@ -173,7 +173,7 @@
                                             <input type="text" class="form-control input-sm" id="new-password" name="new-password" placeholder="<%= Password %>">
                                         </div>
                                         <div class="col-md-2 col-sm-4 col-xs-4">
-                                            <button id="generate-pwd" type="button" onclick="SCA.generatePwd();" class="btn btn-sm btn-success pull-right"><%= Generate %></button>
+                                            <button id="generate-pwd" type="button" onclick="SCA.generatePwd();" class="btn btn-sm btn-warning pull-right"><%= Generate %></button>
                                         </div>
                                     </div>
                                 </div>
@@ -199,7 +199,7 @@
                                     <input type="text" class="form-control input-sm" id="new-group-name" name="new-group-name" placeholder="New group name">
                                 </div>
                                 <div class="col-xs-4 col-md-6">
-                                    <button id="add-new-group" type="button" onclick="SCA.newGrp();" class="btn btn-xs btn-primary pull-right">Add Group</button>
+                                    <button id="add-new-group" type="button" onclick="SCA.newGrp();" class="btn btn-xs btn-success pull-right">Add Group</button>
                                 </div>
                             </div>
                         </div>                 
@@ -227,7 +227,7 @@
 
         <div id="pw-data" class="container" style="display: none;">
             <form id="pwid-form" class="form-horizontal" role="form" autocomplete="off" onsubmit="return false;">
-                <div id="pwid-glow" class="panel panel-default">
+                <div id="pwid-glow" class="panel panel-info">
                     <div class="panel-heading">
                         <div class="row">
                             <div class="col-xs-6 col-sm-7 col-md-8 col-lg-8">
@@ -277,7 +277,7 @@
         </div>
                 
         <div id="grp-data" class="container" style="display: none;">           
-            <div id="grpid-glow" class="panel panel-info">
+            <div id="grpid-glow" class="panel panel-default">
                 <div class="panel-heading">
                     <form id="grpid-form" class="form-horizontal" role="form" autocomplete="off" onsubmit="return false;">
                         <div class="row">
@@ -286,14 +286,14 @@
                                 <input id="grpid-name" name="grpid-name" type="text" class="form-control input-sm pull-left" onkeydown="" onkeyup=""></input>
                             </div> 
                              <div id="grpid-drag" class="grp-drag" style="cursor: ns-resize;" draggable="true" ondragstart="SCA.dragStart(event);" ondragover="SCA.dragOver(event);" ondragenter="SCA.dragEnter(event);" ondragleave="SCA.dragLeave(event);" ondrop="SCA.dragDropGrp(event);" ondragend="SCA.dragEnd(event);">
-                                <div class="col-xs-4 col-sm-4 col-md-2 col-lg-2 btn-toolbar">
-                                    <button id="grpid-toggle" type="button" onclick="SCA.toggleGrp('grpid');" class="btn btn-xs btn-primary pull-left">Hide Group</button>  
-                                </div>  
-                                <div class="col-xs-4 col-sm-4 col-md-2 col-lg-2 btn-toolbar">
-                                    <button id="grpid-setdefault" type="button" onclick="SCA.setGrpAsDefault('grpid');" class="btn btn-xs btn-info" style="border: 2px solid transparent;">Make Default Group</button>  
-                                </div>  
+                                <div class="col-xs-2 col-sm-1 col-md-2 col-lg-2 btn-toolbar">
+                                    <button id="grpid-setdefault" type="button" onclick="SCA.setGrpAsDefault('grpid');" class="btn btn-xs btn-info" style="border: 2px solid transparent;">Default</button>  
+                                </div> 
+                                <div class="col-xs-2 col-sm-1 col-md-2 col-lg-2 btn-toolbar">
+                                    <button id="grpid-toggle" type="button" onclick="SCA.toggleGrp('grpid');" class="btn btn-xs btn-primary pull-left">Hide</button>  
+                                </div>                              
                                 <div class="col-xs-2 col-sm-1 col-md-2 col-lg-2">
-                                    <button id="grpid-delete" type="button" onclick="SCA.delGrp('grpid');" class="btn btn-xs btn-danger pull-right">Del Group</button>
+                                    <button id="grpid-delete" type="button" onclick="SCA.delGrp('grpid');" class="btn btn-xs btn-danger pull-right">Del</button>
                                 </div>
                             </div>
                         </div>

@@ -292,10 +292,10 @@ SCA.showGrpBody = function(id, show) {
 
     if (show) {
         panelBody.style.display = "inherit";
-        toggleButton.innerHTML = "Hide Group";
+        toggleButton.innerHTML = "Hide";
     } else {
         panelBody.style.display = "none";
-        toggleButton.innerHTML = "Show Group";
+        toggleButton.innerHTML = "Show";
     }
 };
 
@@ -330,7 +330,7 @@ SCA.setGrpAsDefault = function(grpId) {
     if(this._currentDefaultGrpId == grpId)
     {
         this._currentDefaultGrpId = "";
-        toggleButton.innerHTML = "Make Default Group";    
+        //toggleButton.innerHTML = "Default";    
         toggleButton.setAttribute("style", "border: 2px solid transparent;");
     }
     else
@@ -338,12 +338,12 @@ SCA.setGrpAsDefault = function(grpId) {
         if(this._currentDefaultGrpId != "")
         {
             var prevToggleButton = this.e(this._currentDefaultGrpId + "-setdefault");
-            prevToggleButton.innerHTML = "Make Default Group";    
+            //prevToggleButton.innerHTML = "Make Default Group";    
             prevToggleButton.setAttribute("style", "border: 2px solid transparent;");
         }
         
         this._currentDefaultGrpId = grpId;
-        toggleButton.innerHTML = "Clear Default Group";
+        //toggleButton.innerHTML = "Clear Default Group";
         toggleButton.setAttribute("style", "border: 2px dashed yellow;");
     }           
 };
@@ -588,6 +588,31 @@ SCA.filterPwds = function(event) {
         }
     });
 
+    this.eachGrp(function(id, grp) {
+        
+        var grpPwdContainer = SCA.e(id+"-pwds");       
+              
+        SCA.eachPwd(function(pid, pwd) {
+        
+            if (searchTerm.length < MIN_SEARCH_TERM_LENGTH) {
+                SCA.setDisplay(pid, "inherit");
+                filtered.push(pid);
+            } else {
+                var jsonString = JSON.stringify(pwd).toLowerCase();
+
+                // Search the jsonString for the search term
+                if (jsonString.indexOf(searchTerm) !== -1) {
+                    SCA.setDisplay(pid, "inherit");
+                    filtered.push(pid);
+                } else {
+                    SCA.setDisplay(pid, "none");
+                }
+            }
+        
+        },grpPwdContainer);
+    });      
+
+
     if (filtered.length === 1 && searchTerm.length >= MIN_SEARCH_TERM_LENGTH) {
         this.showPwdBody(filtered[0], true, false);
     } else {
@@ -723,7 +748,6 @@ SCA.dragEnd = function(ev) {
         var grpPwdContainer = SCA.e(id+"-pwds");       
               
         SCA.eachPwd(function(pid, pwd) {
-            console.log("clean up pwd:"+pid);
             var form = pid + "-glow";
             SCA.removeClass(form, "dragged");
             SCA.removeClass(form, "drag-target");
@@ -793,17 +817,17 @@ SCA.dragDropPwd = function(ev) { //password onto password
 
         }
     }
-    else //this.e(SCA.currentDraggable).classList.contains("grp-drag")
-    {
-        var srcIdForm = ev.currentTarget.id;
-        var destIdForm = SCA.currentDraggable;
-        var srcId = srcIdForm.replace("-drag", "");
-        var destId = destIdForm.replace("-drag", "");
-       
-        var src = this.e(srcId);                       
-      
-        this.e(destId+"-pwds").appendChild(src);
-    }  
+    //    else //this.e(SCA.currentDraggable).classList.contains("grp-drag")
+    //    {
+    //        var srcIdForm = ev.currentTarget.id;
+    //        var destIdForm = SCA.currentDraggable;
+    //        var srcId = srcIdForm.replace("-drag", "");
+    //        var destId = destIdForm.replace("-drag", "");
+    //       
+    //        var src = this.e(srcId);                       
+    //      
+    //        this.e(destId+"-pwds").appendChild(src);
+    //    }  
     
     return false;
 };
