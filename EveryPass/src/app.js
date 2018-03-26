@@ -107,7 +107,7 @@ SCA.newPwd = function() {
         a: this.getAndClear("new-answer")
     };
 
-    this.addPwd(pwData);
+    this.addPwd(pwData,this._currentDefaultGrpId);
     this.e("search").value = "";
     this.filterPwds();
 };
@@ -118,7 +118,8 @@ SCA.newPwd = function() {
  */
 SCA.newGrp = function() {
     var grpData = {
-        n: this.getAndClear("new-group-name"),
+        g: this.getAndClear("new-group-name"),
+        pwds: []
     };
 
     this.addGrp(grpData);
@@ -131,7 +132,7 @@ SCA.newGrp = function() {
  * 
  * @param {object} item - the password JSON object to add
  */
-SCA.addPwd = function(item) {
+SCA.addPwd = function(item, grp) {
     
     var id = "p" + this._nextPwdId;
     
@@ -144,9 +145,9 @@ SCA.addPwd = function(item) {
     div.id = id;
     div.innerHTML = replaced;
     
-    if(this._currentDefaultGrpId != "")
+    if(grp)
     {
-        this._grpPwds(this._currentDefaultGrpId).appendChild(div);
+        this._grpPwds(grp).appendChild(div);
     }
     else
     {
@@ -176,8 +177,14 @@ SCA.addGrp = function(item) {
     div.id = id;
     div.innerHTML = replaced;
     this._divGrps().appendChild(div);
-    this.e(id + "-name").value = item.n;
+    this.e(id + "-name").value = item.g;
     this.showGrpBody(id, true);
+        
+    //add passwords (if imported/decrypted group)
+    for(var i = 0; i < item.pwds.length; i++)
+    {
+        SCA.addPwd(item.pwds[i], id);
+    }    
 };
 
 /**
@@ -188,6 +195,17 @@ SCA.addGrp = function(item) {
 SCA.addPwds = function(pwds) {
     for (var id in pwds) {
         this.addPwd(pwds[id]);
+    }
+};
+
+/**
+ * Adds all passwords in the supplied array to the DOM
+ * 
+ * @param {array} pwds - an array of password JSON objects
+ */
+SCA.addGrps = function(grps) {
+    for (var id in grps) {
+        this.addGrp(grps[id]);
     }
 };
 
@@ -237,7 +255,7 @@ SCA.delGrp = function(id) {
         
         if(this._currentDefaultGrpId == id)
         {
-            this._currentDefaultGrpId = "";
+            this._currentDefaultGrpId = null;
         }
         
         if(this.isKeepPwdsOfDeletedGrp())
@@ -329,13 +347,13 @@ SCA.setGrpAsDefault = function(grpId) {
             
     if(this._currentDefaultGrpId == grpId)
     {
-        this._currentDefaultGrpId = "";
+        this._currentDefaultGrpId = null;
         //toggleButton.innerHTML = "Default";    
         toggleButton.setAttribute("style", "border: 2px solid transparent;");
     }
     else
     {
-        if(this._currentDefaultGrpId != "")
+        if(this._currentDefaultGrpId)
         {
             var prevToggleButton = this.e(this._currentDefaultGrpId + "-setdefault");
             //prevToggleButton.innerHTML = "Make Default Group";    
@@ -381,8 +399,12 @@ SCA.getPwd = function(id) {
  * @returns {object} a JSON object which encapsulates the password data.
  */
 SCA.getGrp = function(id) {
+    
+    var grpPwdContainer = SCA.e(id+"-pwds");
+               
     return {
-        n: this.e(id + "-name").value, 
+        g: this.e(id + "-name").value, 
+        pwds: this.getPwds(grpPwdContainer)
     };
 };
 
@@ -391,14 +413,30 @@ SCA.getGrp = function(id) {
  * 
  * @returns {Array} an array of JSON objects representing all passwords on the page.
  */
-SCA.getPwds = function() {
+SCA.getPwds = function(container) {
     var pwds = [];
     this.eachPwd(function(id, pwd) {
         pwds.push(pwd);
-    });
+    }, container);
 
     return pwds;
 };
+
+
+/**
+ * Reads all passwords from the DOM into an array of JSON objects.
+ * 
+ * @returns {Array} an array of JSON objects representing all passwords on the page.
+ */
+SCA.getGrps = function() {
+    var grps = [];
+    this.eachGrp(function(id, grp) {
+        grps.push(grp);
+    });
+
+    return grps;
+};
+
 
 /**
  * Iterates over all passwords stored in the DOM with the supplied function.
@@ -491,6 +529,7 @@ SCA.encryptAndEmbedData = function() {
     
     return this.encryptWith(function(cs, cryptoKey, iv, adata) {
         // Reset document specific elements
+        SCA._divGrps().innerHTML = "";
         SCA._divPwds().innerHTML = "";
         SCA.e("search").setAttribute("disabled", "");
         
@@ -503,7 +542,13 @@ SCA.encryptAndEmbedData = function() {
  * @returns {string} - the passwords to be encrypted in plaintext.
  */
 SCA.getPayload = function() {
-    return SCA.getPwds();
+              
+    var pwdsGrouped = SCA.getGrps();
+    var pwdsNotGrouped = SCA.getPwds();
+    
+    var combined = pwdsNotGrouped.concat(pwdsGrouped);
+    
+    return combined;
 };
 
 /**
@@ -545,8 +590,27 @@ SCA.decrypt = function() {
         if (v === undefined || v <= 1.2) {
             out = JSON.parse(out);
         }
-        SCA.addPwds(out);
         
+        var splitIdx = out.length;
+        for(var i = 0; i < out.length; i++)
+        {
+            if('g' in out[i])
+            {
+                splitIdx = i;
+                break;
+            }                
+        }
+                     
+        var unGroupedPwds = out.slice(0, splitIdx);      
+             
+        SCA.addPwds(unGroupedPwds);
+        
+        if(splitIdx < out.length)
+        {
+            var groupPwds = out.slice(splitIdx);           
+            SCA.addGrps(groupPwds);
+        }              
+                
         return Promise.resolve();
     });
     
