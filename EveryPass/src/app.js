@@ -29,7 +29,7 @@ SCA._nextPwdId = 0;
  */
 SCA._nextGrpId = 0;
 
-SCA._currentDefaultGrpId = "";
+SCA._currentDefaultGrpId = null;
 
 /**
  * Gets the pw-data hidden template for passwords, and caches its value for future use.
@@ -119,7 +119,9 @@ SCA.newPwd = function() {
 SCA.newGrp = function() {
     var grpData = {
         g: this.getAndClear("new-group-name"),
-        pwds: []
+        pwds: [],
+        vis: true,
+        def: false
     };
 
     this.addGrp(grpData);
@@ -178,7 +180,20 @@ SCA.addGrp = function(item) {
     div.innerHTML = replaced;
     this._divGrps().appendChild(div);
     this.e(id + "-name").value = item.g;
-    this.showGrpBody(id, true);
+    
+    if(item.vis)
+    {
+        this.showGrpBody(id, true);
+    }
+    else
+    {
+        this.showGrpBody(id, false);
+    }
+    
+    if(item.def)
+    {
+        this.setGrpAsDefault(id);
+    }
         
     //add passwords (if imported/decrypted group)
     for(var i = 0; i < item.pwds.length; i++)
@@ -343,26 +358,34 @@ SCA.toggleGrp = function(id) {
 SCA.setGrpAsDefault = function(grpId) {
     
     var toggleButton = this.e(grpId + "-setdefault");
-    
-            
+                
     if(this._currentDefaultGrpId == grpId)
     {
         this._currentDefaultGrpId = null;
-        //toggleButton.innerHTML = "Default";    
-        toggleButton.setAttribute("style", "border: 2px solid transparent;");
+    
+        toggleButton.classList.remove("btn-warning");
+        
+        this.setDisplay(grpId + "-default-indicator-on", "none");
+        this.setDisplay(grpId + "-default-indicator-off", "inline");      
     }
     else
     {
         if(this._currentDefaultGrpId)
         {
-            var prevToggleButton = this.e(this._currentDefaultGrpId + "-setdefault");
-            //prevToggleButton.innerHTML = "Make Default Group";    
-            prevToggleButton.setAttribute("style", "border: 2px solid transparent;");
+            var prevToggleButton = this.e(this._currentDefaultGrpId + "-setdefault");               
+            
+            prevToggleButton.classList.remove("btn-warning");
+                 
+            this.setDisplay(this._currentDefaultGrpId + "-default-indicator-on", "none"); 
+            this.setDisplay(this._currentDefaultGrpId + "-default-indicator-off", "inline");  
         }
         
         this._currentDefaultGrpId = grpId;
-        //toggleButton.innerHTML = "Clear Default Group";
-        toggleButton.setAttribute("style", "border: 2px dashed yellow;");
+
+        toggleButton.classList.add("btn-warning");
+    
+        this.setDisplay(grpId + "-default-indicator-on", "inline");
+        this.setDisplay(grpId + "-default-indicator-off", "none"); 
     }           
 };
 
@@ -404,7 +427,9 @@ SCA.getGrp = function(id) {
                
     return {
         g: this.e(id + "-name").value, 
-        pwds: this.getPwds(grpPwdContainer)
+        pwds: this.getPwds(grpPwdContainer),
+        vis: grpPwdContainer.style.display !== "none",
+        def: (id == SCA._currentDefaultGrpId) 
     };
 };
 

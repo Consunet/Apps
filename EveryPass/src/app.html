@@ -227,7 +227,7 @@
 
         <div id="pw-data" class="container" style="display: none;">
             <form id="pwid-form" class="form-horizontal" role="form" autocomplete="off" onsubmit="return false;">
-                <div id="pwid-glow" class="panel panel-info">
+                <div id="pwid-glow" class="panel panel-default">
                     <div class="panel-heading">
                         <div class="row">
                             <div class="col-xs-6 col-sm-7 col-md-8 col-lg-8">
@@ -277,7 +277,7 @@
         </div>
                 
         <div id="grp-data" class="container" style="display: none;">           
-            <div id="grpid-glow" class="panel panel-default">
+            <div id="grpid-glow" class="panel panel-info">
                 <div class="panel-heading">
                     <form id="grpid-form" class="form-horizontal" role="form" autocomplete="off" onsubmit="return false;">
                         <div class="row">
@@ -287,7 +287,9 @@
                             </div> 
                             <div id="grpid-drag" class="grp-drag" style="cursor: ns-resize;" draggable="true" ondragstart="SCA.dragStart(event);" ondragover="SCA.dragOver(event);" ondragenter="SCA.dragEnter(event);" ondragleave="SCA.dragLeave(event);" ondrop="SCA.dragDropGrp(event);" ondragend="SCA.dragEnd(event);">
                                 <div class="col-xs-2 col-sm-1 col-md-2 col-lg-2 btn-toolbar">
-                                    <button id="grpid-setdefault" type="button" onclick="SCA.setGrpAsDefault('grpid');" class="btn btn-xs btn-info" style="border: 2px solid transparent;">Default</button>  
+                                    <button id="grpid-setdefault" type="button" onclick="SCA.setGrpAsDefault('grpid');" class="btn btn-xs" style="border: 2px solid transparent;">Default</button>  
+                                    <span id="grpid-default-indicator-on" style="color:green;font-weight:bold;display: none;">☑</span>
+                                    <span id="grpid-default-indicator-off" style="color:red;font-weight:bold">☒</span>
                                 </div> 
                                 <div class="col-xs-2 col-sm-1 col-md-2 col-lg-2 btn-toolbar">
                                     <button id="grpid-toggle" type="button" onclick="SCA.toggleGrp('grpid');" class="btn btn-xs btn-primary pull-left">Hide</button>  
