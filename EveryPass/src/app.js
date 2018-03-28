@@ -123,8 +123,8 @@ SCA.newGrp = function() {
     };
 
     this.addGrp(grpData);
-    //this.e("search").value = "";
-    //this.filterPwds();
+    this.e("search").value = "";
+    this.filterPwds();
 };
 
 /**
@@ -666,6 +666,7 @@ SCA.filterPwds = function(event) {
 
                 // Search the jsonString for the search term
                 if (jsonString.indexOf(searchTerm) !== -1) {
+                    SCA.showGrpBody(id, true);
                     SCA.setDisplay(pid, "inherit");
                     filtered.push(pid);
                 } else {
@@ -776,7 +777,12 @@ SCA.dragEnter = function(ev) {
     
     var id = ev.currentTarget.id;
     var glowId = id.replace("-drag", "-glow");
-    SCA.addClass(glowId, "drag-target");
+       
+    if(!(this.e(SCA.currentDraggable).classList.contains("grp-drag") && this.e(id).classList.contains("pwd-drag")))
+    {
+         SCA.addClass(glowId, "drag-target");
+    }
+    //else - prevent group onto password drag from triggering effect
 };
 
 /**
@@ -880,18 +886,7 @@ SCA.dragDropPwd = function(ev) { //password onto password
             }
 
         }
-    }
-    //    else //this.e(SCA.currentDraggable).classList.contains("grp-drag")
-    //    {
-    //        var srcIdForm = ev.currentTarget.id;
-    //        var destIdForm = SCA.currentDraggable;
-    //        var srcId = srcIdForm.replace("-drag", "");
-    //        var destId = destIdForm.replace("-drag", "");
-    //       
-    //        var src = this.e(srcId);                       
-    //      
-    //        this.e(destId+"-pwds").appendChild(src);
-    //    }  
+    }//else- dont do anything if group dropped onto passwors 
     
     return false;
 };

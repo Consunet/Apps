@@ -45,14 +45,9 @@ module.exports.refreshCoverage = async function (driver)
 
 }
 
-module.exports.openOptions = async function openOptions(driver, skipConfirmDel) {
+module.exports.openOptions = async function openOptions(driver) {
     await driver.findElement(webdriver.By.id('menu-button')).click();
     await driver.findElement(webdriver.By.id('menu-options')).click();
- 
-    if (skipConfirmDel && await driver.findElement(webdriver.By.id('opt-confirm-del')).isSelected()) {     
-        //deselect
-        await driver.findElement(webdriver.By.id('opt-confirm-del')).click();      
-    }
 }
 
 exports.encryptWith = async function (driver, password, hint) {
