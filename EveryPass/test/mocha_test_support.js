@@ -8,7 +8,7 @@ const expect = require("../../common/node_modules/chai").expect;
 const assert = require("../../common/node_modules/chai").assert;
 const comsupport = require('../../common/test/mocha_common_support.js');
 
-exports.getTestData = function getTestData(service, username, password, question, answer) {
+exports.getTestData = function (service, username, password, question, answer) {
     service = service || 'test service';
     username = username || 'test username';
     password = password || 'test password';
@@ -25,7 +25,7 @@ exports.getTestData = function getTestData(service, username, password, question
     return data;
 }
 
-exports.addPassword = async function addPassword(driver, doClickAdd, data) {
+exports.addPassword = async function (driver, doClickAdd, data) {
     data = data || this.getTestData();
     var searchForm = await driver.findElement(webdriver.By.id('new-entry'));
 
@@ -41,34 +41,34 @@ exports.addPassword = async function addPassword(driver, doClickAdd, data) {
     }
 }
 
-exports.addGroup = async function addPassword(driver, name) {
-  
+exports.addGroup = async function (driver, name) {
+
     var searchForm = await driver.findElement(webdriver.By.id('new-group'));
 
     await searchForm.findElement(webdriver.By.id('new-group-name')).sendKeys(name);
 
-    await searchForm.findElement(webdriver.By.id('add-new-group')).click();  
+    await searchForm.findElement(webdriver.By.id('add-new-group')).click();
 }
 
-exports.toggleShow = async function toggleShow(driver, id) {
+exports.toggleShowBody = async function (driver, id) {
     await driver.findElement(webdriver.By.id(id + '-toggle')).click();
 }
 
-exports.toggleDefaultGrp = async function (driver, id) {;
+exports.toggleDefaultGrp = async function (driver, id) {    
     await driver.findElement(webdriver.By.id(id + '-setdefault')).click();
 }
 
-exports.assertPasswordHidden = async function assertPasswordHidden(driver, id) {
+exports.assertPasswordHidden = async function (driver, id) {
     var passwordDisplayed = await driver.findElement(webdriver.By.id(id + '-service')).isDisplayed();
     expect(passwordDisplayed, "Password is shown for " + id).to.equal(false);
 }
 
-exports.assertPasswordShown = async function assertPasswordShown(driver, id) {
+exports.assertPasswordShown = async function (driver, id) {
     var passwordDisplayed = await driver.findElement(webdriver.By.id(id + '-service')).isDisplayed();
     expect(passwordDisplayed, "Password is hidden for " + id).to.equal(true);
 }
 
-exports.assertPasswordBodyHidden = async function assertPasswordBodyHidden(driver, id, grp) {
+exports.assertPasswordBodyHidden = async function (driver, id, grp) {
     await this.assertPasswordExists(driver, id, grp);
     //assertVisable(service)
     var serviceDisplayed = await driver.findElement(webdriver.By.id(id + '-service')).isDisplayed();
@@ -87,7 +87,7 @@ exports.assertPasswordBodyHidden = async function assertPasswordBodyHidden(drive
     expect(answerDisplayed, "Answer is shown for " + id).to.equal(false);
 }
 
-exports.assertPasswordBodyShown = async function assertPasswordBodyShown(driver, id, grp) {
+exports.assertPasswordBodyShown = async function (driver, id, grp) {
     await this.assertPasswordExists(driver, id, grp);
     //assertVisable(service)
     var serviceDisplayed = await driver.findElement(webdriver.By.id(id + '-service')).isDisplayed();
@@ -106,53 +106,61 @@ exports.assertPasswordBodyShown = async function assertPasswordBodyShown(driver,
     expect(answerDisplayed, "Answer is hidden for " + id).to.equal(true);
 }
 
-exports.assertPasswordNotExists = async function assertPasswordNotExists(driver, id, grp) {
-    
+exports.assertGroupBodyHidden = async function (driver, id) {
+    var passwordDisplayed = await driver.findElement(webdriver.By.id(id + '-pwds')).isDisplayed();
+    expect(passwordDisplayed, "Password is shown for " + id).to.equal(false);
+}
+
+exports.assertGroupBodyShown = async function (driver, id) {
+    var passwordDisplayed = await driver.findElement(webdriver.By.id(id + '-pwds')).isDisplayed();
+    expect(passwordDisplayed, "Password is hidden for " + id).to.equal(true);
+}
+
+exports.assertPasswordNotExists = async function (driver, id, grp) {
+
     var searchDomain;
-    
-    if(grp)
+
+    if (grp)
     {
         searchDomain = await driver.findElement(webdriver.By.id(grp + '-pwds'));
-    }
-    else
+    } else
     {
         searchDomain = await driver.findElement(webdriver.By.id('pwds'));
     }
-    
+
     var password = await searchDomain.findElements(webdriver.By.id(id + '-password'));
     expect(password, "Password entry is found for " + id).to.be.empty;
 }
 
-exports.assertPasswordExists = async function assertPasswordExists(driver, id, grp) {
-    
+exports.assertPasswordExists = async function (driver, id, grp) {
+
     var searchDomain;
-    
-    if(grp)
+
+    if (grp)
     {
         searchDomain = await driver.findElement(webdriver.By.id(grp + '-pwds'));
-    }
-    else
+    } else
     {
         searchDomain = await driver.findElement(webdriver.By.id('pwds'));
     }
-    
+
     var password = await searchDomain.findElements(webdriver.By.id(id + '-password'));
     expect(password, "Password entry is not found for " + id).to.not.be.empty;
 }
 
-exports.assertGroupNotExists = async function assertGroupNotExists(driver, id) {
-         
+exports.assertGroupNotExists = async function (driver, id) {
+
     var password = await driver.findElements(webdriver.By.id(id));
     expect(password, "Password entry is found for " + id).to.be.empty;
 }
 
-exports.assertGroupExists = async function assertGroupExists(driver, id) {
-    
+exports.assertGroupExists = async function (driver, id) {
+
     var password = await driver.findElements(webdriver.By.id(id));
     expect(password, "Password entry is not found for " + id).to.not.be.empty;
 }
 
-exports.verifyDataMatches = async function verifyDataMatches(driver, id, data) {
+exports.verifyDataMatches = async function (driver, id, data) {
     serviceVal = await driver.findElement(webdriver.By.id(id + '-service')).getAttribute("value");
     expect(serviceVal, "Service data does not match expected." + id).to.equal(data.service);
     //username
@@ -169,11 +177,11 @@ exports.verifyDataMatches = async function verifyDataMatches(driver, id, data) {
     expect(answerVal, "Answer data does not match expected." + id).to.equal(data.answer);
 }
 
-exports.delItem = async function delItem(driver, id) {
+exports.delItem = async function (driver, id) {
     await driver.findElement(webdriver.By.id(id + '-delete')).click();
 }
 
-exports.search = async function search(driver, text, reset) {
+exports.search = async function (driver, text, reset) {
     var searchBar = await driver.findElement(webdriver.By.id('search'))
     if (reset) {
         await searchBar.clear();
@@ -182,22 +190,21 @@ exports.search = async function search(driver, text, reset) {
 }
 
 exports.setExtendedOptions = async function (driver, isConfirmDelete, isKeepDeletedGrpPwds) {
-    
+
     await comsupport.openOptions(driver);
-    
+
     var currentOpt_isConfirmDelete = await driver.findElement(webdriver.By.id('opt-confirm-del')).isSelected();
-    
-    if (isConfirmDelete != currentOpt_isConfirmDelete) {     
+
+    if (isConfirmDelete != currentOpt_isConfirmDelete) {
         //deselect
-        await driver.findElement(webdriver.By.id('opt-confirm-del')).click();      
+        await driver.findElement(webdriver.By.id('opt-confirm-del')).click();
     }
-    
+
     var currentOpt_isKeepDeletedGrpPwds = await driver.findElement(webdriver.By.id('opt-keep-grp-pwds')).isSelected();
-    
-    if (isKeepDeletedGrpPwds != currentOpt_isKeepDeletedGrpPwds) {     
+
+    if (isKeepDeletedGrpPwds != currentOpt_isKeepDeletedGrpPwds) {
         //deselect
-        await driver.findElement(webdriver.By.id('opt-keep-grp-pwds')).click();      
+        await driver.findElement(webdriver.By.id('opt-keep-grp-pwds')).click();
     }
-    
 }
 

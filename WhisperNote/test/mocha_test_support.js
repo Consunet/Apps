@@ -8,11 +8,11 @@ const expect = require("../../common/node_modules/chai").expect;
 const assert = require("../../common/node_modules/chai").assert;
 
 
-exports.addNote = async function addNote(driver, message) {
+exports.addNote = async function (driver, message) {
     await driver.findElement(webdriver.By.id('payload')).sendKeys(message);
 }
 
-exports.assertNoteText = async function assertNoteText(driver, expectedText) {
+exports.assertNoteText = async function (driver, expectedText) {
     var msg = await driver.executeScript(function () {
         return document.getElementById("payload").value;
     });

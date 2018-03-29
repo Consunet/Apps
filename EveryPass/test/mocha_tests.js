@@ -62,7 +62,7 @@ describe('EveryPass Specific Testing', function () {
         assert.equal(title, 'EveryPass Password Manager v1.5', 'Password manager homepage title is NOT the one expected');
         var help = await driver.findElement(webdriver.By.id('help-screen'));
         var helpText = await help.getAttribute("innerHTML");
-        assert.include(helpText, "is a Password Manager", 'Description exists')
+        assert.include(helpText, "is a Password Manager", 'Description exists');
     });
 
     describe('Core UI function tests', function () {
@@ -85,8 +85,8 @@ describe('EveryPass Specific Testing', function () {
             //assertPasswordBodyHidden()
             await support.assertPasswordBodyHidden(driver, id);
 
-            //toggleShow()
-            await support.toggleShow(driver, id)
+            //toggleShowBody()
+            await support.toggleShowBody(driver, id)
 
             //assertPasswordBodyShown()
             await support.assertPasswordBodyShown(driver, id);
@@ -97,8 +97,8 @@ describe('EveryPass Specific Testing', function () {
             var goDisplayed = await driver.findElement(webdriver.By.id(id + '-go')).isDisplayed();
             expect(goDisplayed, "Go Button is hidden for " + id).to.equal(true);
 
-            //toggleShow()
-            await support.toggleShow(driver, id)
+            //toggleShowBody()
+            await support.toggleShowBody(driver, id)
             //assertPasswordBodyHidden()
             await support.assertPasswordBodyHidden(driver, id);
             //skip confirmation on delete
@@ -204,7 +204,9 @@ describe('EveryPass Specific Testing', function () {
 
             await support.addGroup(driver, 'Group 1');
 
-            await support.assertGroupExists(driver, 'g0'); 
+            await support.assertGroupExists(driver, 'g0');
+
+            await support.assertGroupBodyShown(driver, 'g0'); //visible grp  
 
             await support.toggleDefaultGrp(driver, 'g0');//pwds to be added to g0
 
@@ -214,20 +216,88 @@ describe('EveryPass Specific Testing', function () {
 
             await support.assertPasswordExists(driver, 'p0', 'g0');//p0 in g0
 
+            await support.assertPasswordShown(driver, 'p0');
+
             await support.verifyDataMatches(driver, 'p0', p0);
+
+            await support.toggleShowBody(driver, 'g0');//hide g0
+
+            await support.assertGroupBodyHidden(driver, 'g0');//hidden grp             
+            await support.assertPasswordHidden(driver, 'p0');
+
+            await support.toggleShowBody(driver, 'g0');//show g0
+
+            await support.assertGroupBodyShown(driver, 'g0'); //visible grp 
+            await support.assertPasswordShown(driver, 'p0');
+        });
+        
+        it('Can create multiple passwords and search for them case-insensitively (no groups).', async function () {
+
+            //sets test timeout to 10s
+            this.timeout(10000);
+
+            //refresh the driver
+            await driver.get(testVars.TEST_UNENCRYPTED_URL);
+
+                 
+            await support.addPassword(driver, true, support.getTestData("ABc"));//p0
+            await support.addPassword(driver, true, support.getTestData("def"));//p1
+            await support.addPassword(driver, true, support.getTestData("ghi"));//p2
+            await support.addPassword(driver, true, support.getTestData("jkl"));//p3
+            var p4 = support.getTestData("abcd")
+            await support.addPassword(driver, true, p4);//p4
+
+            await support.assertPasswordExists(driver, 'p0');
+            await support.assertPasswordExists(driver, 'p1');
+            await support.assertPasswordExists(driver, 'p2');                  
+            await support.assertPasswordExists(driver, 'p3');
+            await support.assertPasswordExists(driver, 'p4');
             
-            await support.assertPasswordShown(driver, 'p0');          
-              
-            await support.toggleShow(driver, 'g0');//hide g0
             
-            await support.assertPasswordHidden(driver, 'p0');//hidden grp means hidden pwd
-            
-            await support.toggleShow(driver, 'g0');//show g0
-            
-            await support.assertPasswordShown(driver, 'p0'); //visible grp means visible pwd             
+            //single character 'a' not to trigger search
+            await support.search(driver, "a");
+            //expect all shown
+            await support.assertPasswordShown(driver, 'p0');
+            await support.assertPasswordShown(driver, 'p1');
+            await support.assertPasswordShown(driver, 'p2');
+            await support.assertPasswordShown(driver, 'p3');
+            await support.assertPasswordShown(driver, 'p4');
+            //
+                      
+            //2 chars to trigger search using 'ab' 
+            await support.search(driver, "b");
+            //expect 2 shown
+            await support.assertPasswordShown(driver, 'p0');
+            await support.assertPasswordHidden(driver, 'p1');
+            await support.assertPasswordHidden(driver, 'p2');          
+   
+            await support.assertPasswordHidden(driver, 'p3');
+            await support.assertPasswordShown(driver, 'p4');           
+
+            //trigger search using 'abc' 
+            await support.search(driver, "c");
+            //expect same 2 shown
+            await support.assertPasswordShown(driver, 'p0');
+            await support.assertPasswordShown(driver, 'p4');
+
+            //trigger search using 'abcd' 
+            await support.search(driver, "d");
+            //expect later of previous 2 shown
+            await support.assertPasswordHidden(driver, 'p0');
+            await support.assertPasswordShown(driver, 'p4');
+            await support.verifyDataMatches(driver, 'p4', p4);
+
+            //reset search and single character 'a' not to trigger new search
+            await support.search(driver, "a", true);
+            //expect all shown
+            await support.assertPasswordShown(driver, 'p0');
+            await support.assertPasswordShown(driver, 'p1');
+            await support.assertPasswordShown(driver, 'p2');
+            await support.assertPasswordShown(driver, 'p3');
+            await support.assertPasswordShown(driver, 'p4');
         });
 
-                it('Can create multiple passwords in separate groups and search for them case-insensitively.', async function () {
+        it('Can create multiple passwords in separate groups and search for them case-insensitively.', async function () {
 
             //sets test timeout to 10s
             this.timeout(10000);
@@ -243,11 +313,11 @@ describe('EveryPass Specific Testing', function () {
             await support.addPassword(driver, true, support.getTestData("ABc"));//p0
             await support.addPassword(driver, true, support.getTestData("def"));//p1
             await support.addPassword(driver, true, support.getTestData("ghi"));//p2
-            
+
             await support.assertPasswordExists(driver, 'p0', 'g0');
             await support.assertPasswordExists(driver, 'p1', 'g0');
             await support.assertPasswordExists(driver, 'p2', 'g0');
-                        
+
             await support.toggleDefaultGrp(driver, 'g1');//pwds to be added to g1            
             await support.addPassword(driver, true, support.getTestData("jkl"));//p3
             var p4 = support.getTestData("abcd")
@@ -255,7 +325,9 @@ describe('EveryPass Specific Testing', function () {
 
             await support.assertPasswordExists(driver, 'p3', 'g1');
             await support.assertPasswordExists(driver, 'p4', 'g1');
- 
+
+            
+            
             //single character 'a' not to trigger search
             await support.search(driver, "a");
             //expect all shown
@@ -265,15 +337,22 @@ describe('EveryPass Specific Testing', function () {
             await support.assertPasswordShown(driver, 'p3');
             await support.assertPasswordShown(driver, 'p4');
             //
-
+            
+            await support.toggleShowBody(driver, 'g1')//hide, should show again upon search match
+            await support.assertGroupBodyHidden(driver, 'g1');
+            
             //2 chars to trigger search using 'ab' 
             await support.search(driver, "b");
             //expect 2 shown
             await support.assertPasswordShown(driver, 'p0');
             await support.assertPasswordHidden(driver, 'p1');
             await support.assertPasswordHidden(driver, 'p2');
+            
+            await support.assertGroupBodyShown(driver, 'g1');
             await support.assertPasswordHidden(driver, 'p3');
             await support.assertPasswordShown(driver, 'p4');
+
+            
 
             //trigger search using 'abc' 
             await support.search(driver, "c");
@@ -340,28 +419,28 @@ describe('EveryPass Specific Testing', function () {
             await support.assertPasswordNotExists(driver, 'p2', 'g0');
             await support.assertPasswordNotExists(driver, 'p2', 'g1');
             await support.assertPasswordExists(driver, 'p2'); //in non grouped area
-        });        
-        
+        });
+
         it('Can delete a group as well as its passwords (after confirmation).', async function () {
             //sets test timeout to 10s
             this.timeout(10000);
 
             //refresh the driver
             await driver.get(testVars.TEST_UNENCRYPTED_URL);
-            
+
             //no delete warning and remove passwords in group
-            await support.setExtendedOptions(driver,true, false);
-            
+            await support.setExtendedOptions(driver, true, false);
+
             await support.addGroup(driver, 'Group 0'); //g0     
             await support.toggleDefaultGrp(driver, 'g0');//on    
             await support.addPassword(driver, true, support.getTestData("ABc"));//p0 in g0     
-    
-            await support.assertPasswordExists(driver, 'p0', 'g0');  
-            
-            await support.delItem(driver,'g0');//del g0 triggering prompt
-            
+
+            await support.assertPasswordExists(driver, 'p0', 'g0');
+
+            await support.delItem(driver, 'g0');//del g0 triggering prompt
+
             var alertShown;
-            
+
             try
             {
                 //confirmation expected
@@ -374,36 +453,36 @@ describe('EveryPass Specific Testing', function () {
             }
 
             expect(alertShown, "Alert not shown").to.equal(true)
-            
+
             await support.assertGroupNotExists(driver, 'g0'); //g0 now gone 
-            
+
             await support.assertPasswordNotExists(driver, 'p0');//p0 not returned to non-grouped area                         
-        }); 
-        
+        });
+
         it('Can delete a group and retain its passwords.', async function () {
-              //sets test timeout to 10s
+            //sets test timeout to 10s
             this.timeout(10000);
 
             //refresh the driver
             await driver.get(testVars.TEST_UNENCRYPTED_URL);
-            
+
             //no delete warning and remove passwords in group
-            await support.setExtendedOptions(driver,false, true);
-            
+            await support.setExtendedOptions(driver, false, true);
+
             await support.addGroup(driver, 'Group 0'); //g0     
             await support.toggleDefaultGrp(driver, 'g0');//on    
             await support.addPassword(driver, true, support.getTestData("ABc"));//p0 in g0     
-    
-            await support.assertPasswordExists(driver, 'p0', 'g0');  
-            
-            await support.delItem(driver,'g0');//del g0 (no prompt this time)
-            
+
+            await support.assertPasswordExists(driver, 'p0', 'g0');
+
+            await support.delItem(driver, 'g0');//del g0 (no prompt this time)
+
             await support.assertGroupNotExists(driver, 'g0'); //g0 deleted 
-            
+
             await support.assertPasswordExists(driver, 'p0'); //p0 returned to non-grouped area                     
-        });         
+        });
     });
-   
+
     describe('Advanced UI function tests', function () {
 
         it('Can drag and drop password onto password to move (downwards, no groups)', async function () {
@@ -414,27 +493,7 @@ describe('EveryPass Specific Testing', function () {
             //refresh the driver
             await driver.get(testVars.TEST_UNENCRYPTED_URL);
 
-            await support.addPassword(driver, true, support.getTestData("ABc"));//p0     
-            await support.addPassword(driver, true, support.getTestData("def"));//p1
-            await support.addPassword(driver, true, support.getTestData("ghi"));//p2
-
-            var posBefore = await driver.executeScript(async function () {
-                var pos = SCA.getPwdPositions('p0', 'p2');
-                return pos;
-            });
-
-            expect(posBefore).to.deep.equal([0, 2]);
-
-            var draggable = await driver.findElement(webdriver.By.id('p0-drag'));
-            var droppable = await driver.findElement(webdriver.By.id('p2-drag'));
-
-            await driver.executeScript(dragAndDrop, draggable, droppable);
-
-            var posAfter = await driver.executeScript(async function () {
-                return SCA.getPwdPositions('p0', 'p2')
-            });
-
-            expect(posAfter).to.deep.equal([2, 1]);
+            await dragPwdToPwdChecks(driver, false);
         });
 
         it('Can drag and drop password onto password to move (upwards, no groups)', async function () {
@@ -445,27 +504,7 @@ describe('EveryPass Specific Testing', function () {
             //refresh the driver
             await driver.get(testVars.TEST_UNENCRYPTED_URL);
 
-            await support.addPassword(driver, true, support.getTestData("ABc"));//p0     
-            await support.addPassword(driver, true, support.getTestData("def"));//p1
-            await support.addPassword(driver, true, support.getTestData("ghi"));//p2
-
-            var posBefore = await driver.executeScript(async function () {
-                var pos = SCA.getPwdPositions('p0', 'p2');
-                return pos;
-            });
-
-            expect(posBefore).to.deep.equal([0, 2]);
-
-            var draggable = await driver.findElement(webdriver.By.id('p2-drag'));
-            var droppable = await driver.findElement(webdriver.By.id('p0-drag'));
-
-            await driver.executeScript(dragAndDrop, draggable, droppable);
-
-            var posAfter = await driver.executeScript(async function () {
-                return SCA.getPwdPositions('p0', 'p2')
-            });
-
-            expect(posAfter).to.deep.equal([1, 0]);
+            await dragPwdToPwdChecks(driver, true);
         });
 
         it('Can drag and drop group onto group to move (downwards)', async function () {
@@ -476,38 +515,7 @@ describe('EveryPass Specific Testing', function () {
             //refresh the driver
             await driver.get(testVars.TEST_UNENCRYPTED_URL);
 
-            await support.addGroup(driver, 'Group 0'); //g0
-            await support.toggleDefaultGrp(driver, 'g0');//on
-            await support.addPassword(driver, true, support.getTestData("abc"));
-            
-            await support.addGroup(driver, 'Group 1'); //g1
-            await support.toggleDefaultGrp(driver, 'g1');
-            await support.addPassword(driver, true, support.getTestData("def"));
-            
-            await support.addGroup(driver, 'Group 2'); //g2
-            await support.toggleDefaultGrp(driver, 'g2');
-            await support.addPassword(driver, true, support.getTestData("ghi"));
-            
-            var posBefore = await driver.executeScript(async function () {
-                var pos = SCA.getGrpPositions('g0', 'g2');
-                return pos;
-            });
-
-            expect(posBefore).to.deep.equal([0, 2]);
-
-            var draggable = await driver.findElement(webdriver.By.id('g0-drag'));
-            var droppable = await driver.findElement(webdriver.By.id('g2-drag'));
-
-            await driver.executeScript(dragAndDrop, draggable, droppable);
-
-            var posAfter = await driver.executeScript(async function () {
-                return SCA.getGrpPositions('g0', 'g2')
-            });
-
-            expect(posAfter).to.deep.equal([2, 1]);
-            
-            await support.assertPasswordExists(driver, 'p0', 'g0');//retains passwords after move 
-            await support.assertPasswordExists(driver, 'p2', 'g2');  
+            await dragGrpToGrpChecks(driver, false);
         });
 
         it('Can drag and drop group onto group to move (upwards)', async function () {
@@ -518,38 +526,7 @@ describe('EveryPass Specific Testing', function () {
             //refresh the driver
             await driver.get(testVars.TEST_UNENCRYPTED_URL);
 
-            await support.addGroup(driver, 'Group 0'); //g0
-            await support.toggleDefaultGrp(driver, 'g0');//on
-            await support.addPassword(driver, true, support.getTestData("abc"));
-            
-            await support.addGroup(driver, 'Group 1'); //g1
-            await support.toggleDefaultGrp(driver, 'g1');
-            await support.addPassword(driver, true, support.getTestData("def"));
-            
-            await support.addGroup(driver, 'Group 2'); //g2
-            await support.toggleDefaultGrp(driver, 'g2');
-            await support.addPassword(driver, true, support.getTestData("ghi"));
-
-            var posBefore = await driver.executeScript(async function () {
-                var pos = SCA.getGrpPositions('g0', 'g2');
-                return pos;
-            });
-
-            expect(posBefore).to.deep.equal([0, 2]);
-
-            var draggable = await driver.findElement(webdriver.By.id('g2-drag'));
-            var droppable = await driver.findElement(webdriver.By.id('g0-drag'));
-
-            await driver.executeScript(dragAndDrop, draggable, droppable);
-
-            var posAfter = await driver.executeScript(async function () {
-                return SCA.getGrpPositions('g0', 'g2')
-            });
-
-            expect(posAfter).to.deep.equal([1, 0]);
-            
-            await support.assertPasswordExists(driver, 'p0', 'g0');//retains passwords after move 
-            await support.assertPasswordExists(driver, 'p2', 'g2');      
+            await dragGrpToGrpChecks(driver, true);
         });
 
         it('Can drag and drop passwords into groups (via group title panel)', async function () {
@@ -645,98 +622,40 @@ describe('EveryPass Specific Testing', function () {
             await support.assertPasswordExists(driver, 'p1', 'g0');//now in group           
         });
 
-        it('Can drag and drop a password in one group onto a password in another group to insert at target (upwards)', async function () {
-
-            //sets test timeout to 10s
-            this.timeout(10000);
-
-            //refresh the driver
-            await driver.get(testVars.TEST_UNENCRYPTED_URL);
-
-            await support.addGroup(driver, 'Group 0'); //g0
-            await support.addGroup(driver, 'Group 1'); //g1
-
-            await support.toggleDefaultGrp(driver, 'g0');//on   
-
-            await support.addPassword(driver, true, support.getTestData("abc")); //p0 to g0
-
-            await support.toggleDefaultGrp(driver, 'g1');//g1 on, g0 off
-
-            await support.addPassword(driver, true, support.getTestData("def")); //p1 to g1                                         
-
-            var draggable = await driver.findElement(webdriver.By.id('p1-drag'));
-            var droppable = await driver.findElement(webdriver.By.id('p0-drag'));
-
-            await support.assertPasswordExists(driver, 'p1', 'g1');//starts in this group   
-            await support.assertPasswordNotExists(driver, 'p1', 'g0');//not yet in this group  
-
-            await driver.executeScript(dragAndDrop, draggable, droppable);
-
-            await support.assertPasswordNotExists(driver, 'p1', 'g1');//no longer in this group   
-            await support.assertPasswordExists(driver, 'p1', 'g0');//now in group 
-
-            var posAfter = await driver.executeScript(async function () {
-
-                var grpContainer = SCA.e('g0-pwds');
-
-                return SCA.getPwdPositions('p0', 'p1', grpContainer);
-            });
-
-            expect(posAfter).to.deep.equal([1, 0]);
-        });
-
         it('Can drag and drop a password in one group onto a password in another group to insert at target (downwards)', async function () {
 
             //sets test timeout to 10s
-            this.timeout(10000);
+            this.timeout(30000);
 
             //refresh the driver
             await driver.get(testVars.TEST_UNENCRYPTED_URL);
 
-            await support.addGroup(driver, 'Group 0'); //g0
-            await support.addGroup(driver, 'Group 1'); //g1
+            await dragPwdToPwdInGrpChecks(driver, false);
+        });
 
-            await support.toggleDefaultGrp(driver, 'g0');//on   
+        it('Can drag and drop a password in one group onto a password in another group to insert at target (upwards)', async function () {
 
-            await support.addPassword(driver, true, support.getTestData("abc")); //p0 to g0
+            //sets test timeout to 10s
+            this.timeout(30000);
 
-            await support.toggleDefaultGrp(driver, 'g1');//g1 on, g0 off
+            //refresh the driver
+            await driver.get(testVars.TEST_UNENCRYPTED_URL);
 
-            await support.addPassword(driver, true, support.getTestData("def")); //p1 to g1                                         
-
-            var draggable = await driver.findElement(webdriver.By.id('p0-drag'));
-            var droppable = await driver.findElement(webdriver.By.id('p1-drag'));
-
-            await support.assertPasswordExists(driver, 'p0', 'g0');//starts in this group   
-            await support.assertPasswordNotExists(driver, 'p0', 'g1');//not yet in this group  
-
-            await driver.executeScript(dragAndDrop, draggable, droppable);
-
-            await support.assertPasswordNotExists(driver, 'p0', 'g0');//no longer in this group   
-            await support.assertPasswordExists(driver, 'p0', 'g1');//now in group 
-
-            var posAfter = await driver.executeScript(async function () {
-
-                var grpContainer = SCA.e('g1-pwds');
-
-                return SCA.getPwdPositions('p0', 'p1', grpContainer);
-            });
-
-            expect(posAfter).to.deep.equal([1, 0]);
+            await dragPwdToPwdInGrpChecks(driver, true);
         });
 
     });
-    
+
     describe('File encrypt and decrypt tests', function () {
-        
-        it('Can create multiple groups and passswords both inside and outside of groups and then encrypt all.', async function () {
+
+        it('Can create multiple groups, add passswords both inside and outside of groups, and then encrypt all.', async function () {
 
             this.timeout(10000);
 
             await driver.get(testVars.TEST_UNENCRYPTED_URL);
 
             await comsupport.setCommonOptions(driver, "test_encrypted", 2);
-           
+
             await support.addPassword(driver, true, support.getTestData("ABc"));//p0
 
             await support.addGroup(driver, 'Group 0'); //g0
@@ -747,11 +666,13 @@ describe('EveryPass Specific Testing', function () {
             await support.addPassword(driver, true, support.getTestData("def"));//p1
             await support.assertPasswordExists(driver, 'p1', 'g0');
 
+            await support.toggleShowBody(driver, 'g0'); //hide g0, to be retained in decrypt;
+
             await support.toggleDefaultGrp(driver, 'g1');//g1 on (previous g0 off)            
 
             //not added until encrypt called (tested for existance in decrypt)
             await support.addPassword(driver, false, support.getTestData("ghi"));//p2
-                   
+
             //trigger encrypt and download
             await comsupport.encryptWith(driver, testVars.TEST_PASSWORD, testVars.TEST_HINT);
 
@@ -759,10 +680,10 @@ describe('EveryPass Specific Testing', function () {
             await sleep(1000);
 
             //ensure passwords and groups removed after encrypt
-            await support.assertPasswordNotExists(driver,  'p1');
-            await support.assertGroupNotExists(driver,  'g0');
-            await support.assertGroupNotExists(driver,  'g1');
-        
+            await support.assertPasswordNotExists(driver, 'p1');
+            await support.assertGroupNotExists(driver, 'g0');
+            await support.assertGroupNotExists(driver, 'g1');
+
             //make sure file is created
             expect(file('test/test_downloads/test_encrypted.html')).to.exist;
 
@@ -776,40 +697,7 @@ describe('EveryPass Specific Testing', function () {
 
             await driver.get(testVars.TEST_ENCRYPTED_URL);
 
-            //check is diplaying form for unlock password
-            await comsupport.assertFormIsLocked(driver, true);
-
-            //check for hint
-            var hintVal = await driver.findElement(webdriver.By.id('dec-hint')).getAttribute("innerHTML");
-            expect(hintVal, "Hint doesn't exist").to.be.equal(testVars.TEST_HINT);
-
-            await comsupport.decryptWith(driver, "password");
-
-            //check is not diplaying form for unlock password
-            await comsupport.assertFormIsLocked(driver, false);
-
-            await comsupport.assertBrowserUnsupportedMessageIsShown(driver, false);
-           
-            await support.assertGroupExists(driver,  'g0');
-            await support.assertGroupExists(driver,  'g1');
-
-            var id = 'p0';
-            await support.assertPasswordBodyHidden(driver, id);
-            await support.toggleShow(driver, id);
-            await support.assertPasswordBodyShown(driver, id);
-            await support.verifyDataMatches(driver, id, support.getTestData("ABc"));
-            
-            id = 'p1';
-            await support.assertPasswordBodyHidden(driver, id, 'g0');
-            await support.toggleShow(driver, id);
-            await support.assertPasswordBodyShown(driver, id, 'g0');
-            await support.verifyDataMatches(driver, id, support.getTestData("def"));
-
-            id = 'p2';
-            await support.assertPasswordBodyHidden(driver, id, 'g1');
-            await support.toggleShow(driver, id);
-            await support.assertPasswordBodyShown(driver, id, 'g1');
-            await support.verifyDataMatches(driver, id, support.getTestData("ghi"));
+            await decryptTestChecks(driver);
         });
 
         it('Can do decrypt of encrypted file via import.', async function () {
@@ -824,42 +712,9 @@ describe('EveryPass Specific Testing', function () {
             //allow for import
             await sleep(100);
 
-            //check is diplaying form for unlock password
-            await comsupport.assertFormIsLocked(driver, true);
-
-            //check for hint
-            var hintVal = await driver.findElement(webdriver.By.id('dec-hint')).getAttribute("innerHTML");
-            expect(hintVal, "Hint doesn't exist").to.be.equal(testVars.TEST_HINT);
-
-            await comsupport.decryptWith(driver, "password");
-
-            //check is not diplaying form for unlock password
-            await comsupport.assertFormIsLocked(driver, false);
-
-            await comsupport.assertBrowserUnsupportedMessageIsShown(driver, false);
-           
-            await support.assertGroupExists(driver,  'g0');
-            await support.assertGroupExists(driver,  'g1');
-
-            var id = 'p0';
-            await support.assertPasswordBodyHidden(driver, id);
-            await support.toggleShow(driver, id);
-            await support.assertPasswordBodyShown(driver, id);
-            await support.verifyDataMatches(driver, id, support.getTestData("ABc"));
-            
-            id = 'p1';
-            await support.assertPasswordBodyHidden(driver, id, 'g0');
-            await support.toggleShow(driver, id);
-            await support.assertPasswordBodyShown(driver, id, 'g0');
-            await support.verifyDataMatches(driver, id, support.getTestData("def"));
-
-            id = 'p2';
-            await support.assertPasswordBodyHidden(driver, id, 'g1');
-            await support.toggleShow(driver, id);
-            await support.assertPasswordBodyShown(driver, id, 'g1');
-            await support.verifyDataMatches(driver, id, support.getTestData("ghi"));
+            await decryptTestChecks(driver);
         });
-        
+
         it('Can do decrypt of encrypted file from final EveryPass build without grouping functionality (via import).', async function () {
 
             this.timeout(10000);
@@ -889,13 +744,13 @@ describe('EveryPass Specific Testing', function () {
             var id = 'p0';
             await support.assertPasswordBodyHidden(driver, id);
 
-            await support.toggleShow(driver, id);
+            await support.toggleShowBody(driver, id);
             await support.assertPasswordBodyShown(driver, id);
             await support.verifyDataMatches(driver, id, support.getTestData());
 
             id = 'p1';
             await support.assertPasswordBodyHidden(driver, id);
-            await support.toggleShow(driver, id);
+            await support.toggleShowBody(driver, id);
             await support.assertPasswordBodyShown(driver, id);
             await support.verifyDataMatches(driver, id, support.getTestData("abc"));
         });
@@ -929,13 +784,13 @@ describe('EveryPass Specific Testing', function () {
             var id = 'p0';
             await support.assertPasswordBodyHidden(driver, id);
 
-            await support.toggleShow(driver, id);
+            await support.toggleShowBody(driver, id);
             await support.assertPasswordBodyShown(driver, id);
             await support.verifyDataMatches(driver, id, support.getTestData());
 
             id = 'p1';
             await support.assertPasswordBodyHidden(driver, id);
-            await support.toggleShow(driver, id);
+            await support.toggleShowBody(driver, id);
             await support.assertPasswordBodyShown(driver, id);
             await support.verifyDataMatches(driver, id, support.getTestData("abc"));
         });
@@ -1032,6 +887,177 @@ describe('EveryPass Specific Testing', function () {
 //    });
 
 });
+
+async function decryptTestChecks(driver) {
+
+    //check is diplaying form for unlock password
+    await comsupport.assertFormIsLocked(driver, true);
+
+    //check for hint
+    var hintVal = await driver.findElement(webdriver.By.id('dec-hint')).getAttribute("innerHTML");
+    expect(hintVal, "Hint doesn't exist").to.be.equal(testVars.TEST_HINT);
+
+    await comsupport.decryptWith(driver, "password");
+
+    //check is not diplaying form for unlock password
+    await comsupport.assertFormIsLocked(driver, false);
+
+    await comsupport.assertBrowserUnsupportedMessageIsShown(driver, false);
+
+    await support.assertGroupExists(driver, 'g0');
+    await support.assertGroupBodyHidden(driver, 'g0');//hidden grp as hidden before encrypt            
+    await support.toggleShowBody(driver, 'g0');
+    await support.assertGroupBodyShown(driver, 'g0');
+
+    await support.assertGroupExists(driver, 'g1');
+    await support.addPassword(driver, true, support.getTestData("ghi"));//p3 to be added to g1 
+    await support.assertPasswordNotExists(driver, 'p3'); //should not be added to non-grouped area
+    await support.assertPasswordExists(driver, 'p3', 'g1');//should be added to g1 which was set as default before encrypt
+
+    var id = 'p0';
+    await support.assertPasswordBodyHidden(driver, id);
+    await support.toggleShowBody(driver, id);
+    await support.assertPasswordBodyShown(driver, id);
+    await support.verifyDataMatches(driver, id, support.getTestData("ABc"));
+
+    id = 'p1';
+    await support.assertPasswordBodyHidden(driver, id, 'g0');
+    await support.toggleShowBody(driver, id);
+    await support.assertPasswordBodyShown(driver, id, 'g0');
+    await support.verifyDataMatches(driver, id, support.getTestData("def"));
+
+    id = 'p2';
+    await support.assertPasswordBodyHidden(driver, id, 'g1');
+    await support.toggleShowBody(driver, id);
+    await support.assertPasswordBodyShown(driver, id, 'g1');
+    await support.verifyDataMatches(driver, id, support.getTestData("ghi"));
+}
+
+async function dragPwdToPwdChecks(driver, isReverse) {
+
+    await support.addPassword(driver, true, support.getTestData("ABc"));//p0     
+    await support.addPassword(driver, true, support.getTestData("def"));//p1
+    await support.addPassword(driver, true, support.getTestData("ghi"));//p2
+
+    var posBefore = await driver.executeScript(async function () {
+        var pos = SCA.getPwdPositions('p0', 'p2');
+        return pos;
+    });
+
+    expect(posBefore).to.deep.equal([0, 2]);
+
+    var p0 = await driver.findElement(webdriver.By.id('p0-drag'));
+    var p2 = await driver.findElement(webdriver.By.id('p2-drag'));
+
+    if (isReverse)
+    {
+        await driver.executeScript(dragAndDrop, p2, p0);
+
+        var posAfter = await driver.executeScript(async function () {
+            return SCA.getPwdPositions('p0', 'p2')
+        });
+
+        expect(posAfter).to.deep.equal([1, 0]);
+    } else
+    {
+        await driver.executeScript(dragAndDrop, p0, p2);
+
+        var posAfter = await driver.executeScript(async function () {
+            return SCA.getPwdPositions('p0', 'p2')
+        });
+
+        expect(posAfter).to.deep.equal([2, 1]);
+    }
+}
+
+async function dragGrpToGrpChecks(driver, isReverse) {
+
+    await support.addGroup(driver, 'Group 0'); //g0
+    await support.toggleDefaultGrp(driver, 'g0');//on
+    await support.addPassword(driver, true, support.getTestData("abc"));
+
+    await support.addGroup(driver, 'Group 1'); //g1
+    await support.toggleDefaultGrp(driver, 'g1');
+    await support.addPassword(driver, true, support.getTestData("def"));
+
+    await support.addGroup(driver, 'Group 2'); //g2
+    await support.toggleDefaultGrp(driver, 'g2');
+    await support.addPassword(driver, true, support.getTestData("ghi"));
+
+    var posBefore = await driver.executeScript(async function () {
+        var pos = SCA.getGrpPositions('g0', 'g2');
+        return pos;
+    });
+
+    expect(posBefore).to.deep.equal([0, 2]);
+
+    var g0 = await driver.findElement(webdriver.By.id('g0-drag'));
+    var g2 = await driver.findElement(webdriver.By.id('g2-drag'));
+
+    if (isReverse)
+    {
+        await driver.executeScript(dragAndDrop, g2, g0);
+
+        var posAfter = await driver.executeScript(async function () {
+            return SCA.getGrpPositions('g0', 'g2')
+        });
+
+        expect(posAfter).to.deep.equal([1, 0]);
+    } else
+    {
+        await driver.executeScript(dragAndDrop, g0, g2);
+
+        var posAfter = await driver.executeScript(async function () {
+            return SCA.getGrpPositions('g0', 'g2')
+        });
+
+        expect(posAfter).to.deep.equal([2, 1]);
+    }
+
+    await support.assertPasswordExists(driver, 'p0', 'g0');//retains passwords after move 
+    await support.assertPasswordExists(driver, 'p2', 'g2');
+}
+
+async function dragPwdToPwdInGrpChecks(driver, isReverse) {
+
+    await support.addGroup(driver, 'Group 0'); //g0
+    await support.addGroup(driver, 'Group 1'); //g1
+
+    await support.toggleDefaultGrp(driver, 'g0');//on   
+
+    await support.addPassword(driver, true, support.getTestData("abc")); //p0 to g0
+
+    await support.toggleDefaultGrp(driver, 'g1');//g1 on, g0 off
+
+    await support.addPassword(driver, true, support.getTestData("def")); //p1 to g1                                         
+
+    var movedPwd = isReverse ? "p1" : "p0";
+    var extantPwd = isReverse ? "p0" : "p1"
+    var startGrp = isReverse ? "g1" : "g0";
+    var endGrp = isReverse ? "g0" : "g1";
+
+
+    var draggable = await driver.findElement(webdriver.By.id(movedPwd + '-drag'));
+    var droppable = await driver.findElement(webdriver.By.id(extantPwd + '-drag'));
+
+    await support.assertPasswordExists(driver, movedPwd, startGrp);//starts in this group   
+    await support.assertPasswordNotExists(driver, movedPwd, endGrp);//not yet in this group  
+
+    await driver.executeScript(dragAndDrop, draggable, droppable);
+
+    await support.assertPasswordNotExists(driver, movedPwd, startGrp);//no longer in this group   
+    await support.assertPasswordExists(driver, movedPwd, endGrp);//now in group 
+
+    var posAfter = await driver.executeScript(
+        
+        "var grpContainer = SCA.e('" + endGrp + "-pwds');"
+        +
+        "return SCA.getPwdPositions('p0', 'p1', grpContainer);"
+    );
+
+    //either way p0 will end up under p1
+    expect(posAfter).to.deep.equal([1, 0]);
+}
 
 function sleep(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));

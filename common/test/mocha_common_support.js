@@ -45,7 +45,7 @@ module.exports.refreshCoverage = async function (driver)
 
 }
 
-module.exports.openOptions = async function openOptions(driver) {
+module.exports.openOptions = async function (driver) {
     await driver.findElement(webdriver.By.id('menu-button')).click();
     await driver.findElement(webdriver.By.id('menu-options')).click();
 }
@@ -62,7 +62,7 @@ exports.encryptWith = async function (driver, password, hint) {
 }
 
 
-module.exports.assertFormIsLocked = async function assertFormIsLocked(driver, isLocked) {
+module.exports.assertFormIsLocked = async function (driver, isLocked) {
     var lockedStyle = await driver.findElement(webdriver.By.id('locked')).getAttribute("style");
     //console.log(lockedStyle);
     var unlockedStyle = await driver.findElement(webdriver.By.id('unlocked')).getAttribute("style");
@@ -76,7 +76,7 @@ module.exports.assertFormIsLocked = async function assertFormIsLocked(driver, is
     }
 }
 
-module.exports.assertBrowserUnsupportedMessageIsShown = async function assertBrowserUnsupportedMessageIsShown(driver, isShown) {
+module.exports.assertBrowserUnsupportedMessageIsShown = async function (driver, isShown) {
     var unsupportedStyle = await driver.findElement(webdriver.By.id('unsupported')).getAttribute("style");
 
     if (isShown) {
@@ -86,8 +86,8 @@ module.exports.assertBrowserUnsupportedMessageIsShown = async function assertBro
     }
 }
 
-module.exports.assertHelpIsShown = async function assertHelpIsShown(driver, isShown) {
-    
+module.exports.assertHelpIsShown = async function (driver, isShown) {
+
     var helpDisplayed = await driver.findElement(webdriver.By.id('help-screen')).isDisplayed();
 
     if (isShown) {
@@ -97,18 +97,18 @@ module.exports.assertHelpIsShown = async function assertHelpIsShown(driver, isSh
     }
 }
 
-module.exports.decryptWith = async function decryptWith(driver, password) {
+module.exports.decryptWith = async function (driver, password) {
     await driver.findElement(webdriver.By.id('dec-password')).sendKeys(password);
     await driver.findElement(webdriver.By.id('do-decrypt')).click();
 }
 
-module.exports.setEncryptPass = async function setEncryptPass(driver, password) {
+module.exports.setEncryptPass = async function (driver, password) {
     var encPass = await driver.findElement(webdriver.By.id('enc-password'))
     await encPass.clear();
     await encPass.sendKeys(password);
 }
 
-module.exports.setCommonOptions = async function setCommonOptions(driver, saveFilename, timeout) {
+module.exports.setCommonOptions = async function (driver, saveFilename, timeout) {
     await this.openOptions(driver);
     await driver.findElement(webdriver.By.id('opt-timeout')).clear();
     await driver.findElement(webdriver.By.id('opt-save-filename')).clear();
@@ -117,7 +117,7 @@ module.exports.setCommonOptions = async function setCommonOptions(driver, saveFi
     await driver.findElement(webdriver.By.id('opt-save-filename')).click(); //updates the timeout
 }
 
-module.exports.sendKeysOptionSaveFilename = async function sendKeysOptionSaveFilename(driver, saveFilename) {
+module.exports.sendKeysOptionSaveFilename = async function (driver, saveFilename) {
     await this.openOptions(driver);
     await driver.findElement(webdriver.By.id('opt-save-filename')).sendKeys(saveFilename);
 }

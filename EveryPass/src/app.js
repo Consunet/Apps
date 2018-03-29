@@ -256,14 +256,14 @@ SCA.delGrp = function(id) {
         
         if(this.isKeepPwdsOfDeletedGrp())
         {
-            pwdMessage = "(Passwords in the Group will be kept.)";
+            pwdMessage = "(<%= DeleteGroupKeepPwds %>)";
         }
         else
         {
-            pwdMessage = "(Passwords in the Group will be deleted.)";
+            pwdMessage = "(<%= DeleteGroupLosePwds %>)";
         }
         
-        canDelete = confirm("Delete Group '" + grpName + "'?\n\n"+pwdMessage);
+        canDelete = confirm("<%= DeleteGroup %> '" + grpName + "'?\n\n"+pwdMessage);
     }       
             
     if (canDelete) {
@@ -325,10 +325,10 @@ SCA.showGrpBody = function(id, show) {
 
     if (show) {
         panelBody.style.display = "inherit";
-        toggleButton.innerHTML = "Hide";
+        toggleButton.innerHTML = "<%= Hide %>";
     } else {
         panelBody.style.display = "none";
-        toggleButton.innerHTML = "Show";
+        toggleButton.innerHTML = "<%= Show %>";
     }
 };
 
@@ -1059,6 +1059,10 @@ SCA.setOptions = function(opts) {
     if('keepPwdsOfDeletedGrp' in opts)
     {
         this.e("opt-keep-grp-pwds").checked = opts.keepPwdsOfDeletedGrp;
+    }
+    else
+    {
+        this.e("opt-keep-grp-pwds").checked = true;
     }
 };
 
