@@ -33,7 +33,7 @@ describe('EveryPass Specific Testing', function () {
         fxoptions.setProfile(comsupport.commonFullPath() + "/firefox_profile")
         fxoptions.setPreference("browser.download.dir", __dirname + "/test_downloads");
         fxoptions.setPreference("browser.download.folderList", 2);
-        //fxoptions.headless();
+        fxoptions.headless();
 
         driver = await new webdriver.Builder()
                 .forBrowser('firefox')
@@ -860,31 +860,31 @@ describe('EveryPass Specific Testing', function () {
     });
 
 
-//    describe('Timeout test (*** intentional 65s pause ***)', function () {
-//
-//        it('Page will reset when timeout hits 0 from 1 minute.', async function () {
-//
-//            //sets test timeout to 80s
-//            this.timeout(80000);
-//
-//            //refresh the driver
-//            await driver.get(testVars.TEST_ENCRYPTED_URL);
-//            await comsupport.assertFormIsLocked(driver, true);
-//            await comsupport.decryptWith(driver, "password");
-//
-//            await comsupport.setCommonOptions(driver, "", "1"); //setting timeout to 1m
-//            var timeoutVal = await driver.findElement(webdriver.By.id('opt-timeout')).getAttribute("value");
-//            expect(timeoutVal).to.be.equal('1');
-//
-//            //should exist from import prior to timeout
-//            await support.assertPasswordExists(driver, 'p0');
-//
-//            await sleep(65000); //sleep(65s)
-//
-//            //timeout should remove this password
-//            await support.assertPasswordNotExists(driver, 'p0');
-//        });
-//    });
+    describe('Timeout test (*** intentional 65s pause ***)', function () {
+
+        it('Page will reset when timeout hits 0 from 1 minute.', async function () {
+
+            //sets test timeout to 80s
+            this.timeout(80000);
+
+            //refresh the driver
+            await driver.get(testVars.TEST_ENCRYPTED_URL);
+            await comsupport.assertFormIsLocked(driver, true);
+            await comsupport.decryptWith(driver, "password");
+
+            await comsupport.setCommonOptions(driver, "", "1"); //setting timeout to 1m
+            var timeoutVal = await driver.findElement(webdriver.By.id('opt-timeout')).getAttribute("value");
+            expect(timeoutVal).to.be.equal('1');
+
+            //should exist from import prior to timeout
+            await support.assertPasswordExists(driver, 'p0');
+
+            await sleep(65000); //sleep(65s)
+
+            //timeout should remove this password
+            await support.assertPasswordNotExists(driver, 'p0');
+        });
+    });
 
 });
 

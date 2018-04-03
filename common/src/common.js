@@ -69,7 +69,12 @@ var SCA = {
 
         var feedback = this.e("enc-password-fb").innerHTML;
         if (feedback === "<%= Password %>: <%= Weak %>") {
-            return confirm("<%= WeakPasswordUsedWarning %>");
+            var answer = confirm("<%= WeakPasswordUsedWarning %>");
+            if (answer) {
+                return answer;
+             } else {
+                return false;
+             }
         }
 
         return true;
@@ -320,6 +325,7 @@ var SCA = {
        
             if (!me.checkEncPass()) {
                 reject(Error("User rejected Password."));
+                throw(Error("User rejected Password.")); //stops further code from running.
             }
             
 
@@ -876,6 +882,7 @@ var SCA = {
         }
 
         try {
+            
             if (!(window.File && window.FileReader && window.FileList && window.Blob)) {
                 throw "<%= FileOpsNotSupported %>";
             }
