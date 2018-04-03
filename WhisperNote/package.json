@@ -18,7 +18,7 @@
     "grunt-contrib-concat": "0.4.0",
     "grunt-contrib-connect": "1.0.2",
     "grunt-contrib-cssmin": "0.9.0",
-    "grunt-contrib-htmlmin": "0.3.0",
+    "grunt-contrib-htmlmin": "^0.6.0",
     "grunt-contrib-uglify": "2.3.0",
     "grunt-contrib-watch": "0.6.1",
     "grunt-curl": "2.4.1",
