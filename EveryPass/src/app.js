@@ -22,13 +22,21 @@
 SCA._nextPwdId = 0;
 
 /**
- * An integer which is used to provide a unique ID for password elements.
+ * An integer which is used to provide a unique ID for group elements.
  * 
  * @type Number
  * @private
  */
 SCA._nextGrpId = 0;
 
+
+/**
+ * An identifier for the currently selected group for all new passwords to be added to.
+ * If null, next new password not grouped.
+ * 
+ * @type String
+ * @private
+ */
 SCA._currentDefaultGrpId = null;
 
 /**
@@ -45,7 +53,7 @@ SCA._divPwData = function() {
 };
 
 /**
- * Gets the pw-data hidden template for passwords, and caches its value for future use.
+ * Gets the pw-data hidden template for groups, and caches its value for future use.
  * 
  * @returns {Element} the pw-data Element
  * @private
@@ -58,21 +66,26 @@ SCA._divGrpData = function() {
 };
 
 /**
- * Gets the pwds element which holds all password objects, and caches its value for future use.
+ * Gets the pwds element which holds all password objects (either in a group or not grouped).
  * 
+ * @param {String} grp - optionally identifies the group to get password container for.
  * @returns {Element} the pwds Element
  * @private
  */
-SCA._divPwds = function() {
-    if (!this.dPwds) {
-        this.dPwds = this.e("pwds");
+SCA._divPwds = function(grp) {
+    
+    if (grp) {
+        return this.e(grp+"-pwds"); //grouped
     }
-    return this.dPwds;
+    else
+    {
+        return this.e("pwds"); //not grouped
+    } 
 };
 
 
 /**
- * Gets the pwds element which holds all password objects, and caches its value for future use.
+ * Gets the grps element which holds all group objects, and caches its value for future use.
  * 
  * @returns {Element} the pwds Element
  * @private
@@ -84,16 +97,6 @@ SCA._divGrps = function() {
     return this.dGrps;
 };
 
-/**
- * Gets the pwds element which holds all password objects, and caches its value for future use.
- * 
- * @returns {Element} the pwds Element
- * @private
- */
-SCA._grpPwds = function(grpid) {
-    
-    return this.e(grpid+"-pwds");   
-};
 
 /**
  * Creates a new password entry from reading form fields, and adds it to the DOM.
@@ -107,6 +110,7 @@ SCA.newPwd = function() {
         a: this.getAndClear("new-answer")
     };
 
+    //if _currentDefaultGrpId = null, not grouped
     this.addPwd(pwData,this._currentDefaultGrpId);
     this.e("search").value = "";
     this.filterPwds();
@@ -114,14 +118,14 @@ SCA.newPwd = function() {
 
 
 /**
- * Creates a new password entry from reading form fields, and adds it to the DOM.
+ * Creates a new group entry from reading form field, and adds it to the DOM.
  */
 SCA.newGrp = function() {
     var grpData = {
         g: this.getAndClear("new-group-name"),
-        pwds: [],
-        vis: true,
-        def: false
+        pwds: [], //none yet
+        vis: true, //show by default
+        def: false //not yet default group
     };
 
     this.addGrp(grpData);
@@ -130,9 +134,10 @@ SCA.newGrp = function() {
 };
 
 /**
- * Adds a new password entry element to the DOM.
+ * Adds a password entry element to the DOM.
  * 
  * @param {object} item - the password JSON object to add
+ * @param {String} grp - optional for the group to add password to.
  */
 SCA.addPwd = function(item, grp) {
     
@@ -145,17 +150,11 @@ SCA.addPwd = function(item, grp) {
     var replaced = cloned.replace(/pwid/g, id).replace(":none", ":inherit");
     var div = document.createElement('div');
     div.id = id;
-    div.innerHTML = replaced;
-    
-    if(grp)
-    {
-        this._grpPwds(grp).appendChild(div);
-    }
-    else
-    {
-        this._divPwds().appendChild(div);
-    }
-    
+    div.innerHTML = replaced;   
+
+    //if grp = null, added to non-grouped passwords
+    this._divPwds(grp).appendChild(div);
+      
     this.e(id + "-service").value = item.s;
     this.e(id + "-username").value = item.u;
     this.e(id + "-password").value = item.p;
@@ -165,9 +164,11 @@ SCA.addPwd = function(item, grp) {
 };
 
 /**
- * Adds a new password entry element to the DOM.
+ * Adds a group entry element to the DOM.
+ * Existing groups imported/decrypted will retain 
+ * open/hide status and default group status.
  * 
- * @param {object} item - the password JSON object to add
+ * @param {object} item - the group JSON object to add
  */
 SCA.addGrp = function(item) {
     var id = "g" + this._nextGrpId;
@@ -181,29 +182,22 @@ SCA.addGrp = function(item) {
     this._divGrps().appendChild(div);
     this.e(id + "-name").value = item.g;
     
-    if(item.vis)
-    {
-        this.showGrpBody(id, true);
-    }
-    else
-    {
-        this.showGrpBody(id, false);
-    }
-    
+    //visibility before encrypt retained
+    this.showGrpBody(id, item.vis)
+     
+    //default status before encrypt retained
     if(item.def)
-    {
-        this.setGrpAsDefault(id);
-    }
-        
+        this.toggleDefaultGroup(id);
+          
     //add passwords (if imported/decrypted group)
     for(var i = 0; i < item.pwds.length; i++)
     {
-        SCA.addPwd(item.pwds[i], id);
+        this.addPwd(item.pwds[i], id);
     }    
 };
 
 /**
- * Adds all passwords in the supplied array to the DOM
+ * Adds all non-grouped passwords in the supplied array to the DOM.
  * 
  * @param {array} pwds - an array of password JSON objects
  */
@@ -214,9 +208,9 @@ SCA.addPwds = function(pwds) {
 };
 
 /**
- * Adds all passwords in the supplied array to the DOM
+ * Adds all groups in the supplied array to the DOM.
  * 
- * @param {array} pwds - an array of password JSON objects
+ * @param {array} grps - an array of group JSON objects
  */
 SCA.addGrps = function(grps) {
     for (var id in grps) {
@@ -231,7 +225,7 @@ SCA.addGrps = function(grps) {
  */
 SCA.delPwd = function(id) {
     var canDelete = true;
-    if (this.isConfirmPwdDelete()) {
+    if (this.isConfirmItemDelete()) {
         var pwdName = this.e(id + "-service").value;          
         
         canDelete = confirm("<%= DeletePasswordFor %> " + pwdName + "?");
@@ -243,39 +237,32 @@ SCA.delPwd = function(id) {
 };
 
 /**
- * Removes a password element from the DOM.
+ * Removes a group element from the DOM.
  * 
- * @param {string} id - the ID of the password element to remove.
+ * @param {string} id - the ID of the group element to remove.
  */
 SCA.delGrp = function(id) {
     var canDelete = true;
-    if (this.isConfirmPwdDelete()) {       
+    if (this.isConfirmItemDelete()) {       
         var grpName = this.e(id + "-name").value;
         
         var pwdMessage;
         
-        if(this.isKeepPwdsOfDeletedGrp())
-        {
-            pwdMessage = "(<%= DeleteGroupKeepPwds %>)";
-        }
-        else
-        {
-            pwdMessage = "(<%= DeleteGroupLosePwds %>)";
-        }
-        
+        //prompt based on setting for keeping passwords
+        this.isKeepPwdsOfDeletedGrp() ? pwdMessage = "(<%= DeleteGroupKeepPwds %>)" : pwdMessage = "(<%= DeleteGroupLosePwds %>)";
+                
         canDelete = confirm("<%= DeleteGroup %> '" + grpName + "'?\n\n"+pwdMessage);
     }       
             
     if (canDelete) {
         
-        if(this._currentDefaultGrpId == id)
-        {
+        if(this._currentDefaultGrpId === id)
             this._currentDefaultGrpId = null;
-        }
         
+        //retain passwords of deleted group (if option)
         if(this.isKeepPwdsOfDeletedGrp())
         {
-            var grpPwdContainer = SCA.e(id+"-pwds");          
+            var grpPwdContainer = this.e(id+"-pwds");          
 
             while(grpPwdContainer.firstChild)
             {
@@ -302,7 +289,7 @@ SCA.showPwdBody = function(id, show, select) {
         panelBody.style.display = "inherit";
         toggleButton.innerHTML = "<%= Hide %>";
         if (select) {
-            SCA.selectPwd(id);
+            this.selectPwd(id);
         }
         this.checkGo(id);
     } else {
@@ -313,11 +300,10 @@ SCA.showPwdBody = function(id, show, select) {
 };
 
 /**
- * Show or hide a password's body in the DOM.
+ * Show or hide a group's body in the DOM.
  * 
- * @param {string} id - the ID of the password to show/hide the body of
- * @param {boolean} show - true if the password body should be shown, false otherwise
- * @param {boolean} select - true if the password field should be selected on show, false otherwise
+ * @param {string} id - the ID of the group to show/hide the body of
+ * @param {boolean} show - true if the group body should be shown, false otherwise
  */
 SCA.showGrpBody = function(id, show) {
     var panelBody = this.e(id + "-pwds");
@@ -345,9 +331,9 @@ SCA.togglePwd = function(id) {
 };
 
 /**
- * Toggles the show/hide state of a password's body.
+ * Toggles the show/hide state of a group's body.
  * 
- * @param {string} id - the ID of the password to toggle the body state of
+ * @param {string} id - the ID of the group to toggle the body state of
  */
 SCA.toggleGrp = function(id) {
     var panelBody = this.e(id + "-pwds");
@@ -355,21 +341,28 @@ SCA.toggleGrp = function(id) {
     this.showGrpBody(id, isHidden);
 };
 
-SCA.setGrpAsDefault = function(grpId) {
+/**
+ * Makes a group the default destination for newly added passwords.
+ * 
+ * @param {string} id - the ID of the group to set as default
+ */
+SCA.toggleDefaultGroup = function(id) {
     
-    var toggleButton = this.e(grpId + "-setdefault");
-                
-    if(this._currentDefaultGrpId == grpId)
+    var toggleButton = this.e(id + "-setdefault");
+    
+    //this group us currently default, clear default
+    if(this._currentDefaultGrpId === id)
     {
         this._currentDefaultGrpId = null;
     
         toggleButton.classList.remove("btn-warning");
         
-        this.setDisplay(grpId + "-default-indicator-on", "none");
-        this.setDisplay(grpId + "-default-indicator-off", "inline");      
+        this.setDisplay(id + "-default-indicator-on", "none");
+        this.setDisplay(id + "-default-indicator-off", "inline");      
     }
-    else
+    else //group not currently default
     {
+        //there is an existing default, make that no longer default
         if(this._currentDefaultGrpId)
         {
             var prevToggleButton = this.e(this._currentDefaultGrpId + "-setdefault");               
@@ -380,12 +373,14 @@ SCA.setGrpAsDefault = function(grpId) {
             this.setDisplay(this._currentDefaultGrpId + "-default-indicator-off", "inline");  
         }
         
-        this._currentDefaultGrpId = grpId;
+        //make this group new defualt
+        this._currentDefaultGrpId = id;
 
         toggleButton.classList.add("btn-warning");
     
-        this.setDisplay(grpId + "-default-indicator-on", "inline");
-        this.setDisplay(grpId + "-default-indicator-off", "none"); 
+        this.setDisplay(id + "-default-indicator-on", "inline");
+        this.setDisplay(id + "-default-indicator-off", "none"); 
+        //
     }           
 };
 
@@ -400,7 +395,7 @@ SCA.selectPwd = function(id) {
 };
 
 /**
- * Reads the password information from the DOM into a JSON object for the supplied id.
+ * Reads the password information from the DOM into a password JSON object for the supplied id.
  * 
  * @param {string} id - the ID of the password to retrieve JSON data for
  * @returns {object} a JSON object which encapsulates the password data.
@@ -416,27 +411,28 @@ SCA.getPwd = function(id) {
 };
 
 /**
- * Reads the password information from the DOM into a JSON object for the supplied id.
+ * Reads the group information from the DOM into a group JSON object for the supplied id.
  * 
- * @param {string} id - the ID of the password to retrieve JSON data for
- * @returns {object} a JSON object which encapsulates the password data.
+ * @param {string} id - the ID of the group to retrieve JSON data for
+ * @returns {object} a JSON object which encapsulates the group data.
  */
 SCA.getGrp = function(id) {
     
-    var grpPwdContainer = SCA.e(id+"-pwds");
+    var grpPwdContainer = this.e(id+"-pwds");
                
     return {
         g: this.e(id + "-name").value, 
-        pwds: this.getPwds(grpPwdContainer),
-        vis: grpPwdContainer.style.display !== "none",
-        def: (id == SCA._currentDefaultGrpId) 
+        pwds: this.getPwds(grpPwdContainer), //array of passwords within group
+        vis: grpPwdContainer.style.display !== "none", //true if currently not hidden
+        def: (id === this._currentDefaultGrpId) //only true if current default group
     };
 };
 
 /**
- * Reads all passwords from the DOM into an array of JSON objects.
+ * Reads all passwords from either a group or outside of groups into an array of JSON objects.
  * 
- * @returns {Array} an array of JSON objects representing all passwords on the page.
+ * @param {Element} container - optional group container for where to get passwords from
+ * @returns {Array} an array of JSON objects representing all passwords within a group or outside all groups.
  */
 SCA.getPwds = function(container) {
     var pwds = [];
@@ -449,9 +445,9 @@ SCA.getPwds = function(container) {
 
 
 /**
- * Reads all passwords from the DOM into an array of JSON objects.
+ * Reads all groups from the DOM into an array of JSON objects.
  * 
- * @returns {Array} an array of JSON objects representing all passwords on the page.
+ * @returns {Array} an array of JSON objects representing all groups on the page.
  */
 SCA.getGrps = function() {
     var grps = [];
@@ -467,15 +463,18 @@ SCA.getGrps = function() {
  * Iterates over all passwords stored in the DOM with the supplied function.
  * 
  * @param {function} fn - the function which consumes the password id and JSON password object.
+ * @param {Element} _container - optional group container for where to get passwords from
  */
 SCA.eachPwd = function(fn, _container) {
     
     var container;
     
+    //if a conainer was provided
     if(_container)
     {
-        container = _container
+        container = _container;
     }
+    //no container, just gets container for non-grouped passwords
     else
     {
         container = this._divPwds();
@@ -492,9 +491,9 @@ SCA.eachPwd = function(fn, _container) {
 };
 
 /**
- * Iterates over all passwords stored in the DOM with the supplied function.
+ * Iterates over all groups stored in the DOM with the supplied function.
  * 
- * @param {function} fn - the function which consumes the password id and JSON password object.
+ * @param {function} fn - the function which consumes the group id and JSON group object.
  */
 SCA.eachGrp = function(fn) {
     var child = this._divGrps().firstChild;
@@ -508,7 +507,7 @@ SCA.eachGrp = function(fn) {
 };
 
 /**
- * Stores all password data as an encrypted object within the DOM and then writes it out to a file.
+ * Stores all password and group data as an encrypted object within the DOM and then writes it out to a file.
  * <p>
  * Encryption is performed asynchronously, and should not be assumed to be complete
  * when this function returns.
@@ -520,15 +519,22 @@ SCA.encrypt = function() {
     eaedPromise.then(function() {
         me.saveDocument();
         me.doOnload();
-    }).catch(function(reason) {
+    }).catch(function(reason) {        
         var errstr = "Encryption failed due to: " + reason;
+        
         console.log(errstr);
-        alert(errstr);
+    
+        //dont need two alerts for weak or empty password
+        if(!reason.endsWith("password"))
+        {
+            //something else
+            alert(errstr);
+        }
     });
 };
 
 /**
- * Encrypts all password data in the DOM and stores it as a JSON object within a script tag element.
+ * Encrypts all password and group data in the DOM and stores it as a JSON object within a script tag element.
  * <p>
  * This encryption is performed in an asynchronous manner via the returned Promise.
  * 
@@ -537,11 +543,11 @@ SCA.encrypt = function() {
 SCA.encryptAndEmbedData = function() {
     
     // Check for existing uncommitted password data.
-    var newService = SCA.e("new-service").value;
-    var newUser = SCA.e("new-username").value;
-    var newPass = SCA.e("new-password").value;
-    var newQuestion = SCA.e("new-question").value;
-    var newAnswer = SCA.e("new-answer").value;
+    var newService = this.e("new-service").value;
+    var newUser = this.e("new-username").value;
+    var newPass = this.e("new-password").value;
+    var newQuestion = this.e("new-question").value;
+    var newAnswer = this.e("new-answer").value;
 
     // If there is any data there, then add the password.
     if (newService.length !== 0 ||
@@ -549,7 +555,7 @@ SCA.encryptAndEmbedData = function() {
         newPass.length !== 0 ||
         newQuestion.length !== 0 ||
         newAnswer.length !== 0) {
-        SCA.newPwd();
+        this.newPwd();
     }
     
     return this.encryptWith(function(cs, cryptoKey, iv, adata) {
@@ -563,17 +569,15 @@ SCA.encryptAndEmbedData = function() {
 };
 
 /**
- * Gets the plaintext JSON passwords payload to be encrypted.
- * @returns {string} - the passwords to be encrypted in plaintext.
+ * Gets the plaintext JSON passwords and groups payload to be encrypted.
+ * @returns {string} - the passwords and groups to be encrypted in plaintext.
  */
 SCA.getPayload = function() {
               
-    var pwdsGrouped = SCA.getGrps();
-    var pwdsNotGrouped = SCA.getPwds();
-    
-    var combined = pwdsNotGrouped.concat(pwdsGrouped);
-    
-    return combined;
+    var pwdsGrouped = this.getGrps();
+    var pwdsNotGrouped = this.getPwds();   
+     
+    return pwdsNotGrouped.concat(pwdsGrouped);
 };
 
 /**
@@ -616,25 +620,25 @@ SCA.decrypt = function() {
             out = JSON.parse(out);
         }
         
-        var splitIdx = out.length;
+        //work out where the groups start in the JSON data array (if any)
+        var grpIdx = out.length;
         for(var i = 0; i < out.length; i++)
         {
+            //group start index found
             if('g' in out[i])
             {
-                splitIdx = i;
+                grpIdx = i;
                 break;
             }                
         }
-                     
-        var unGroupedPwds = out.slice(0, splitIdx);      
-             
-        SCA.addPwds(unGroupedPwds);
         
-        if(splitIdx < out.length)
-        {
-            var groupPwds = out.slice(splitIdx);           
-            SCA.addGrps(groupPwds);
-        }              
+        //add non-grouped pwds if any 
+        if(grpIdx > 0)
+            SCA.addPwds(out.slice(0, grpIdx));
+                
+        //add groups if any
+        if(grpIdx < out.length)            
+            SCA.addGrps(out.slice(grpIdx));                  
                 
         return Promise.resolve();
     });
@@ -649,17 +653,17 @@ SCA.decrypt = function() {
  * Passwords are displayed based on a string match of the JSON password object.
  * Matching is only done when the search term length is greater than two.
  * If there is a single match, that password's body is revealed.
+ * If a matching password is within a hidden group, the group will be unhidden.
+ * <p>
+ * Triggered upon key release (onkeyup) 
  */
 SCA.filterPwds = function(event) {
-    // Clear search field on ESC
-    if (event && event.which === 27) {
-        SCA.e("search").value = "";
-    }
-    
+        
     var MIN_SEARCH_TERM_LENGTH = 2;
     var searchTerm = this.e("search").value.toLowerCase();
     var filtered = [];
 
+    //seach each non-grouped password
     this.eachPwd(function(id, pwd) {
         if (searchTerm.length < MIN_SEARCH_TERM_LENGTH) {
             SCA.setDisplay(id, "inherit");
@@ -677,10 +681,12 @@ SCA.filterPwds = function(event) {
         }
     });
 
+    //search each group
     this.eachGrp(function(id, grp) {
         
-        var grpPwdContainer = SCA.e(id+"-pwds");       
-              
+        var grpPwdContainer = SCA.e(id+"-pwds");      
+           
+        //search each password in the group
         SCA.eachPwd(function(pid, pwd) {
         
             if (searchTerm.length < MIN_SEARCH_TERM_LENGTH) {
@@ -691,15 +697,16 @@ SCA.filterPwds = function(event) {
 
                 // Search the jsonString for the search term
                 if (jsonString.indexOf(searchTerm) !== -1) {
+                    //ensure password and parent group shown
                     SCA.showGrpBody(id, true);
                     SCA.setDisplay(pid, "inherit");
                     filtered.push(pid);
-                } else {
+                } else {                    
                     SCA.setDisplay(pid, "none");
                 }
             }
         
-        },grpPwdContainer);
+        },grpPwdContainer);   
     });      
 
 
@@ -713,10 +720,23 @@ SCA.filterPwds = function(event) {
 };
 
 /**
+ * Clears the search field upon pressing down ESC key (onkeydown).
+ * <p>
+ * Other keys may trigger this event but will do nothing until released
+ * and calling the above filterPwds() handler for onkeyup.
+ */
+SCA.filterClear = function (event) {
+    // Clear search field on ESC
+    if (event && event.which === 27) {
+        this.e("search").value = "";
+    }
+};
+
+/**
  * Populates the password field for a new entry with a generated random base64 String.
  */
 SCA.generatePwd = function() {
-    var generated = SCA.convertUint8ArrayToBase64String(window.crypto.getRandomValues(new Uint8Array(16)));
+    var generated = this.convertUint8ArrayToBase64String(window.crypto.getRandomValues(new Uint8Array(16)));
     generated = generated.substring(0, generated.length - 2);
     var replace = String.fromCharCode(97 + Math.round(Math.random() * 25));
     generated = generated.replace(/\+/g, replace);
@@ -754,7 +774,7 @@ SCA.checkGo = function(id) {
     var service = this.e(id + "-service").value;
     var panelBody = this.e(id + "-body");
 
-    if (service.match(SCA.checkGoRegex) && panelBody.style.display === "inherit") {
+    if (service.match(this.checkGoRegex) && panelBody.style.display === "inherit") {
         this.setDisplay(id + "-go", "inline");
     } else {
         this.setDisplay(id + "-go", "none");
@@ -762,27 +782,27 @@ SCA.checkGo = function(id) {
 };
 
 /**
- * Stores the current password being dragged - greyed out.
+ * Stores the current password or group being dragged - greyed out.
  */
 SCA.currentDraggable = "";
 
 
 /**
- * Handles ondragstart events for passwords.
+ * Handles ondragstart events for passwords and groups.
  */
 SCA.dragStart = function(ev) {
   
     var id = ev.target.id;
-    SCA.currentDraggable = id;
+    this.currentDraggable = id;
     var glowId = id.replace("-drag", "-glow");
-    SCA.addClass(glowId, "dragged");
+    this.addClass(glowId, "dragged");
     // Required by Firefox to allow drag and drop events to fire
     ev.dataTransfer.setData("id", id);
     ev.dataTransfer.effectAllowed = 'move';
 };
 
 /**
- * Handles drag over events for passwords.
+ * Handles drag over events for passwords and groups.
  */
 SCA.dragOver = function(ev) {
     
@@ -796,36 +816,37 @@ SCA.dragOver = function(ev) {
 
 
 /**
- * Handles drag enter events for passwords - highlights targets.
+ * Handles drag enter events for passwords and groups - highlights targets.
  */
 SCA.dragEnter = function(ev) {
     
     var id = ev.currentTarget.id;
     var glowId = id.replace("-drag", "-glow");
-       
-    if(!(this.e(SCA.currentDraggable).classList.contains("grp-drag") && this.e(id).classList.contains("pwd-drag")))
+    
+    //prevent group onto password drag from triggering effect
+    if(!(this.e(this.currentDraggable).classList.contains("grp-drag") && this.e(id).classList.contains("pwd-drag")))
     {
-         SCA.addClass(glowId, "drag-target");
-    }
-    //else - prevent group onto password drag from triggering effect
+         //ok to highlight
+         this.addClass(glowId, "drag-target");
+    } 
 };
 
 /**
- * Handles drag leave events for passwords - unhighlights targets.
+ * Handles drag leave events for passwords and groups - unhighlights targets.
  */
 SCA.dragLeave = function(ev) {
   
     var id = ev.currentTarget.id;
     var glowId = id.replace("-drag", "-glow");
-    SCA.removeClass(glowId, "drag-target");
+    this.removeClass(glowId, "drag-target");
 };
 
 /**
- * Handles drag end events for passwords - resets state.
+ * Handles drag end events for passwords and groups - resets state.
  */
 SCA.dragEnd = function(ev) {
   
-    SCA.currentDraggable = "";
+    this.currentDraggable = "";
   
     // Reset all passwords - to cater for Firefox case where multiple selections take place.
     // Also makes it more robust.
@@ -834,14 +855,16 @@ SCA.dragEnd = function(ev) {
         SCA.removeClass(form, "dragged");
         SCA.removeClass(form, "drag-target");
     });
-            
+    
+    //clear highlight in groups
     this.eachGrp(function(id, grp) {
         var form = id + "-glow";
         SCA.removeClass(form, "dragged");
         SCA.removeClass(form, "drag-target");  
         
         var grpPwdContainer = SCA.e(id+"-pwds");       
-              
+        
+        //clear highlight of passwords in group
         SCA.eachPwd(function(pid, pwd) {
             var form = pid + "-glow";
             SCA.removeClass(form, "dragged");
@@ -854,7 +877,7 @@ SCA.dragEnd = function(ev) {
 /**
  * Handles drop events for passwords - performs the reshuffling if required.
  */
-SCA.dragDropPwd = function(ev) { //password onto password
+SCA.dragDropPwd = function(ev) { 
 
     // Stops some browsers from redirecting.
     if (ev.stopPropagation) {
@@ -864,23 +887,26 @@ SCA.dragDropPwd = function(ev) { //password onto password
         ev.preventDefault(); 
     }
     
-    var srcIdForm = SCA.currentDraggable;
+    var srcIdForm = this.currentDraggable;
     var destIdForm = ev.currentTarget.id;
     var srcId = srcIdForm.replace("-drag", "");
     var destId = destIdForm.replace("-drag", "");
 
     if (srcId === destId) {
+        //src and dest match, do nothing
         return false;
     }
     
     var src = this.e(srcId);
     var dest = this.e(destId);
     
-    if(this.e(SCA.currentDraggable).classList.contains("pwd-drag"))
+    //password dragged onto password (only allowed case)
+    if(this.e(this.currentDraggable).classList.contains("pwd-drag"))
     {          
         var srcParent = src.parentNode;
         var destParent = dest.parentNode;
 
+        //pwds already in same group (simple rearrange)
         if(srcParent === destParent)
         {
             var pwds = srcParent;
@@ -897,8 +923,9 @@ SCA.dragDropPwd = function(ev) { //password onto password
                 pwds.insertBefore(dest, src);
             }          
         }
-        else
+        else //pwds in different groups (src joins dest group)
         {
+            //group order to detect higher password on page
             var pos = this.getGrpPositions(srcParent.id.replace("-pwds", ""), destParent.id.replace("-pwds", ""));
 
             // Swap src and dest (ensure src is before dest)
@@ -911,16 +938,16 @@ SCA.dragDropPwd = function(ev) { //password onto password
             }
 
         }
-    }//else- dont do anything if group dropped onto passwors 
+    }//else- dont do anything if group dropped onto password 
     
     return false;
 };
 
 
 /**
- * Handles drop events for passwords - performs the reshuffling if required.
+ * Handles drop events for groups- performs the reshuffling if required.
  */
-SCA.dragDropGrp = function(ev) { //Group onto group or password onto group
+SCA.dragDropGrp = function(ev) { 
             
     // Stops some browsers from redirecting.
     if (ev.stopPropagation) {
@@ -930,10 +957,10 @@ SCA.dragDropGrp = function(ev) { //Group onto group or password onto group
         ev.preventDefault(); 
     }
 
-
-    if(this.e(SCA.currentDraggable).classList.contains("pwd-drag"))
+    //password onto group, password joins group
+    if(this.e(this.currentDraggable).classList.contains("pwd-drag"))
     {
-        var srcIdForm = SCA.currentDraggable;
+        var srcIdForm = this.currentDraggable;
         var destIdForm = ev.currentTarget.id;
         var srcId = srcIdForm.replace("-drag", "");
         var destId = destIdForm.replace("-drag", "");
@@ -942,21 +969,21 @@ SCA.dragDropGrp = function(ev) { //Group onto group or password onto group
       
         this.e(destId+"-pwds").appendChild(src);           
     }
-    else //this.e(SCA.currentDraggable).classList.contains("grp-drag")
+    else //group onto group, rearrange groups 
     {
-        var srcIdForm = SCA.currentDraggable;
+        var srcIdForm = this.currentDraggable;
         var destIdForm = ev.currentTarget.id;
         var srcId = srcIdForm.replace("-drag", "");
         var destId = destIdForm.replace("-drag", "");
 
         if (srcId === destId) {
+            //src and dest match, do nothing
             return false;
         }
    
         var src = this.e(srcId);
         var dest = this.e(destId);
         var grps = this._divGrps();
-
 
         var pos = this.getGrpPositions(srcId, destId);
 
@@ -999,9 +1026,9 @@ SCA.getPwdPositions = function(srcId, destId, container) {
 };
 
 /**
- * Obtains an array containing the src and dest positions of the passwords in the list.
- * @param {type} srcId the id of the src password
- * @param {type} destId the id of the dest password
+ * Obtains an array containing the src and dest positions of the groups in the list.
+ * @param {type} srcId the id of the src group
+ * @param {type} destId the id of the dest group
  * @returns {Array} of the src and dest positions in the list, respectively.
  */
 SCA.getGrpPositions = function(srcId, destId) {
@@ -1022,14 +1049,14 @@ SCA.getGrpPositions = function(srcId, destId) {
 };
 
 /**
- * @returns true if the confirm password checkbox is checked, false otherwise
+ * @returns true if the confirm deletion of passwords and groups checkbox is checked, false otherwise
  */
-SCA.isConfirmPwdDelete = function() {
+SCA.isConfirmItemDelete = function() {
   return this.e("opt-confirm-del").checked;
 };
 
 /**
- * @returns true if the confirm password checkbox is checked, false otherwise
+ * @returns true if the keep passwords of deleted groups checkbox is checked, false otherwise
  */
 SCA.isKeepPwdsOfDeletedGrp = function() {
   return this.e("opt-keep-grp-pwds").checked;
@@ -1073,13 +1100,13 @@ SCA.setOptions = function(opts) {
 SCA.readOptions = function() {
     var sfn = this.getSaveFilename();
     var timeout = this.getTimeout();
-    var pwdDelete = this.isConfirmPwdDelete();
+    var itemDelete = this.isConfirmItemDelete();
     var keepGrpPwds = this.isKeepPwdsOfDeletedGrp();
 
     return {
         saveFileName: sfn,
         timeoutPeriodMins: timeout,
-        confirmPwdDelete: pwdDelete,
+        confirmPwdDelete: itemDelete,
         keepPwdsOfDeletedGrp: keepGrpPwds
     };
 };

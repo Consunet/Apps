@@ -50,6 +50,11 @@ module.exports.openOptions = async function (driver) {
     await driver.findElement(webdriver.By.id('menu-options')).click();
 }
 
+module.exports.closeOptions = async function (driver) {
+    var optionsScreen = await driver.findElement(webdriver.By.id('options-screen'))
+    await optionsScreen.findElement(webdriver.By.className('close')).click();
+}
+
 exports.encryptWith = async function (driver, password, hint) {
 
     await driver.findElement(webdriver.By.id('enc-password')).sendKeys(password);
@@ -115,6 +120,7 @@ module.exports.setCommonOptions = async function (driver, saveFilename, timeout)
     await driver.findElement(webdriver.By.id('opt-timeout')).sendKeys(timeout);
     await driver.findElement(webdriver.By.id('opt-save-filename')).sendKeys(saveFilename);
     await driver.findElement(webdriver.By.id('opt-save-filename')).click(); //updates the timeout
+    await this.closeOptions(driver);
 }
 
 module.exports.sendKeysOptionSaveFilename = async function (driver, saveFilename) {

@@ -29,7 +29,7 @@
             <div class="navbar-header pull-right">
                 <form id="search-form" class="navbar-form" role="search" onsubmit="return false;"> 
                     <label class="sr-only" for="search"><%= Search %></label>
-                    <input id="search" name="search" type="search" class="form-control srch" onkeydown="SCA.filterPwds(event);" onkeyup="SCA.filterPwds(event);" placeholder="<%= Search %>..." disabled="">
+                    <input id="search" name="search" type="search" class="form-control srch" onkeydown="SCA.filterClear(event);" onkeyup="SCA.filterPwds(event);" placeholder="<%= Search %>..." disabled="">
                     <button id="menu-button" type="button" class="btn btn-sm btn-default menu-icon">&equiv;</button>
                     <ul id="menu" class="menu" role="menu" style=" display: none;">
                         <li role="presentation"><a id="menu-import" role="menuitem" onclick="SCA.e('import').click();" href="#"><%= Import %></a></li>
@@ -286,7 +286,7 @@
                             </div> 
                             <div id="grpid-drag" class="grp-drag" style="cursor: ns-resize;" draggable="true" ondragstart="SCA.dragStart(event);" ondragover="SCA.dragOver(event);" ondragenter="SCA.dragEnter(event);" ondragleave="SCA.dragLeave(event);" ondrop="SCA.dragDropGrp(event);" ondragend="SCA.dragEnd(event);">
                                 <div class="col-xs-2 col-sm-1 col-md-2 col-lg-2 btn-toolbar">
-                                    <button id="grpid-setdefault" type="button" onclick="SCA.setGrpAsDefault('grpid');" class="btn btn-xs" style="border: 2px solid transparent;"><%= DefaultGroup %></button>  
+                                    <button id="grpid-setdefault" type="button" onclick="SCA.toggleDefaultGroup('grpid');" class="btn btn-xs" style="border: 2px solid transparent;"><%= DefaultGroup %></button>  
                                     <span id="grpid-default-indicator-on" style="color:green;font-weight:bold;display: none;">☑</span>
                                     <span id="grpid-default-indicator-off" style="color:red;font-weight:bold">☒</span>
                                 </div> 
