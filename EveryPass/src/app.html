@@ -103,21 +103,21 @@
                     <h4><%= Options %></h4>
                     <form id="options" class="form-horizontal" autocomplete="off" onsubmit="SCA.saveOptions(); return false;">
                         <div id="opt-save-filename-group" class="form-group">
-                            <label for="opt-save-filename" class="col-md-2 col-lg-2 control-label"><%= SaveFilename %></label>
+                            <label for="opt-save-filename" class="col-md-4 col-lg-4 control-label"><%= SaveFilename %></label>
                             <div class="col-md-4 col-lg-4">
                                 <input id="opt-save-filename" name="file-save-name" type="text" class="form-control" onkeyup="SCA.validateSaveFilename();" onkeydown="SCA.validateSaveFilename();" value=""></input>
                                 <p id="opt-save-filename-help" class="help-block"></p>
                             </div>
                         </div>
                         <div id="opt-timeout-group" class="form-group">
-                            <label for="opt-timeout" class="col-md-2 col-lg-2 control-label"><%= TimeoutPeriod %> (min.)</label>
+                            <label for="opt-timeout" class="col-md-4 col-lg-4 control-label"><%= TimeoutPeriod %> (min.)</label>
                             <div class="col-md-2 col-lg-2">
                                 <input id="opt-timeout" name="opt-timeout" type="number" onkeyup="SCA.validateTimeout();" onkeydown="SCA.validateTimeout();" onkeypress="return SCA.isNumericKey(event);" class="form-control" value=""></input>
                                 <p id="opt-timeout-help" class="help-block"></p>
                             </div>
                         </div>
                         <div id="opt-confirm-del-group" class="form-group">
-                            <label for="opt-timeout" class="col-md-2 col-lg-2 control-label">
+                            <label for="opt-timeout" class="col-md-4 col-lg-4 control-label">
                                 <%= ConfirmPasswordDeletion %>                                    
                             </label>
                             <div class="col-md-1 col-lg-1">
@@ -125,7 +125,7 @@
                             </div>
                         </div>                        
                         <div id="opt-confirm-del-group" class="form-group">
-                            <label for="opt-timeout" class="col-md-2 col-lg-2 control-label">    
+                            <label for="opt-timeout" class="col-md-4 col-lg-4 control-label">    
                                 <%= OptionKeepPwdsOfDeletedGrps %> 
                             </label>
                             <div class="col-md-1 col-lg-1">
@@ -280,19 +280,17 @@
                 <div class="panel-heading">
                     <form id="grpid-form" class="form-horizontal" role="form" autocomplete="off" onsubmit="return false;">
                         <div class="row">
-                            <div class="col-xs-6 col-sm-6 col-md-6 col-lg-6">
+                            <div class="col-xs-6 col-sm-7 col-md-8 col-lg-8">
                                 <label class="sr-only" for="grpid-name"><%= GroupName %></label>
                                 <input id="grpid-name" name="grpid-name" type="text" class="form-control input-sm pull-left" onkeydown="" onkeyup=""></input>
                             </div> 
                             <div id="grpid-drag" class="grp-drag" style="cursor: ns-resize;" draggable="true" ondragstart="SCA.dragStart(event);" ondragover="SCA.dragOver(event);" ondragenter="SCA.dragEnter(event);" ondragleave="SCA.dragLeave(event);" ondrop="SCA.dragDropGrp(event);" ondragend="SCA.dragEnd(event);">
-                                <div class="col-xs-2 col-sm-1 col-md-2 col-lg-2 btn-toolbar">
-                                    <button id="grpid-setdefault" type="button" onclick="SCA.toggleDefaultGroup('grpid');" class="btn btn-xs" style="border: 2px solid transparent;"><%= DefaultGroup %></button>  
-                                    <span id="grpid-default-indicator-on" style="color:green;font-weight:bold;display: none;">☑</span>
-                                    <span id="grpid-default-indicator-off" style="color:red;font-weight:bold">☒</span>
-                                </div> 
-                                <div class="col-xs-2 col-sm-1 col-md-2 col-lg-2 btn-toolbar">
+                                <div class="col-xs-2 col-sm-2 col-md-1 col-lg-1 btn-toolbar">
                                     <button id="grpid-toggle" type="button" onclick="SCA.toggleGrp('grpid');" class="btn btn-xs btn-primary pull-left"><%= Hide %></button>  
-                                </div>                              
+                                </div>  
+                                <div class="col-xs-2 col-sm-2 col-md-1 col-lg-1 btn-toolbar">
+                                    <button id="grpid-setdefault" type="button" onclick="SCA.toggleDefaultGroup('grpid');" class="btn btn-xs btn-custom"><%= DefaultGroup %></button>                           
+                                </div>                             
                                 <div class="col-xs-2 col-sm-1 col-md-2 col-lg-2">
                                     <button id="grpid-delete" type="button" onclick="SCA.delGrp('grpid');" class="btn btn-xs btn-danger pull-right">Del</button>
                                 </div>

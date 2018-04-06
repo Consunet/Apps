@@ -356,9 +356,7 @@ SCA.toggleDefaultGroup = function(id) {
         this._currentDefaultGrpId = null;
     
         toggleButton.classList.remove("btn-warning");
-        
-        this.setDisplay(id + "-default-indicator-on", "none");
-        this.setDisplay(id + "-default-indicator-off", "inline");      
+        toggleButton.classList.add("btn-custom"); 
     }
     else //group not currently default
     {
@@ -367,19 +365,15 @@ SCA.toggleDefaultGroup = function(id) {
         {
             var prevToggleButton = this.e(this._currentDefaultGrpId + "-setdefault");               
             
-            prevToggleButton.classList.remove("btn-warning");
-                 
-            this.setDisplay(this._currentDefaultGrpId + "-default-indicator-on", "none"); 
-            this.setDisplay(this._currentDefaultGrpId + "-default-indicator-off", "inline");  
+            prevToggleButton.classList.remove("btn-warning");   
+            prevToggleButton.classList.add("btn-custom"); 
         }
         
         //make this group new defualt
         this._currentDefaultGrpId = id;
 
-        toggleButton.classList.add("btn-warning");
-    
-        this.setDisplay(id + "-default-indicator-on", "inline");
-        this.setDisplay(id + "-default-indicator-off", "none"); 
+        toggleButton.classList.remove("btn-custom");
+        toggleButton.classList.add("btn-warning");   
         //
     }           
 };
