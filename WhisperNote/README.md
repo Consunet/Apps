@@ -52,6 +52,9 @@ If you are using a x32 or x64 Linux machine, you may be able to use the install.
 There are multiple ways that grunt can be called, each providing different ways for building or testing. ```grunt coverage``` will run the mocha tests and output the coverage to a html file. ```grunt manualcoverage``` will open a firefox browser for manual testing and create a coverage report after. ```grunt dualcoverage``` is a combination of the previous two, it will run the automated testing and then open a browser for manual testing. The coverage report produced is an aggregate of the both testing types.
 
 There is also ```grunt notest``` which will skip the testing and coverage and just build the public_html files.
+
+Finally ```grunt debug``` can be used to skip the minification of the javascript files to make debugging easier.
+
 ### Lessons learnt
 #### SJCL vs CryptoJS
 [CryptoJS](http://code.google.com/p/crypto-js/) is another Javascript cryptography library that was evaluated for use for this project.
@@ -62,3 +65,11 @@ Thus, SJCL was the chosen library.
 Binary data is stored in "chunks" within the HTML file.
 This is because the SJCL library struggles to encrypt a large amount of data at a time - it runs very slowly.
 Therefore the file is broken up into chunks, and each chunk is encrypted. The chunks are then reassembled on decryption.
+
+## Technology review
+The following technologies were considered for use in this app:
+
+### Testing
+
+#### CasperJS with PhantomJS
+CasperJS was used with PhantomJS for testing but when the project moved to a browser based encryption in v1.4, the headless browserless setup was no longer was able to test encryption and as such the testing suite was changed.
