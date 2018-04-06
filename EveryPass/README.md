@@ -49,8 +49,15 @@ There are multiple ways that grunt can be called, each providing different ways 
 
 There is also ```grunt notest``` which will skip the testing and coverage and just build the public_html files.
 
+Finally ```grunt debug``` can be used to skip the minification of the javascript files to make debugging easier.
+
 ## Technology review
 The following technologies were considered for use in this app:
+
+### Testing
+
+#### CasperJS with PhantomJS
+CasperJS was used with PhantomJS for testing but when the project moved to a browser based encryption in v1.4, the headless browserless setup was no longer was able to test encryption and as such the testing suite was changed.
 
 ### Databinding
 The following Databinding libraries were considered for use in this project, however it was decided that databinding libraries should not be used.

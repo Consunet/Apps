@@ -3,7 +3,19 @@
  * @author Artem S Vybornov <vybornov@gmail.com>
  * @license MIT
  */
-!function ( global ) {
+(function (global, factory) {
+    if (typeof define === 'function' && define.amd) {
+        // AMD. Register as an anonymous module.
+        define([], function () {
+            return factory(global);
+        });
+    } else if (typeof module === 'object' && module.exports) {
+        // CommonJS-like environments that support module.exports
+        module.exports = factory(global);
+    } else {
+        factory(global);
+    }
+}(typeof self !== 'undefined' ? self : this, function (global) {
     'use strict';
 
     if ( typeof Promise !== 'function' )
@@ -19,8 +31,9 @@
         _SubtleCrypto = global.SubtleCrypto || _subtle.constructor || Object,
         _CryptoKey  = global.CryptoKey || global.Key || Object;
 
-    var isIE    = !!global.msCrypto,
-        isWebkit = !!_crypto.webkitSubtle;
+    var isEdge = global.navigator.userAgent.indexOf('Edge/') > -1;
+    var isIE    = !!global.msCrypto && !isEdge;
+    var isWebkit = !_crypto.subtle && !!_crypto.webkitSubtle;
     if ( !isIE && !isWebkit ) return;
 
     function s2a ( s ) {
@@ -594,4 +607,4 @@
         global.SubtleCrypto = _SubtleCrypto;
         global.CryptoKey = CryptoKey;
     }
-}(this);
+}));
