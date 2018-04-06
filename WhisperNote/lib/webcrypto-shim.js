@@ -1,4 +1,4 @@
-﻿/**
+/**
  * @file Web Cryptography API shim
  * @author Artem S Vybornov <vybornov@gmail.com>
  * @license MIT

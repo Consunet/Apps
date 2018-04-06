@@ -369,7 +369,7 @@ SCA.toggleDefaultGroup = function(id) {
             prevToggleButton.classList.add("btn-custom"); 
         }
         
-        //make this group new defualt
+        //make this group new default
         this._currentDefaultGrpId = id;
 
         toggleButton.classList.remove("btn-custom");
@@ -554,6 +554,8 @@ SCA.encryptAndEmbedData = function() {
     
     return this.encryptWith(function(cs, cryptoKey, iv, adata) {
         // Reset document specific elements
+        SCA._currentDefaultGrpId = null;
+        
         SCA._divGrps().innerHTML = "";
         SCA._divPwds().innerHTML = "";
         SCA.e("search").setAttribute("disabled", "");

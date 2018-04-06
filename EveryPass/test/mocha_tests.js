@@ -75,37 +75,32 @@ describe('EveryPass Specific Testing', function () {
             //refresh the driver
             await driver.get(testVars.TEST_UNENCRYPTED_URL);
 
-            //getTestData();
+
             var data = support.getTestData("www.consunet.com.au");
 
             await support.addPassword(driver, true, data);
 
             var id = 'p0';
 
-            //assertPasswordBodyHidden()
             await support.assertPasswordBodyHidden(driver, id);
 
-            //toggleShowBody()
             await support.toggleShowBody(driver, id)
 
-            //assertPasswordBodyShown()
             await support.assertPasswordBodyShown(driver, id);
 
-            //verifyDataMatches()
             await support.verifyDataMatches(driver, id, data);
 
             var goDisplayed = await driver.findElement(webdriver.By.id(id + '-go')).isDisplayed();
             expect(goDisplayed, "Go Button is hidden for " + id).to.equal(true);
 
-            //toggleShowBody()
             await support.toggleShowBody(driver, id)
-            //assertPasswordBodyHidden()
+
             await support.assertPasswordBodyHidden(driver, id);
-            //skip confirmation on delete
+
             await support.setExtendedOptions(driver, false, true);
-            //delItem()
+
             await support.delItem(driver, id);
-            //assertPasswordNotExists()
+
             await support.assertPasswordNotExists(driver, id);
         });
 
@@ -167,17 +162,19 @@ describe('EveryPass Specific Testing', function () {
             //sets test timeout to 10s
             this.timeout(10000);
 
+            fs.copyFileSync('test/local_test_page.html', 'public_html/local_test_page.html');
+
             //refresh the driver
             await driver.get(testVars.TEST_UNENCRYPTED_URL);
 
             //create URL based password
-            var data = support.getTestData("www.consunet.com.au");
+            var data = support.getTestData(testVars.TEST_LOCAL_PAGE);
             await support.addPassword(driver, true, data);
 
             await driver.findElement(webdriver.By.id('p0-toggle')).click();
             await driver.findElement(webdriver.By.id('p0-go')).click();
 
-            await sleep(3000);
+            await sleep(1000);
 
             var handles = await driver.getAllWindowHandles();
             var secondWindowHandle = handles[1];
@@ -185,12 +182,14 @@ describe('EveryPass Specific Testing', function () {
 
             await driver.switchTo().window(secondWindowHandle);
 
-            assert.equal(await driver.getCurrentUrl(), 'https://www.consunet.com.au/');
+            assert.equal(await driver.getCurrentUrl(), testVars.TEST_LOCAL_PAGE);
 
             //close secondary window only
             await driver.close();
 
             await driver.switchTo().window(firstWindowHandle);
+            
+            fs.unlinkSync('public_html/local_test_page.html');
         });
 
 
@@ -230,7 +229,7 @@ describe('EveryPass Specific Testing', function () {
             await support.assertGroupBodyShown(driver, 'g0'); //visible grp 
             await support.assertPasswordShown(driver, 'p0');
         });
-        
+
         it('Can create multiple passwords and search for them case-insensitively (no groups).', async function () {
 
             //sets test timeout to 10s
@@ -239,7 +238,7 @@ describe('EveryPass Specific Testing', function () {
             //refresh the driver
             await driver.get(testVars.TEST_UNENCRYPTED_URL);
 
-                 
+
             await support.addPassword(driver, true, support.getTestData("ABc"));//p0
             await support.addPassword(driver, true, support.getTestData("def"));//p1
             await support.addPassword(driver, true, support.getTestData("ghi"));//p2
@@ -249,11 +248,11 @@ describe('EveryPass Specific Testing', function () {
 
             await support.assertPasswordExists(driver, 'p0');
             await support.assertPasswordExists(driver, 'p1');
-            await support.assertPasswordExists(driver, 'p2');                  
+            await support.assertPasswordExists(driver, 'p2');
             await support.assertPasswordExists(driver, 'p3');
             await support.assertPasswordExists(driver, 'p4');
-            
-            
+
+
             //single character 'a' not to trigger search
             await support.search(driver, "a");
             //expect all shown
@@ -263,16 +262,16 @@ describe('EveryPass Specific Testing', function () {
             await support.assertPasswordShown(driver, 'p3');
             await support.assertPasswordShown(driver, 'p4');
             //
-                      
+
             //2 chars to trigger search using 'ab' 
             await support.search(driver, "b");
             //expect 2 shown
             await support.assertPasswordShown(driver, 'p0');
             await support.assertPasswordHidden(driver, 'p1');
-            await support.assertPasswordHidden(driver, 'p2');          
-   
+            await support.assertPasswordHidden(driver, 'p2');
+
             await support.assertPasswordHidden(driver, 'p3');
-            await support.assertPasswordShown(driver, 'p4');           
+            await support.assertPasswordShown(driver, 'p4');
 
             //trigger search using 'abc' 
             await support.search(driver, "c");
@@ -326,8 +325,8 @@ describe('EveryPass Specific Testing', function () {
             await support.assertPasswordExists(driver, 'p3', 'g1');
             await support.assertPasswordExists(driver, 'p4', 'g1');
 
-            
-            
+
+
             //single character 'a' not to trigger search
             await support.search(driver, "a");
             //expect all shown
@@ -337,22 +336,22 @@ describe('EveryPass Specific Testing', function () {
             await support.assertPasswordShown(driver, 'p3');
             await support.assertPasswordShown(driver, 'p4');
             //
-            
+
             await support.toggleShowBody(driver, 'g1')//hide, should show again upon search match
             await support.assertGroupBodyHidden(driver, 'g1');
-            
+
             //2 chars to trigger search using 'ab' 
             await support.search(driver, "b");
             //expect 2 shown
             await support.assertPasswordShown(driver, 'p0');
             await support.assertPasswordHidden(driver, 'p1');
             await support.assertPasswordHidden(driver, 'p2');
-            
+
             await support.assertGroupBodyShown(driver, 'g1');
             await support.assertPasswordHidden(driver, 'p3');
             await support.assertPasswordShown(driver, 'p4');
 
-            
+
 
             //trigger search using 'abc' 
             await support.search(driver, "c");
@@ -888,6 +887,9 @@ describe('EveryPass Specific Testing', function () {
 
 });
 
+/*
+ * Repeated logic from import and URL based decrpytion tests
+ */
 async function decryptTestChecks(driver) {
 
     //check is diplaying form for unlock password
@@ -933,6 +935,9 @@ async function decryptTestChecks(driver) {
     await support.verifyDataMatches(driver, id, support.getTestData("ghi"));
 }
 
+/*
+ * Repeated logic for drag and drop tests (password onto password)
+ */
 async function dragPwdToPwdChecks(driver, isReverse) {
 
     await support.addPassword(driver, true, support.getTestData("ABc"));//p0     
@@ -970,6 +975,9 @@ async function dragPwdToPwdChecks(driver, isReverse) {
     }
 }
 
+/*
+ * Repeated logic for drag and drop tests (group onto group)
+ */
 async function dragGrpToGrpChecks(driver, isReverse) {
 
     await support.addGroup(driver, 'Group 0'); //g0
@@ -1018,6 +1026,9 @@ async function dragGrpToGrpChecks(driver, isReverse) {
     await support.assertPasswordExists(driver, 'p2', 'g2');
 }
 
+/*
+ * Repeated logic for drag and drop tests (password onto password within separate group)
+ */
 async function dragPwdToPwdInGrpChecks(driver, isReverse) {
 
     await support.addGroup(driver, 'Group 0'); //g0
@@ -1049,16 +1060,18 @@ async function dragPwdToPwdInGrpChecks(driver, isReverse) {
     await support.assertPasswordExists(driver, movedPwd, endGrp);//now in group 
 
     var posAfter = await driver.executeScript(
-        
-        "var grpContainer = SCA.e('" + endGrp + "-pwds');"
-        +
-        "return SCA.getPwdPositions('p0', 'p1', grpContainer);"
-    );
+            "var grpContainer = SCA.e('" + endGrp + "-pwds');"
+            +
+            "return SCA.getPwdPositions('p0', 'p1', grpContainer);"
+            );
 
     //either way p0 will end up under p1
     expect(posAfter).to.deep.equal([1, 0]);
 }
 
+/*
+ * Makes test wait for browser to do something
+ */
 function sleep(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
 }
