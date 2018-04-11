@@ -69,7 +69,12 @@ var SCA = {
 
         var feedback = this.e("enc-password-fb").innerHTML;
         if (feedback === "<%= Password %>: <%= Weak %>") {
-            return confirm("<%= WeakPasswordUsedWarning %>");
+            var answer = confirm("<%= WeakPasswordUsedWarning %>");
+            if (answer) {
+                return answer;
+             } else {
+                return false;
+             }
         }
 
         return true;
@@ -319,7 +324,8 @@ var SCA = {
         var retval = new Promise(function (resolve, reject) {
        
             if (!me.checkEncPass()) {
-                reject(Error("User rejected Password."));
+                reject(Error("password"));
+                throw(Error("password")); //stops further code from running.
             }
             
 
@@ -374,7 +380,7 @@ var SCA = {
 
                                     // Reset the document
                                     encData = CONST.cypherSettings;
-
+                                    
                                     me.setDisplay("nojavascript", "inline");
                                     me.setDisplay("unsupported", "none");
                                     me.setDisplay("locked", "none");
@@ -876,6 +882,7 @@ var SCA = {
         }
 
         try {
+            
             if (!(window.File && window.FileReader && window.FileList && window.Blob)) {
                 throw "<%= FileOpsNotSupported %>";
             }

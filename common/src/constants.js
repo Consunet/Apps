@@ -11,7 +11,7 @@
  * </p>
  */
 var CONST = {
-    version: 1.5,
+    version: 1.6,
     cypherSettings: {
         iter: 1000, // maintained for backwards compatibility
         ks: 256, // maintained for backwards compatibility

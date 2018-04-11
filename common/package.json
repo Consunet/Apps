@@ -16,8 +16,8 @@
     "chai": "4.1.2",
     "chai-files": "1.4.0",
     "chai-string": "1.4.0",
+    "html-dnd": "1.2.0",
     "istanbul-middleware": "0.2.2",
     "selenium-webdriver": "4.0.0-alpha.1"
-  },
-  "dependencies": {}
+  }
 }

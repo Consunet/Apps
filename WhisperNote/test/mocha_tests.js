@@ -64,7 +64,7 @@ describe('WhisperNote Testing', function () {
         await driver.get(testVars.TEST_UNENCRYPTED_URL);
 
         var title = await driver.getTitle();
-        assert.equal(title, 'WhisperNote Encrypted Note v1.5', 'WhisperNote homepage title is NOT the one expected');
+        assert.equal(title, 'WhisperNote Encrypted Note v1.6', 'WhisperNote homepage title is NOT the one expected');
         var help = await driver.findElement(webdriver.By.id('help-screen'));
         var helpText = await help.getAttribute("innerHTML");
         assert.include(helpText, "is a portable encrypted message container.", 'Description exists')

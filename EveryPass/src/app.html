@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <title>EveryPass Password Manager v1.5</title>
+        <title>EveryPass Password Manager v1.6</title>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
         <meta http-equiv="cache-control" content="max-age=0"/>
         <meta http-equiv="cache-control" content="no-cache"/>
@@ -29,7 +29,7 @@
             <div class="navbar-header pull-right">
                 <form id="search-form" class="navbar-form" role="search" onsubmit="return false;"> 
                     <label class="sr-only" for="search"><%= Search %></label>
-                    <input id="search" name="search" type="search" class="form-control srch" onkeydown="SCA.filterPwds(event);" onkeyup="SCA.filterPwds(event);" placeholder="<%= Search %>..." disabled="">
+                    <input id="search" name="search" type="search" class="form-control srch" onkeydown="SCA.filterClear(event);" onkeyup="SCA.filterPwds(event);" placeholder="<%= Search %>..." disabled="">
                     <button id="menu-button" type="button" class="btn btn-sm btn-default menu-icon">&equiv;</button>
                     <ul id="menu" class="menu" role="menu" style=" display: none;">
                         <li role="presentation"><a id="menu-import" role="menuitem" onclick="SCA.e('import').click();" href="#"><%= Import %></a></li>
@@ -103,25 +103,33 @@
                     <h4><%= Options %></h4>
                     <form id="options" class="form-horizontal" autocomplete="off" onsubmit="SCA.saveOptions(); return false;">
                         <div id="opt-save-filename-group" class="form-group">
-                            <label for="opt-save-filename" class="col-md-2 col-lg-2 control-label"><%= SaveFilename %></label>
+                            <label for="opt-save-filename" class="col-md-4 col-lg-4 control-label"><%= SaveFilename %></label>
                             <div class="col-md-4 col-lg-4">
                                 <input id="opt-save-filename" name="file-save-name" type="text" class="form-control" onkeyup="SCA.validateSaveFilename();" onkeydown="SCA.validateSaveFilename();" value=""></input>
                                 <p id="opt-save-filename-help" class="help-block"></p>
                             </div>
                         </div>
                         <div id="opt-timeout-group" class="form-group">
-                            <label for="opt-timeout" class="col-md-2 col-lg-2 control-label"><%= TimeoutPeriod %> (min.)</label>
+                            <label for="opt-timeout" class="col-md-4 col-lg-4 control-label"><%= TimeoutPeriod %> (min.)</label>
                             <div class="col-md-2 col-lg-2">
                                 <input id="opt-timeout" name="opt-timeout" type="number" onkeyup="SCA.validateTimeout();" onkeydown="SCA.validateTimeout();" onkeypress="return SCA.isNumericKey(event);" class="form-control" value=""></input>
                                 <p id="opt-timeout-help" class="help-block"></p>
                             </div>
                         </div>
                         <div id="opt-confirm-del-group" class="form-group">
-                            <label for="opt-timeout" class="col-md-2 col-lg-2 control-label">
-                                <%= ConfirmPasswordDeletion %>
+                            <label for="opt-timeout" class="col-md-4 col-lg-4 control-label">
+                                <%= ConfirmPasswordDeletion %>                                    
                             </label>
                             <div class="col-md-1 col-lg-1">
                                 <input id="opt-confirm-del" name="opt-confirm-del" type="checkbox" class="form-control" value=""></input>
+                            </div>
+                        </div>                        
+                        <div id="opt-confirm-del-group" class="form-group">
+                            <label for="opt-timeout" class="col-md-4 col-lg-4 control-label">    
+                                <%= OptionKeepPwdsOfDeletedGrps %> 
+                            </label>
+                            <div class="col-md-1 col-lg-1">
+                                <input id="opt-keep-grp-pwds" name="opt-keep-grp-pwds" type="checkbox" class="form-control" value=""></input>
                             </div>
                         </div>
                     </form>
@@ -134,9 +142,10 @@
                     <%= HelpDetailString %>
                     </div>
                 </div>
+                <div id="grps"></div>
                 <div id="pwds"></div>
                 <form id="new-entry" class="form-horizontal" role="form" autocomplete="off" onsubmit="return false;">
-                    <div class="panel panel-info">
+                    <div class="panel panel-primary">
                         <div class="panel-heading">
                             <div class="row">
                                 <div class="col-xs-8 col-md-6">
@@ -144,7 +153,7 @@
                                     <input type="text" class="form-control input-sm" id="new-service" name="new-service" placeholder="<%= NewPasswordFor %>">
                                 </div>
                                 <div class="col-xs-4 col-md-6">
-                                    <button id="add-new-pwd" type="button" onclick="SCA.newPwd();" class="btn btn-xs btn-primary pull-right"><%= Add %></button>
+                                    <button id="add-new-pwd" type="button" onclick="SCA.newPwd();" class="btn btn-xs btn-success pull-right"><%= Add %></button>
                                 </div>
                             </div>
                         </div>
@@ -163,7 +172,7 @@
                                             <input type="text" class="form-control input-sm" id="new-password" name="new-password" placeholder="<%= Password %>">
                                         </div>
                                         <div class="col-md-2 col-sm-4 col-xs-4">
-                                            <button id="generate-pwd" type="button" onclick="SCA.generatePwd();" class="btn btn-sm btn-success pull-right"><%= Generate %></button>
+                                            <button id="generate-pwd" type="button" onclick="SCA.generatePwd();" class="btn btn-sm btn-warning pull-right"><%= Generate %></button>
                                         </div>
                                     </div>
                                 </div>
@@ -178,6 +187,21 @@
                                 </div>
                             </div>
                         </div>
+                    </div>
+                </form>
+                <form id="new-group" class="form-horizontal" role="form" autocomplete="off" onsubmit="return false;">
+                    <div class="panel panel-primary">                
+                        <div class="panel-heading">
+                            <div class="row">
+                                <div class="col-xs-8 col-md-6">
+                                    <label class="sr-only" for="new-group-name"><%= GroupName %></label>
+                                    <input type="text" class="form-control input-sm" id="new-group-name" name="new-group-name" placeholder="<%= NewGroupNamePlaceholder %>">
+                                </div>
+                                <div class="col-xs-4 col-md-6">
+                                    <button id="add-new-group" type="button" onclick="SCA.newGrp();" class="btn btn-xs btn-success pull-right"><%= AddGroup %></button>
+                                </div>
+                            </div>
+                        </div>                 
                     </div>
                 </form>
                 <nav class="navbar navbar-default navbar-fixed-bottom">
@@ -209,7 +233,7 @@
                                 <label class="sr-only" for="new-service"><%= Service %></label>
                                 <input id="pwid-service" name="pwid-service" type="text" class="form-control input-sm pull-left" onkeydown="SCA.checkGo('pwid');" onkeyup="SCA.checkGo('pwid');"></input>
                             </div> 
-                            <div id="pwid-drag" style="cursor: ns-resize;" draggable="true" ondragstart="SCA.dragStartPwd(event);" ondragover="SCA.dragOverPwd(event);" ondragenter="SCA.dragEnterPwd(event);" ondragleave="SCA.dragLeavePwd(event);" ondrop="SCA.dragDrop(event);" ondragend="SCA.dragEndPwd(event);">
+                            <div id="pwid-drag" class="pwd-drag" style="cursor: ns-resize;" draggable="true" ondragstart="SCA.dragStart(event);" ondragover="SCA.dragOver(event);" ondragenter="SCA.dragEnter(event);" ondragleave="SCA.dragLeave(event);" ondrop="SCA.dragDropPwd(event);" ondragend="SCA.dragEnd(event);">
                                 <div class="col-xs-4 col-sm-4 col-md-2 col-lg-2 btn-toolbar">
                                     <button id="pwid-toggle" type="button" onclick="SCA.togglePwd('pwid');" class="btn btn-xs btn-primary pull-left"><%= Show %></button>
                                     <button id="pwid-go" type="button" onclick="SCA.go('pwid');" class="btn btn-xs btn-success pull-left"><%= Go %></button>
@@ -241,7 +265,7 @@
                                     <label for="question" class="col-lg-2 control-label"><%= AdditionalInfo %></label>
                                     <div class="col-lg-10">
                                         <input id="pwid-question" name="pwid-question" type="text" class="form-control input-sm"></input>
-                    <input id="pwid-answer" name="pwid-answer" type="text" class="form-control input-sm"></input>
+                                        <input id="pwid-answer" name="pwid-answer" type="text" class="form-control input-sm"></input>
                                     </div>
                                 </div>
                             </div>
@@ -250,5 +274,35 @@
                 </div>
             </form>
         </div>
+                
+        <div id="grp-data" class="container" style="display: none;">           
+            <div id="grpid-glow" class="panel panel-info">
+                <div class="panel-heading">
+                    <form id="grpid-form" class="form-horizontal" role="form" autocomplete="off" onsubmit="return false;">
+                        <div class="row">
+                            <div class="col-xs-6 col-sm-7 col-md-8 col-lg-8">
+                                <label class="sr-only" for="grpid-name"><%= GroupName %></label>
+                                <input id="grpid-name" name="grpid-name" type="text" class="form-control input-sm pull-left" onkeydown="" onkeyup=""></input>
+                            </div> 
+                            <div id="grpid-drag" class="grp-drag" style="cursor: ns-resize;" draggable="true" ondragstart="SCA.dragStart(event);" ondragover="SCA.dragOver(event);" ondragenter="SCA.dragEnter(event);" ondragleave="SCA.dragLeave(event);" ondrop="SCA.dragDropGrp(event);" ondragend="SCA.dragEnd(event);">
+                                <div class="col-xs-2 col-sm-2 col-md-1 col-lg-1 btn-toolbar">
+                                    <button id="grpid-toggle" type="button" onclick="SCA.toggleGrp('grpid');" class="btn btn-xs btn-primary pull-left"><%= Hide %></button>  
+                                </div>  
+                                <div class="col-xs-2 col-sm-2 col-md-1 col-lg-1 btn-toolbar">
+                                    <button id="grpid-setdefault" type="button" onclick="SCA.toggleDefaultGroup('grpid');" class="btn btn-xs btn-custom"><%= DefaultGroup %></button>                           
+                                </div>                             
+                                <div class="col-xs-2 col-sm-1 col-md-2 col-lg-2">
+                                    <button id="grpid-delete" type="button" onclick="SCA.delGrp('grpid');" class="btn btn-xs btn-danger pull-right">Del</button>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div> 
+                <div id="grpid-pwds" class="panel-body">
+                
+                </div>                    
+            </div>              
+        </div>        
+        
     </body>
 </html>
