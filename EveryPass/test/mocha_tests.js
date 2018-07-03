@@ -8,6 +8,7 @@ const dragAndDrop = require('../../common/node_modules/html-dnd').code;
 const chai = require('../../common/node_modules/chai');
 const expect = chai.expect;
 const assert = chai.assert;
+const path = require('path')
 const chaiFiles = require('../../common/node_modules/chai-files');
 const file = chaiFiles.file;
 const dir = chaiFiles.dir;
@@ -31,7 +32,7 @@ describe('EveryPass Specific Testing', function () {
 
         var fxoptions = new firefox.Options()
         fxoptions.setProfile(comsupport.commonFullPath() + "/firefox_profile")
-        fxoptions.setPreference("browser.download.dir", __dirname + "/test_downloads");
+        fxoptions.setPreference("browser.download.dir", __dirname + path.sep + "test_downloads");
         fxoptions.setPreference("browser.download.folderList", 2);
         fxoptions.headless();
 
@@ -706,7 +707,7 @@ describe('EveryPass Specific Testing', function () {
             await driver.get(testVars.TEST_UNENCRYPTED_URL);
 
             //import file created above
-            await driver.findElement(webdriver.By.id('import')).sendKeys(__dirname + "/test_downloads/test_encrypted.html");
+            await driver.findElement(webdriver.By.id('import')).sendKeys(__dirname + path.sep + "test_downloads" + path.sep + "test_encrypted.html");
 
             //allow for import
             await sleep(100);
@@ -721,7 +722,7 @@ describe('EveryPass Specific Testing', function () {
             await driver.get(testVars.TEST_UNENCRYPTED_URL);
 
             //import file created above
-            await driver.findElement(webdriver.By.id('import')).sendKeys(__dirname + "/pre_groups_decrypt_import.html");
+            await driver.findElement(webdriver.By.id('import')).sendKeys(__dirname + path.sep + "pre_groups_decrypt_import.html");
 
             //allow for import
             await sleep(100);
@@ -761,7 +762,7 @@ describe('EveryPass Specific Testing', function () {
             await driver.get(testVars.TEST_UNENCRYPTED_URL);
 
             //import file created above
-            await driver.findElement(webdriver.By.id('import')).sendKeys(__dirname + "/legacy_decrypt_import.html");
+            await driver.findElement(webdriver.By.id('import')).sendKeys(__dirname + path.sep + "legacy_decrypt_import.html");
 
             //allow for import
             await sleep(100);

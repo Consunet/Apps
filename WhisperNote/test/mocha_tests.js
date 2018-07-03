@@ -9,6 +9,7 @@ const expect = chai.expect;
 const assert = chai.assert;
 const chaiFiles = require('../../common/node_modules/chai-files');
 const file = chaiFiles.file;
+const path = require('path')
 const dir = chaiFiles.dir;
 const until = webdriver.until;
 const fs = require('fs')
@@ -30,7 +31,7 @@ describe('WhisperNote Testing', function () {
 
         var fxoptions = new firefox.Options()
         fxoptions.setProfile(comsupport.commonFullPath() + "/firefox_profile")
-        fxoptions.setPreference("browser.download.dir", __dirname + "/test_downloads");
+        fxoptions.setPreference("browser.download.dir", __dirname + path.sep + "test_downloads");
         fxoptions.setPreference("browser.download.folderList", 2);
         fxoptions.headless();
 
@@ -110,7 +111,7 @@ describe('WhisperNote Testing', function () {
 
             await support.addNote(driver, testVars.TEST_MESSAGE);
 
-            await driver.findElement(webdriver.By.id('file')).sendKeys(__dirname + "/testmessage.txt");
+            await driver.findElement(webdriver.By.id('file')).sendKeys(__dirname + path.sep + "testmessage.txt");
 
             await sleep(100);
 
@@ -185,7 +186,7 @@ describe('WhisperNote Testing', function () {
 
             await driver.get(testVars.TEST_UNENCRYPTED_URL);
 
-            await driver.findElement(webdriver.By.id('import')).sendKeys(__dirname + "/test_downloads/test_encrypted.html");
+            await driver.findElement(webdriver.By.id('import')).sendKeys(__dirname + path.sep + "test_downloads" + path.sep + "test_encrypted.html");
 
             await sleep(100);
 
@@ -207,7 +208,7 @@ describe('WhisperNote Testing', function () {
 
             await driver.get(testVars.TEST_UNENCRYPTED_URL);
 
-            await driver.findElement(webdriver.By.id('import')).sendKeys(__dirname + "/test_downloads/test_encrypted_attachment.html");
+            await driver.findElement(webdriver.By.id('import')).sendKeys(__dirname + path.sep + "test_downloads" + path.sep + "test_encrypted_attachment.html");
 
             await sleep(100);
 
@@ -242,7 +243,7 @@ describe('WhisperNote Testing', function () {
 
             await driver.get(testVars.TEST_UNENCRYPTED_URL);
 
-            await driver.findElement(webdriver.By.id('import')).sendKeys(__dirname + "/legacy_decrypt_import.html");
+            await driver.findElement(webdriver.By.id('import')).sendKeys(__dirname + path.sep + "legacy_decrypt_import.html");
 
             await sleep(100);
 
