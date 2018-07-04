@@ -31,6 +31,7 @@ module.exports = function(grunt) {
                 src: [
                    'lib/sjcl.js',
                    'lib/Blob.js',
+                   'lib/DragDropTouch.js',
                    'lib/FileSaver.js',
                    'lib/es6-promise.js',
                    'lib/encoding-indexes.js',
@@ -47,6 +48,7 @@ module.exports = function(grunt) {
                 src: [
                    'lib/sjcl.js',
                    'lib/Blob.js',
+                   'lib/DragDropTouch.js',
                    'lib/FileSaver.js',
                    'lib/es6-promise.js',
                    'lib/encoding-indexes.js',
