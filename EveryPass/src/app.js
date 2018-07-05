@@ -289,8 +289,14 @@ SCA.delGrp = function(id) {
                 this._divPwds().appendChild(grpPwdContainer.firstChild);
             }
         }
+
         
         this.e(id).outerHTML = "";
+    }
+
+    if( !this.passwordsExist() ) {
+        // No passwords exist, show "no passwords" message.
+        this.setDisplay("store-empty-message", "block");
     }
 };
 

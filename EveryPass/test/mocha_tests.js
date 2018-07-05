@@ -116,10 +116,63 @@ describe('EveryPass Specific Testing', function () {
             var data = support.getTestData("www.consunet.com.au");
             await support.addPassword(driver, true, data);
 
+
             var emptyMessageDisplayed = await driver.findElement(webdriver.By.id('store-empty-message')).isDisplayed();
             expect(emptyMessageDisplayed, "Empty message should be hidden").to.equal(false);
         });
 
+        it('Store empty message displays when the last password is removed', async function() {
+            //sets test timeout to 10s
+            this.timeout(10000);
+
+            //refresh the driver
+            await driver.get(testVars.TEST_UNENCRYPTED_URL);
+
+            //no delete warning and remove passwords in group
+            await support.setExtendedOptions(driver, false, false);
+
+            // Setup Group
+            await support.addGroup(driver, 'Group 1');
+            await support.toggleDefaultGrp(driver, 'g0');//pwds to be added to g0
+
+            // Setup password
+            var data = support.getTestData("www.consunet.com.au");
+            await support.addPassword(driver, true, data);
+
+            var emptyMessageDisplayed = await driver.findElement(webdriver.By.id('store-empty-message')).isDisplayed();
+            expect(emptyMessageDisplayed, "Empty message should be visible").to.equal(false);
+
+            await driver.findElement(webdriver.By.id('p0-delete')).click();
+
+            emptyMessageDisplayed = await driver.findElement(webdriver.By.id('store-empty-message')).isDisplayed();
+            expect(emptyMessageDisplayed, "Empty message should be visible").to.equal(true);
+
+        });
+
+        it('Store empty message displays when the last password (inside a group) is removed', async function() {
+            //sets test timeout to 10s
+            this.timeout(10000);
+
+            //refresh the driver
+            await driver.get(testVars.TEST_UNENCRYPTED_URL);
+
+            //no delete warning and remove passwords in group
+            await support.setExtendedOptions(driver, false, false);
+
+            // Setup Group
+            await support.addGroup(driver, 'Group 1');
+            await support.toggleDefaultGrp(driver, 'g0');//pwds to be added to g0
+
+            // Setup password
+            var data = support.getTestData("www.consunet.com.au");
+            await support.addPassword(driver, true, data);
+
+            await support.delItem(driver, 'g0');//del g0 triggering prompt
+
+            var emptyMessageDisplayed = await driver.findElement(webdriver.By.id('store-empty-message')).isDisplayed();
+            expect(emptyMessageDisplayed, "Empty message should be visible").to.equal(true);
+
+        });
     });
 
     describe('Core UI function tests', function () {
