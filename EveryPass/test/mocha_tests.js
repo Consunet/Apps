@@ -40,6 +40,7 @@ describe('EveryPass Specific Testing', function () {
                 .forBrowser('firefox')
                 .setFirefoxOptions(fxoptions)
                 .build();
+
     });
 
     after(async function () {
@@ -64,6 +65,58 @@ describe('EveryPass Specific Testing', function () {
         var help = await driver.findElement(webdriver.By.id('help-screen'));
         var helpText = await help.getAttribute("innerHTML");
         assert.include(helpText, "is a Password Manager", 'Description exists');
+    });
+
+    describe('Store functionality', function() {
+        it('Store empty message disappears when a password is added.', async function() {
+            //sets test timeout to 10s
+            this.timeout(10000);
+
+            //refresh the driver
+            await driver.get(testVars.TEST_UNENCRYPTED_URL);
+
+            var data = support.getTestData("www.consunet.com.au");
+
+            await support.addPassword(driver, true, data);
+
+            var emptyMessageDisplayed = await driver.findElement(webdriver.By.id('store-empty-message')).isDisplayed();
+            expect(emptyMessageDisplayed, "Empty message should be hidden").to.equal(false);
+
+        });
+
+        it('Store empty message shows when only a group exist', async function() {
+            //sets test timeout to 10s
+            this.timeout(10000);
+
+            //refresh the driver
+            await driver.get(testVars.TEST_UNENCRYPTED_URL);
+
+            // Setup Group
+            await support.addGroup(driver, 'Group 1');
+
+            var emptyMessageDisplayed = await driver.findElement(webdriver.By.id('store-empty-message')).isDisplayed();
+            expect(emptyMessageDisplayed, "Empty message should be visible").to.equal(true);
+        });
+        
+        it('Store empty message is still hidden when a password is added to a group', async function() {
+            //sets test timeout to 10s
+            this.timeout(10000);
+
+            //refresh the driver
+            await driver.get(testVars.TEST_UNENCRYPTED_URL);
+
+            // Setup Group
+            await support.addGroup(driver, 'Group 1');
+            await support.toggleDefaultGrp(driver, 'g0');//pwds to be added to g0
+
+            // Setup password
+            var data = support.getTestData("www.consunet.com.au");
+            await support.addPassword(driver, true, data);
+
+            var emptyMessageDisplayed = await driver.findElement(webdriver.By.id('store-empty-message')).isDisplayed();
+            expect(emptyMessageDisplayed, "Empty message should be hidden").to.equal(false);
+        });
+
     });
 
     describe('Core UI function tests', function () {
@@ -182,8 +235,42 @@ describe('EveryPass Specific Testing', function () {
             var firstWindowHandle = handles[0];
 
             await driver.switchTo().window(secondWindowHandle);
-
             assert.equal(await driver.getCurrentUrl(), testVars.TEST_LOCAL_PAGE);
+
+            //close secondary window only
+            await driver.close();
+
+            await driver.switchTo().window(firstWindowHandle);
+            
+            fs.unlinkSync('public_html/local_test_page.html');
+        });
+
+        it('Can click Go button to visit password URL (Without http protocol).', async function () {
+
+            //sets test timeout to 10s
+            this.timeout(10000);
+
+            fs.copyFileSync('test/local_test_page.html', 'public_html/local_test_page.html');
+
+            //refresh the driver
+            await driver.get(testVars.TEST_UNENCRYPTED_URL);
+
+            //create URL based password
+            var data = support.getTestData(testVars.TEST_GOOGLE_URL_NO_PROTOCOL);
+            await support.addPassword(driver, true, data);
+
+            await driver.findElement(webdriver.By.id('p0-toggle')).click();
+            await driver.findElement(webdriver.By.id('p0-go')).click();
+
+            await sleep(4000);
+
+            var handles = await driver.getAllWindowHandles();
+            var secondWindowHandle = handles[1];
+            var firstWindowHandle = handles[0];
+
+            await driver.switchTo().window(secondWindowHandle);
+
+            assert.equal(await driver.getCurrentUrl(), "https://" + testVars.TEST_GOOGLE_URL_NO_PROTOCOL + "/?gws_rd=ssl");
 
             //close secondary window only
             await driver.close();
@@ -459,7 +546,45 @@ describe('EveryPass Specific Testing', function () {
             await support.assertPasswordNotExists(driver, 'p0');//p0 not returned to non-grouped area                         
         });
 
-        it('Can delete a group and retain its passwords.', async function () {
+        it('Can delete a group and retain passwords (after confirmation).', async function () {
+            //sets test timeout to 10s
+            this.timeout(10000);
+
+            //refresh the driver
+            await driver.get(testVars.TEST_UNENCRYPTED_URL);
+
+            //no delete warning and remove passwords in group
+            await support.setExtendedOptions(driver, true, true);
+
+            await support.addGroup(driver, 'Group 0'); //g0     
+            await support.toggleDefaultGrp(driver, 'g0');//on    
+            await support.addPassword(driver, true, support.getTestData("ABc"));//p0 in g0     
+
+            await support.assertPasswordExists(driver, 'p0', 'g0');
+
+            await support.delItem(driver, 'g0');//del g0 triggering prompt
+
+            var alertShown;
+
+            try
+            {
+                //confirmation expected
+                await driver.wait(webdriver.until.alertIsPresent(), 1000)
+                alertShown = true;
+                await driver.switchTo().alert().accept();
+            } catch (e)
+            {
+                alertShown = false;
+            }
+
+            expect(alertShown, "Alert not shown").to.equal(true)
+
+            await support.assertGroupNotExists(driver, 'g0'); //g0 now gone 
+
+            await support.assertPasswordExists(driver, 'p0');//p0 not returned to non-grouped area                         
+        });
+
+        it('Can delete a group and retain its passwords. (no confirmation)', async function () {
             //sets test timeout to 10s
             this.timeout(10000);
 
