@@ -30,4 +30,10 @@ esac
 tar -xvzf geckodriver*
 chmod +x geckodriver
 sudo mv geckodriver /usr/local/bin/
+
+#Install chromedriver
+wget https://chromedriver.storage.googleapis.com/2.40/chromedriver_linux64.zip
+unzip chromedriver_linux64.zip
+chmod +x chromedriver
+sudo mv chromedriver /usr/local/bin/
 #etc.

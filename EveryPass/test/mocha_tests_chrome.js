@@ -14,7 +14,7 @@ const file = chaiFiles.file;
 const dir = chaiFiles.dir;
 const until = webdriver.until;
 const fs = require('fs')
-const support = require('./mocha_test_support.js');
+const support = require('./mocha_test_support_chrome.js');
 const comsupport = require('../../common/test/mocha_common_support.js');
 
 chai.use(chaiFiles);
@@ -22,34 +22,24 @@ chai.use(chaiFiles);
 
 describe('EveryPass Specific Testing', function () {
 
+    //var fdriver;
     var driver;
-    var chromedriver;
 
     before(async function () {
 
         this.timeout(30000);
 
-        console.log("------------ opening headless browser -------------");
-
-        var fxoptions = new firefox.Options();
-        fxoptions.setProfile(comsupport.commonFullPath() + "/firefox_profile");
-        fxoptions.setPreference("browser.download.dir", __dirname + "/test_downloads");
-        fxoptions.setPreference("browser.download.folderList", 2);
-        fxoptions.headless();
-
-        driver = await new webdriver.Builder()
-                .forBrowser('firefox')
-                .setFirefoxOptions(fxoptions)
-                .build();
+        console.log("------------ opening chromium browser -------------");
 
         var chromeOptions = new chromium.Options();
-        chromeOptions.headless();
+        //chromeOptions.headless();
+        //chromeOptions.
         //chromeOptions.setPreference
         //chromeOptions.setPreference("browser.download.dir", __dirname + "/test_downloadsc");
         chromeOptions.setChromeBinaryPath("/usr/bin/chromium-browser");
-               
+        chromeOptions.setUserPreferences({"download.default_directory":__dirname + "/test_downloads"});
                 
-        chromedriver = await new webdriver.Builder()
+        driver = await new webdriver.Builder()
         .forBrowser('chrome')
         .setChromeOptions(chromeOptions)
         .build();
@@ -60,7 +50,7 @@ describe('EveryPass Specific Testing', function () {
 
         console.log("------------ closing headless browser -------------");
         await driver.quit();
-        await chromedriver.quit();
+        //await chromeDriver.quit();
     });
 
     afterEach(async function () {
@@ -315,7 +305,7 @@ describe('EveryPass Specific Testing', function () {
         it('Can create multiple passwords in separate groups and search for them case-insensitively.', async function () {
 
             //sets test timeout to 10s
-            this.timeout(10000);
+            this.timeout(20000);
 
             //refresh the driver
 
@@ -509,6 +499,7 @@ describe('EveryPass Specific Testing', function () {
             await driver.get(testVars.TEST_UNENCRYPTED_URL);
 
             await dragPwdToPwdChecks(driver, false);
+
         });
 
         it('Can drag and drop password onto password to move (upwards, no groups)', async function () {
@@ -959,14 +950,34 @@ async function dragPwdToPwdChecks(driver, isReverse) {
     await support.addPassword(driver, true, support.getTestData("ABc"));//p0     
     await support.addPassword(driver, true, support.getTestData("def"));//p1
     await support.addPassword(driver, true, support.getTestData("ghi"));//p2
-
-    var posBefore = await driver.executeScript(async function () {
-        var pos = SCA.getPwdPositions('p0', 'p2');
-        return pos;
+    
+    await driver.executeScript(async function(){
+        setTimeout(function(){}, 50000);   
     });
+    
+    var posBefore = await driver.executeScript(async function () {
+        
+        var pwdsEl = document.getElementById("pwds");
+        var pos = [];
+        for(var x = 0; x < pwdsEl.children.length; x++ ){
+            var chld = pwdsEl.children[x];
+            if(chld.id == 'p0'){
+                pos[0] = x;
+            }
+            if(chld.id == 'p2'){ 
+                pos[1] = x; 
+            }
+        }
 
+        //var pos = SCA.getPwdPositions('p0', 'p2');
+        console.log(pos[0] + ' ' + pos[1]);
+        return pos;
+
+    });
+    console.log('Drag password bizzo');
+    
     expect(posBefore).to.deep.equal([0, 2]);
-
+    
     var p0 = await driver.findElement(webdriver.By.id('p0-drag'));
     var p2 = await driver.findElement(webdriver.By.id('p2-drag'));
 
@@ -1012,7 +1023,7 @@ async function dragGrpToGrpChecks(driver, isReverse) {
         var pos = SCA.getGrpPositions('g0', 'g2');
         return pos;
     });
-
+    console.log(JSON.stringify(posBefore));
     expect(posBefore).to.deep.equal([0, 2]);
 
     var g0 = await driver.findElement(webdriver.By.id('g0-drag'));
