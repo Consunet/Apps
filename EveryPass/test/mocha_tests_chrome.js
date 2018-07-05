@@ -587,7 +587,7 @@ describe('EveryPass Specific Testing', function () {
 
             await support.assertPasswordExists(driver, 'p2', 'g0');//now in group
 
-            var posAfter = await driver.executeScript(async function () {
+            var posAfter = await driver.executeScript(function () {
 
                 var grpContainer = SCA.e('g0-pwds');
 
@@ -946,38 +946,16 @@ async function decryptTestChecks(driver) {
  * Repeated logic for drag and drop tests (password onto password)
  */
 async function dragPwdToPwdChecks(driver, isReverse) {
-
     await support.addPassword(driver, true, support.getTestData("ABc"));//p0     
     await support.addPassword(driver, true, support.getTestData("def"));//p1
     await support.addPassword(driver, true, support.getTestData("ghi"));//p2
-    
-    await driver.executeScript(async function(){
-        setTimeout(function(){}, 50000);   
-    });
-    
-    var posBefore = await driver.executeScript(async function () {
-        
-        var pwdsEl = document.getElementById("pwds");
-        var pos = [];
-        for(var x = 0; x < pwdsEl.children.length; x++ ){
-            var chld = pwdsEl.children[x];
-            if(chld.id == 'p0'){
-                pos[0] = x;
-            }
-            if(chld.id == 'p2'){ 
-                pos[1] = x; 
-            }
-        }
 
-        //var pos = SCA.getPwdPositions('p0', 'p2');
-        console.log(pos[0] + ' ' + pos[1]);
-        return pos;
-
+    var posBefore = await driver.executeScript(function () {
+        return SCA.getPwdPositions('p0', 'p2');
     });
-    console.log('Drag password bizzo');
-    
+
     expect(posBefore).to.deep.equal([0, 2]);
-    
+
     var p0 = await driver.findElement(webdriver.By.id('p0-drag'));
     var p2 = await driver.findElement(webdriver.By.id('p2-drag'));
 
@@ -985,7 +963,7 @@ async function dragPwdToPwdChecks(driver, isReverse) {
     {
         await driver.executeScript(dragAndDrop, p2, p0);
 
-        var posAfter = await driver.executeScript(async function () {
+        var posAfter = await driver.executeScript(function () {
             return SCA.getPwdPositions('p0', 'p2')
         });
 
@@ -994,7 +972,7 @@ async function dragPwdToPwdChecks(driver, isReverse) {
     {
         await driver.executeScript(dragAndDrop, p0, p2);
 
-        var posAfter = await driver.executeScript(async function () {
+        var posAfter = await driver.executeScript(function () {
             return SCA.getPwdPositions('p0', 'p2')
         });
 
@@ -1019,11 +997,11 @@ async function dragGrpToGrpChecks(driver, isReverse) {
     await support.toggleDefaultGrp(driver, 'g2');
     await support.addPassword(driver, true, support.getTestData("ghi"));
 
-    var posBefore = await driver.executeScript(async function () {
+    var posBefore = await driver.executeScript(function () {
         var pos = SCA.getGrpPositions('g0', 'g2');
         return pos;
     });
-    console.log(JSON.stringify(posBefore));
+
     expect(posBefore).to.deep.equal([0, 2]);
 
     var g0 = await driver.findElement(webdriver.By.id('g0-drag'));
@@ -1033,7 +1011,7 @@ async function dragGrpToGrpChecks(driver, isReverse) {
     {
         await driver.executeScript(dragAndDrop, g2, g0);
 
-        var posAfter = await driver.executeScript(async function () {
+        var posAfter = await driver.executeScript(function () {
             return SCA.getGrpPositions('g0', 'g2')
         });
 
@@ -1042,7 +1020,7 @@ async function dragGrpToGrpChecks(driver, isReverse) {
     {
         await driver.executeScript(dragAndDrop, g0, g2);
 
-        var posAfter = await driver.executeScript(async function () {
+        var posAfter = await driver.executeScript(function () {
             return SCA.getGrpPositions('g0', 'g2')
         });
 
