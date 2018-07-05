@@ -44,9 +44,9 @@ describe('EveryPass Specific Testing', function () {
 
         var chromeOptions = new chromium.Options();
         chromeOptions.headless();
-        //chromeOptions.setPreference
-        //chromeOptions.setPreference("browser.download.dir", __dirname + "/test_downloadsc");
-        chromeOptions.setChromeBinaryPath("/usr/bin/chromium-browser");
+        chromeOptions.setPreference
+        chromeOptions.setPreference("browser.download.dir", __dirname + "/test_downloads");
+        //chromeOptions.setChromeBinaryPath("/usr/bin/chromium-browser");
                
                 
         chromedriver = await new webdriver.Builder()
