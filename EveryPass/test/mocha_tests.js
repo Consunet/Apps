@@ -33,6 +33,7 @@ describe('EveryPass Specific Testing', function () {
         var fxoptions = new firefox.Options()
         fxoptions.setProfile(comsupport.commonFullPath() + "/firefox_profile")
         fxoptions.setPreference("browser.download.dir", __dirname + path.sep + "test_downloads");
+        fxoptions.addArguments("--window-size=1920,1080");
         fxoptions.setPreference("browser.download.folderList", 2);
         fxoptions.headless();
 
@@ -40,6 +41,8 @@ describe('EveryPass Specific Testing', function () {
                 .forBrowser('firefox')
                 .setFirefoxOptions(fxoptions)
                 .build();
+
+        await driver.manage().window().fullscreen(); 
 
     });
 
@@ -835,7 +838,7 @@ describe('EveryPass Specific Testing', function () {
             await driver.findElement(webdriver.By.id('import')).sendKeys(__dirname + path.sep + "test_downloads" + path.sep + "test_encrypted.html");
 
             //allow for import
-            await sleep(100);
+            await sleep(1000);
 
             await decryptTestChecks(driver);
         });
@@ -850,7 +853,7 @@ describe('EveryPass Specific Testing', function () {
             await driver.findElement(webdriver.By.id('import')).sendKeys(__dirname + path.sep + "pre_groups_decrypt_import.html");
 
             //allow for import
-            await sleep(100);
+            await sleep(1000);
 
             //check is diplaying form for unlock password
             await comsupport.assertFormIsLocked(driver, true);
@@ -890,7 +893,7 @@ describe('EveryPass Specific Testing', function () {
             await driver.findElement(webdriver.By.id('import')).sendKeys(__dirname + path.sep + "legacy_decrypt_import.html");
 
             //allow for import
-            await sleep(100);
+            await sleep(1000);
 
             //check for hint
             var hintVal = await driver.findElement(webdriver.By.id('dec-hint')).getAttribute("innerHTML");
@@ -1070,7 +1073,7 @@ async function dragPwdToPwdChecks(driver, isReverse) {
     await support.addPassword(driver, true, support.getTestData("def"));//p1
     await support.addPassword(driver, true, support.getTestData("ghi"));//p2
 
-    var posBefore = await driver.executeScript(async function () {
+    var posBefore = await driver.executeScript(function () {
         var pos = SCA.getPwdPositions('p0', 'p2');
         return pos;
     });
@@ -1084,7 +1087,7 @@ async function dragPwdToPwdChecks(driver, isReverse) {
     {
         await driver.executeScript(dragAndDrop, p2, p0);
 
-        var posAfter = await driver.executeScript(async function () {
+        var posAfter = await driver.executeScript(function () {
             return SCA.getPwdPositions('p0', 'p2')
         });
 
@@ -1093,7 +1096,7 @@ async function dragPwdToPwdChecks(driver, isReverse) {
     {
         await driver.executeScript(dragAndDrop, p0, p2);
 
-        var posAfter = await driver.executeScript(async function () {
+        var posAfter = await driver.executeScript(function () {
             return SCA.getPwdPositions('p0', 'p2')
         });
 
@@ -1118,7 +1121,7 @@ async function dragGrpToGrpChecks(driver, isReverse) {
     await support.toggleDefaultGrp(driver, 'g2');
     await support.addPassword(driver, true, support.getTestData("ghi"));
 
-    var posBefore = await driver.executeScript(async function () {
+    var posBefore = await driver.executeScript(function () {
         var pos = SCA.getGrpPositions('g0', 'g2');
         return pos;
     });
@@ -1132,7 +1135,7 @@ async function dragGrpToGrpChecks(driver, isReverse) {
     {
         await driver.executeScript(dragAndDrop, g2, g0);
 
-        var posAfter = await driver.executeScript(async function () {
+        var posAfter = await driver.executeScript(function () {
             return SCA.getGrpPositions('g0', 'g2')
         });
 
@@ -1141,7 +1144,7 @@ async function dragGrpToGrpChecks(driver, isReverse) {
     {
         await driver.executeScript(dragAndDrop, g0, g2);
 
-        var posAfter = await driver.executeScript(async function () {
+        var posAfter = await driver.executeScript(function () {
             return SCA.getGrpPositions('g0', 'g2')
         });
 
