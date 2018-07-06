@@ -279,7 +279,7 @@ module.exports = function(grunt) {
     grunt.loadNpmTasks('grunt-uncss');
     grunt.loadNpmTasks('grunt-text-replace');
     grunt.loadNpmTasks('grunt-i18n');
-    grunt.loadNpmTasks('grunt-image-embed');
+    grunt.loadNpmTasks('grunt-image-embed-src');
     grunt.loadNpmTasks('grunt-mocha-test');
     grunt.loadNpmTasks('grunt-express-server');
     grunt.loadNpmTasks('grunt-curl');
