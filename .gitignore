@@ -13,5 +13,8 @@
 /EveryPass/doc/*
 /EveryPass/npm-debug.log
 /EveryPass/imgs/Thumbs.db
-common/nbproject/private/private.xml
+
+/common/nbproject/private/private.xml
 /common/imgs/Thumbs.db
+/common/node_modules/
+/common/test/firefox_profile/

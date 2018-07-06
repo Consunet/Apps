@@ -33,6 +33,7 @@ describe('EveryPass Specific Testing', function () {
         var fxoptions = new firefox.Options()
         fxoptions.setProfile(comsupport.commonFullPath() + "/firefox_profile")
         fxoptions.setPreference("browser.download.dir", __dirname + path.sep + "test_downloads");
+        fxoptions.addArguments("--window-size=1920,1080");
         fxoptions.setPreference("browser.download.folderList", 2);
         fxoptions.headless();
 
@@ -40,6 +41,9 @@ describe('EveryPass Specific Testing', function () {
                 .forBrowser('firefox')
                 .setFirefoxOptions(fxoptions)
                 .build();
+
+        await driver.manage().window().fullscreen(); 
+
     });
 
     after(async function () {
@@ -64,6 +68,111 @@ describe('EveryPass Specific Testing', function () {
         var help = await driver.findElement(webdriver.By.id('help-screen'));
         var helpText = await help.getAttribute("innerHTML");
         assert.include(helpText, "is a Password Manager", 'Description exists');
+    });
+
+    describe('Store functionality', function() {
+        it('Store empty message disappears when a password is added.', async function() {
+            //sets test timeout to 10s
+            this.timeout(10000);
+
+            //refresh the driver
+            await driver.get(testVars.TEST_UNENCRYPTED_URL);
+
+            var data = support.getTestData("www.consunet.com.au");
+
+            await support.addPassword(driver, true, data);
+
+            var emptyMessageDisplayed = await driver.findElement(webdriver.By.id('store-empty-message')).isDisplayed();
+            expect(emptyMessageDisplayed, "Empty message should be hidden").to.equal(false);
+
+        });
+
+        it('Store empty message shows when only a group exist', async function() {
+            //sets test timeout to 10s
+            this.timeout(10000);
+
+            //refresh the driver
+            await driver.get(testVars.TEST_UNENCRYPTED_URL);
+
+            // Setup Group
+            await support.addGroup(driver, 'Group 1');
+
+            var emptyMessageDisplayed = await driver.findElement(webdriver.By.id('store-empty-message')).isDisplayed();
+            expect(emptyMessageDisplayed, "Empty message should be visible").to.equal(true);
+        });
+        
+        it('Store empty message is still hidden when a password is added to a group', async function() {
+            //sets test timeout to 10s
+            this.timeout(10000);
+
+            //refresh the driver
+            await driver.get(testVars.TEST_UNENCRYPTED_URL);
+
+            // Setup Group
+            await support.addGroup(driver, 'Group 1');
+            await support.toggleDefaultGrp(driver, 'g0');//pwds to be added to g0
+
+            // Setup password
+            var data = support.getTestData("www.consunet.com.au");
+            await support.addPassword(driver, true, data);
+
+
+            var emptyMessageDisplayed = await driver.findElement(webdriver.By.id('store-empty-message')).isDisplayed();
+            expect(emptyMessageDisplayed, "Empty message should be hidden").to.equal(false);
+        });
+
+        it('Store empty message displays when the last password is removed', async function() {
+            //sets test timeout to 10s
+            this.timeout(10000);
+
+            //refresh the driver
+            await driver.get(testVars.TEST_UNENCRYPTED_URL);
+
+            //no delete warning and remove passwords in group
+            await support.setExtendedOptions(driver, false, false);
+
+            // Setup Group
+            await support.addGroup(driver, 'Group 1');
+            await support.toggleDefaultGrp(driver, 'g0');//pwds to be added to g0
+
+            // Setup password
+            var data = support.getTestData("www.consunet.com.au");
+            await support.addPassword(driver, true, data);
+
+            var emptyMessageDisplayed = await driver.findElement(webdriver.By.id('store-empty-message')).isDisplayed();
+            expect(emptyMessageDisplayed, "Empty message should be visible").to.equal(false);
+
+            await driver.findElement(webdriver.By.id('p0-delete')).click();
+
+            emptyMessageDisplayed = await driver.findElement(webdriver.By.id('store-empty-message')).isDisplayed();
+            expect(emptyMessageDisplayed, "Empty message should be visible").to.equal(true);
+
+        });
+
+        it('Store empty message displays when the last password (inside a group) is removed', async function() {
+            //sets test timeout to 10s
+            this.timeout(10000);
+
+            //refresh the driver
+            await driver.get(testVars.TEST_UNENCRYPTED_URL);
+
+            //no delete warning and remove passwords in group
+            await support.setExtendedOptions(driver, false, false);
+
+            // Setup Group
+            await support.addGroup(driver, 'Group 1');
+            await support.toggleDefaultGrp(driver, 'g0');//pwds to be added to g0
+
+            // Setup password
+            var data = support.getTestData("www.consunet.com.au");
+            await support.addPassword(driver, true, data);
+
+            await support.delItem(driver, 'g0');//del g0 triggering prompt
+
+            var emptyMessageDisplayed = await driver.findElement(webdriver.By.id('store-empty-message')).isDisplayed();
+            expect(emptyMessageDisplayed, "Empty message should be visible").to.equal(true);
+
+        });
     });
 
     describe('Core UI function tests', function () {
@@ -182,8 +291,42 @@ describe('EveryPass Specific Testing', function () {
             var firstWindowHandle = handles[0];
 
             await driver.switchTo().window(secondWindowHandle);
-
             assert.equal(await driver.getCurrentUrl(), testVars.TEST_LOCAL_PAGE);
+
+            //close secondary window only
+            await driver.close();
+
+            await driver.switchTo().window(firstWindowHandle);
+            
+            fs.unlinkSync('public_html/local_test_page.html');
+        });
+
+        it('Can click Go button to visit password URL (Without http protocol).', async function () {
+
+            //sets test timeout to 10s
+            this.timeout(10000);
+
+            fs.copyFileSync('test/local_test_page.html', 'public_html/local_test_page.html');
+
+            //refresh the driver
+            await driver.get(testVars.TEST_UNENCRYPTED_URL);
+
+            //create URL based password
+            var data = support.getTestData(testVars.TEST_GOOGLE_URL_NO_PROTOCOL);
+            await support.addPassword(driver, true, data);
+
+            await driver.findElement(webdriver.By.id('p0-toggle')).click();
+            await driver.findElement(webdriver.By.id('p0-go')).click();
+
+            await sleep(4000);
+
+            var handles = await driver.getAllWindowHandles();
+            var secondWindowHandle = handles[1];
+            var firstWindowHandle = handles[0];
+
+            await driver.switchTo().window(secondWindowHandle);
+
+            assert.equal(await driver.getCurrentUrl(), "https://" + testVars.TEST_GOOGLE_URL_NO_PROTOCOL + "/?gws_rd=ssl");
 
             //close secondary window only
             await driver.close();
@@ -459,7 +602,45 @@ describe('EveryPass Specific Testing', function () {
             await support.assertPasswordNotExists(driver, 'p0');//p0 not returned to non-grouped area                         
         });
 
-        it('Can delete a group and retain its passwords.', async function () {
+        it('Can delete a group and retain passwords (after confirmation).', async function () {
+            //sets test timeout to 10s
+            this.timeout(10000);
+
+            //refresh the driver
+            await driver.get(testVars.TEST_UNENCRYPTED_URL);
+
+            //no delete warning and remove passwords in group
+            await support.setExtendedOptions(driver, true, true);
+
+            await support.addGroup(driver, 'Group 0'); //g0     
+            await support.toggleDefaultGrp(driver, 'g0');//on    
+            await support.addPassword(driver, true, support.getTestData("ABc"));//p0 in g0     
+
+            await support.assertPasswordExists(driver, 'p0', 'g0');
+
+            await support.delItem(driver, 'g0');//del g0 triggering prompt
+
+            var alertShown;
+
+            try
+            {
+                //confirmation expected
+                await driver.wait(webdriver.until.alertIsPresent(), 1000)
+                alertShown = true;
+                await driver.switchTo().alert().accept();
+            } catch (e)
+            {
+                alertShown = false;
+            }
+
+            expect(alertShown, "Alert not shown").to.equal(true)
+
+            await support.assertGroupNotExists(driver, 'g0'); //g0 now gone 
+
+            await support.assertPasswordExists(driver, 'p0');//p0 not returned to non-grouped area                         
+        });
+
+        it('Can delete a group and retain its passwords. (no confirmation)', async function () {
             //sets test timeout to 10s
             this.timeout(10000);
 
@@ -710,7 +891,7 @@ describe('EveryPass Specific Testing', function () {
             await driver.findElement(webdriver.By.id('import')).sendKeys(__dirname + path.sep + "test_downloads" + path.sep + "test_encrypted.html");
 
             //allow for import
-            await sleep(100);
+            await sleep(1000);
 
             await decryptTestChecks(driver);
         });
@@ -725,7 +906,7 @@ describe('EveryPass Specific Testing', function () {
             await driver.findElement(webdriver.By.id('import')).sendKeys(__dirname + path.sep + "pre_groups_decrypt_import.html");
 
             //allow for import
-            await sleep(100);
+            await sleep(1000);
 
             //check is diplaying form for unlock password
             await comsupport.assertFormIsLocked(driver, true);
@@ -765,7 +946,7 @@ describe('EveryPass Specific Testing', function () {
             await driver.findElement(webdriver.By.id('import')).sendKeys(__dirname + path.sep + "legacy_decrypt_import.html");
 
             //allow for import
-            await sleep(100);
+            await sleep(1000);
 
             //check for hint
             var hintVal = await driver.findElement(webdriver.By.id('dec-hint')).getAttribute("innerHTML");
@@ -945,7 +1126,7 @@ async function dragPwdToPwdChecks(driver, isReverse) {
     await support.addPassword(driver, true, support.getTestData("def"));//p1
     await support.addPassword(driver, true, support.getTestData("ghi"));//p2
 
-    var posBefore = await driver.executeScript(async function () {
+    var posBefore = await driver.executeScript(function () {
         var pos = SCA.getPwdPositions('p0', 'p2');
         return pos;
     });
@@ -959,7 +1140,7 @@ async function dragPwdToPwdChecks(driver, isReverse) {
     {
         await driver.executeScript(dragAndDrop, p2, p0);
 
-        var posAfter = await driver.executeScript(async function () {
+        var posAfter = await driver.executeScript(function () {
             return SCA.getPwdPositions('p0', 'p2')
         });
 
@@ -968,7 +1149,7 @@ async function dragPwdToPwdChecks(driver, isReverse) {
     {
         await driver.executeScript(dragAndDrop, p0, p2);
 
-        var posAfter = await driver.executeScript(async function () {
+        var posAfter = await driver.executeScript(function () {
             return SCA.getPwdPositions('p0', 'p2')
         });
 
@@ -993,7 +1174,7 @@ async function dragGrpToGrpChecks(driver, isReverse) {
     await support.toggleDefaultGrp(driver, 'g2');
     await support.addPassword(driver, true, support.getTestData("ghi"));
 
-    var posBefore = await driver.executeScript(async function () {
+    var posBefore = await driver.executeScript(function () {
         var pos = SCA.getGrpPositions('g0', 'g2');
         return pos;
     });
@@ -1007,7 +1188,7 @@ async function dragGrpToGrpChecks(driver, isReverse) {
     {
         await driver.executeScript(dragAndDrop, g2, g0);
 
-        var posAfter = await driver.executeScript(async function () {
+        var posAfter = await driver.executeScript(function () {
             return SCA.getGrpPositions('g0', 'g2')
         });
 
@@ -1016,7 +1197,7 @@ async function dragGrpToGrpChecks(driver, isReverse) {
     {
         await driver.executeScript(dragAndDrop, g0, g2);
 
-        var posAfter = await driver.executeScript(async function () {
+        var posAfter = await driver.executeScript(function () {
             return SCA.getGrpPositions('g0', 'g2')
         });
 

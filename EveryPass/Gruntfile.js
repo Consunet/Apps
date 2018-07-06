@@ -66,7 +66,8 @@ module.exports = function(grunt) {
                     '../common/src/css/bootstrap.css',
                     '../common/src/css/bootstrap-theme.css',
                     '../common/src/css/app.css',
-                    'css/new-question.css'
+                    'css/new-question.css',
+                    'css/app.css'
                 ],
                 dest: 'dist/<%= pkg.name %>.css'
             }
@@ -180,7 +181,7 @@ module.exports = function(grunt) {
         watch: {
             scripts: {
                 files: ['src/*', 'test/*', 'Gruntfile.js', 'locales/*', '../common/**'],
-                tasks: ['debug'],
+                tasks: ['notest'],
                 options: {
                     spawn: true
                 }

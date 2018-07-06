@@ -150,6 +150,7 @@ SCA.addPwd = function(item, grp) {
     var replaced = cloned.replace(/pwid/g, id).replace(":none", ":inherit");
     var div = document.createElement('div');
     div.id = id;
+    div.className = "password-container"
     div.innerHTML = replaced;   
 
     //if grp = null, added to non-grouped passwords
@@ -161,7 +162,14 @@ SCA.addPwd = function(item, grp) {
     this.e(id + "-question").value = item.q;
     this.e(id + "-answer").value = item.a;
     this.showPwdBody(id, false, false);
+
+    if(this.passwordsExist() ) {
+        // No passwords exist, show "no passwords" message.
+        this.setDisplay("store-empty-message", "none");
+    }
+
 };
+
 
 /**
  * Adds a group entry element to the DOM.
@@ -205,6 +213,12 @@ SCA.addPwds = function(pwds) {
     for (var id in pwds) {
         this.addPwd(pwds[id]);
     }
+
+    if(this.passwordsExist() ) {
+        // No passwords exist, show "no passwords" message.
+        this.setDisplay("store-empty-message", "none");
+    }
+
 };
 
 /**
@@ -234,6 +248,12 @@ SCA.delPwd = function(id) {
     if (canDelete) {
         this.e(id).outerHTML = "";
     }
+
+    if( !this.passwordsExist() ) {
+        // No passwords exist, show "no passwords" message.
+        this.setDisplay("store-empty-message", "block");
+    }
+
 };
 
 /**
@@ -269,8 +289,14 @@ SCA.delGrp = function(id) {
                 this._divPwds().appendChild(grpPwdContainer.firstChild);
             }
         }
+
         
         this.e(id).outerHTML = "";
+    }
+
+    if( !this.passwordsExist() ) {
+        // No passwords exist, show "no passwords" message.
+        this.setDisplay("store-empty-message", "block");
     }
 };
 
@@ -297,6 +323,13 @@ SCA.showPwdBody = function(id, show, select) {
         toggleButton.innerHTML = "<%= Show %>";
         this.setDisplay(id + "-go", "none");
     }
+};
+
+/**
+ * Returns true if passwords exist, false if not.
+ */
+SCA.passwordsExist = function() {
+    return document.getElementsByClassName("password-container").length > 0;
 };
 
 /**
