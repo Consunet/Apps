@@ -114,7 +114,7 @@ body {
 }
 
 .navbar-icon{
-  background-image: url(../../../../../imgs/logo.png);
+  background-image: url(/../../../../imgs/logo.png);
   background-repeat: no-repeat;
   background-position: center;
   background-size: auto;
@@ -235,7 +235,7 @@ body {
 }
 
 .lock-image {
-    background-image: url(../../../../../../common/imgs/lock.gif);
+    background-image: url(/../../../../../common/imgs/lock.gif);
     background-repeat: no-repeat;
     background-position: center;
     background-size: contain;

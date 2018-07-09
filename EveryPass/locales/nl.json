@@ -61,5 +61,8 @@
 	"DeleteGroup": "Groep verwijderen",
 	"OptionKeepPwdsOfDeletedGrps": "Houd wachtwoorden van verwijderde groepen?",
 	"DeleteGroupKeepPwds": "Wachtwoorden in de groep zal worden gehouden.",
-	"DeleteGroupLosePwds": "Wachtwoorden in de groep zullen worden verwijderd."
+	"DeleteGroupLosePwds": "Wachtwoorden in de groep zullen worden verwijderd.",
+	"MyStore:": "Mijn winkel",
+	"YouHaveNoPasswords": "U hebt momenteel geen wachtwoorden",
+	"CreatePassword" : "Maak een wachtwoord"
 }

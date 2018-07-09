@@ -61,5 +61,9 @@
 	"DeleteGroup": "Удалить группу",
 	"OptionKeepPwdsOfDeletedGrps": "Храните пароли удаленных групп?",
 	"DeleteGroupKeepPwds": "Пароли в группе будут сохранены.",
-	"DeleteGroupLosePwds": "Пароли в группе будут удалены."
+	"DeleteGroupLosePwds": "Пароли в группе будут удалены.",
+	"MyStore:": "Мой магазин",
+	"YouHaveNoPasswords": "В настоящее время у вас нет паролей",
+	"CreatePassword" : "Придумайте пароль"
+
 }

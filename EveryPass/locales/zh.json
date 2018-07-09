@@ -61,5 +61,8 @@
 	"DeleteGroup": "删除组",
 	"OptionKeepPwdsOfDeletedGrps": "请删除组的密码？",
 	"DeleteGroupKeepPwds": "在组密码将被保留。",
-	"DeleteGroupLosePwds": "在组密码将被删除。"
+	"DeleteGroupLosePwds": "在组密码将被删除。",
+	"MyStore:": "My Store",
+	"YouHaveNoPasswords": "You currently have no passwords",
+	"CreatePassword" : "Create Password"
 }

@@ -61,5 +61,8 @@
 	"DeleteGroup": "Poista ryhmä",
 	"OptionKeepPwdsOfDeletedGrps": "Pidä salasanat Poistettujen ryhmien?",
 	"DeleteGroupKeepPwds": "Salasanat Konsernissa pidetään.",
-	"DeleteGroupLosePwds": "Salasanat konsernin poistetaan."
+	"DeleteGroupLosePwds": "Salasanat konsernin poistetaan.",
+	"MyStore:": "Minun kauppani",
+	"YouHaveNoPasswords": "Sinulla ei ole tällä hetkellä salasanaa",
+	"CreatePassword" : "Luo salasana"
 }
