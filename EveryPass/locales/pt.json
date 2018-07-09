@@ -62,7 +62,7 @@
 	"OptionKeepPwdsOfDeletedGrps": "Mantenha senhas de grupos excluídos?",
 	"DeleteGroupKeepPwds": "Senhas no Grupo será mantido.",
 	"DeleteGroupLosePwds": "As senhas do Grupo serão apagados.",
-	"MyStore:": "Minha loja",
+	"MyStore": "Minha loja",
 	"YouHaveNoPasswords": "Você atualmente não tem senhas",
 	"CreatePassword" : "Criar senha"
 }

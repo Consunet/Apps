@@ -62,7 +62,7 @@
         "OptionKeepPwdsOfDeletedGrps": "Keep passwords of deleted groups?",
         "DeleteGroupKeepPwds": "Passwords in the Group will be kept.",
 		"DeleteGroupLosePwds": "Passwords in the Group will be deleted.",
-	"MyStore:": "My Store",
+	"MyStore": "My Store",
 	"YouHaveNoPasswords": "You currently have no passwords",
 	"CreatePassword" : "Create Password"
 }

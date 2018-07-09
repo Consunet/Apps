@@ -62,7 +62,7 @@
 	"OptionKeepPwdsOfDeletedGrps": "Gardez les mots de passe de groupes supprimés?",
 	"DeleteGroupKeepPwds": "Les mots de passe au sein du Groupe seront conservés.",
 	"DeleteGroupLosePwds": "Les mots de passe au sein du groupe seront supprimés.",
-	"MyStore:": "Créer un mot de passe",
+	"MyStore": "Créer un mot de passe",
 	"YouHaveNoPasswords": "Vous n'avez actuellement aucun mot de passe",
 	"CreatePassword" : "Créer un mot de passe"
 }

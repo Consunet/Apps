@@ -62,7 +62,7 @@
 	"OptionKeepPwdsOfDeletedGrps": "Jauhkan password dari kelompok dihapus?",
 	"DeleteGroupKeepPwds": "Password dalam Grup akan disimpan.",
 	"DeleteGroupLosePwds": "Password dalam Grup akan dihapus.",
-	"MyStore:": "Toko saya",
+	"MyStore": "Toko saya",
 	"YouHaveNoPasswords": "Saat ini Anda tidak memiliki kata sandi",
 	"CreatePassword" : "Buat kata sandi"
 }

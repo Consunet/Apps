@@ -62,7 +62,7 @@
 	"OptionKeepPwdsOfDeletedGrps": "Halten Sie Kennwörter von gelöschten Gruppen?",
 	"DeleteGroupKeepPwds": "Passwörter in der Gruppe bleiben erhalten.",
 	"DeleteGroupLosePwds": "Passwörter in der Gruppe werden gelöscht.",
-	"MyStore:": "Mein Laden",
+	"MyStore": "Mein Laden",
 	"YouHaveNoPasswords": "Sie haben derzeit keine Passwörter",
 	"CreatePassword" : "Passwort erstellen"
 }

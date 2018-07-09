@@ -62,7 +62,7 @@
 	"OptionKeepPwdsOfDeletedGrps": "Przechowywać haseł usuniętych grup?",
 	"DeleteGroupKeepPwds": "Hasła w Grupie będą przechowywane.",
 	"DeleteGroupLosePwds": "Hasła w Grupie zostaną usunięte.",
-	"MyStore:": "Mój sklep",
+	"MyStore": "Mój sklep",
 	"YouHaveNoPasswords": "Obecnie nie masz żadnych haseł",
 	"CreatePassword" : "Stwórz hasło"
 }
