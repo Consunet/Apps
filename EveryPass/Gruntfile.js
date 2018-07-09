@@ -23,6 +23,11 @@ module.exports = function(grunt) {
                 "../common/test/firefox_profile/"
             ],
         },
+        node_version: {
+            options: {
+                nvm: false
+            }
+        },
         concat: {                        
             options: {
                 stripBanners: true
@@ -287,6 +292,7 @@ module.exports = function(grunt) {
     grunt.loadNpmTasks('grunt-express-server');
     grunt.loadNpmTasks('grunt-curl');
     grunt.loadNpmTasks('grunt-shell');     
+    grunt.loadNpmTasks('grunt-node-version');
     
     
     grunt.template.addDelimiters("curly", "{{", "}}");
@@ -313,7 +319,7 @@ module.exports = function(grunt) {
 
     
     // Default task.
-    grunt.registerTask('default', ['clean', 'concat:no_coverage_js', 'concat:css', 'uglify:dist', 'uncss', 'imageEmbed', 'cssmin', 'replace', 'buildhtml', 'htmlmin', 'i18n', 'connect', 'shell:extractFirefoxProfile', 'mochaTest:test', 'clean:test_cleanup']);
+    grunt.registerTask('default', ['clean', 'node_version', 'concat:no_coverage_js', 'concat:css', 'uglify:dist', 'uncss', 'imageEmbed', 'cssmin', 'replace', 'buildhtml', 'htmlmin', 'i18n', 'connect', 'shell:extractFirefoxProfile', 'mochaTest:test', 'clean:test_cleanup']);
     grunt.registerTask('coverage', ['clean', 'shell:instrumentScripts', 'concat:coverage_js', 'concat:css', 'uglify:coverage', 'uncss', 'imageEmbed', 'cssmin', 'replace', 'buildhtml', 'htmlmin', 'i18n', 'connect','express:dev', 'shell:extractFirefoxProfile','mochaTest:testWithCoverage', 'clean:test_cleanup', 'curl:coverage-download', 'shell:extractReport']);
     grunt.registerTask('manualcoverage', ['clean', 'shell:instrumentScripts', 'concat:coverage_js', 'concat:css', 'uglify:coverage', 'uncss', 'imageEmbed', 'cssmin', 'replace', 'buildhtml', 'htmlmin', 'i18n', 'connect','express:dev', 'shell:extractFirefoxProfile', 'mochaTest:manualCoverage', 'clean:test_cleanup', 'curl:coverage-download', 'shell:extractReport']);
     grunt.registerTask('dualcoverage', ['clean', 'shell:instrumentScripts', 'concat:coverage_js', 'concat:css', 'uglify:coverage', 'uncss', 'imageEmbed', 'cssmin', 'replace', 'buildhtml', 'htmlmin', 'i18n', 'connect','express:dev', 'shell:extractFirefoxProfile', 'mochaTest:testWithCoverage','mochaTest:manualCoverage', 'clean:test_cleanup', 'curl:coverage-download', 'shell:extractReport']);
