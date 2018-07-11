@@ -39,6 +39,8 @@ describe('WhisperNote Testing', function () {
                 .forBrowser('firefox')
                 .setFirefoxOptions(fxoptions)
                 .build();
+
+        await driver.manage().window().setRect({ x: 0, y: 0, width: 1920, height: 1080})
     });
 
     after(async function () {
@@ -65,7 +67,7 @@ describe('WhisperNote Testing', function () {
         await driver.get(testVars.TEST_UNENCRYPTED_URL);
 
         var title = await driver.getTitle();
-        assert.equal(title, 'WhisperNote Encrypted Note v1.6', 'WhisperNote homepage title is NOT the one expected');
+        assert.equal(title, 'WhisperNote Encrypted Note v1.3', 'WhisperNote homepage title is NOT the one expected');
         var help = await driver.findElement(webdriver.By.id('help-screen'));
         var helpText = await help.getAttribute("innerHTML");
         assert.include(helpText, "is a portable encrypted message container.", 'Description exists')

@@ -42,7 +42,7 @@ describe('EveryPass Specific Testing', function () {
                 .setFirefoxOptions(fxoptions)
                 .build();
 
-        await driver.manage().window().fullscreen(); 
+        await driver.manage().window().setRect({ x: 0, y: 0, width: 1920, height: 1080})
 
     });
 
@@ -64,7 +64,7 @@ describe('EveryPass Specific Testing', function () {
         await driver.get(testVars.TEST_UNENCRYPTED_URL);
 
         var title = await driver.getTitle();
-        assert.equal(title, 'EveryPass Password Manager v1.6', 'Password manager homepage title is NOT the one expected');
+        assert.equal(title, 'EveryPass Password Manager v1.3', 'Password manager homepage title is NOT the one expected');
         var help = await driver.findElement(webdriver.By.id('help-screen'));
         var helpText = await help.getAttribute("innerHTML");
         assert.include(helpText, "is a Password Manager", 'Description exists');
