@@ -64,7 +64,7 @@ describe('EveryPass Specific Testing', function () {
         await driver.get(testVars.TEST_UNENCRYPTED_URL);
 
         var title = await driver.getTitle();
-        assert.equal(title, 'EveryPass Password Manager v1.3', 'Password manager homepage title is NOT the one expected');
+        assert.equal(title, 'EveryPass Password Manager v2.0', 'Password manager homepage title is NOT the one expected');
         var help = await driver.findElement(webdriver.By.id('help-screen'));
         var helpText = await help.getAttribute("innerHTML");
         assert.include(helpText, "is a Password Manager", 'Description exists');
