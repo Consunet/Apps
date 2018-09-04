@@ -1,3 +1,4 @@
+require("../../common/constants.js")
 /**
  * @file externalised constants relating to the Password Manager
  */ 

@@ -1,0 +1,30 @@
+@import "../../common/css/bootstrap.css";
+@import "../../common/css/bootstrap-theme.css";
+@import "./new-question.css";
+@import "../../common/css/app.css";
+
+#new-entry {
+    margin: 30px 0px;
+}
+
+#new-entry-header {
+    text-align: center;
+}
+
+#store-empty-message {
+    text-align: center;
+}
+
+#store-header {
+    text-align: center;
+}
+
+body {
+  padding-top: 50px;
+  margin-bottom: 85px;
+}   
+
+
+.navbar-icon{
+    background-image: url(../imgs/logo.png);
+}

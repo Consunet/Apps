@@ -1,3 +1,11 @@
+import "../../common/node_modules/drag-drop-touch"
+import "../../common/common.js"
+import "./constants.js"
+
+var sjcl = require("../../common/lib/sjcl")
+var Blob = require("../../common/node_modules/blob")
+var FileSaver = require('../../common/node_modules/file-saver');
+
 /**
  * @file functions to encapsulate interface logic for the WhisperNote app
  */
@@ -154,14 +162,17 @@ SCA.decrypt = function() {
                 // in this branch key is required to be a SJCL algorithum/password pair
                 var encryptedFilenameBits = sjcl.codec.base64.toBits(encData.cattname);
                 var decryptedFilenameBits = sjcl.mode[encData.mode].decrypt(key, encryptedFilenameBits, iv, adata, encData.ts);
+                console.log(sjcl.codec.utf8String);
                 var decryptedFilename = sjcl.codec.utf8String.fromBits(decryptedFilenameBits);
                 SCA.e("download-label").innerHTML = decryptedFilename;
                 SCA.setDisplay("att-download", "inline");
 
                 var byteArrays = [];
+                console.log("Length: " + encData.catt.length);
                 for (var i = 0; i < encData.catt.length; i++) {
                     var sliceBits = sjcl.codec.base64.toBits(encData.catt[i]);
                     var decryptedSlice = sjcl.mode[encData.mode].decrypt(key, sliceBits, iv, adata, encData.ts);
+                    console.log(sjcl);
                     var byteNumbersSlice = sjcl.codec.bytes.fromBits(decryptedSlice);
                     var byteArraySlice = new Uint8Array(byteNumbersSlice);
                     byteArrays.push(byteArraySlice);
@@ -221,7 +232,7 @@ SCA.decrypt = function() {
  * Downloads the stores attachment blob and filename.
  */
 SCA.downloadDecrypted = function() {
-    saveAs(this.attBlob, this.attName);
+    FileSaver.saveAs(this.attBlob, this.attName);
 };
 
 /**

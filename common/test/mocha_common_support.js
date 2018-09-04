@@ -2,24 +2,23 @@
  * @file browser interface functions to support common testing
  */
 
+const cov = require('istanbul-middleware');
 const webdriver = require('selenium-webdriver');
 const expect = require("chai").expect;
 const assert = require("chai").assert;
 const fs = require('fs');
-var http = require("http");
+const http = require('http');
 
 module.exports.commonFullPath = function ()
 {
     return __dirname;
 }
 
-module.exports.refreshCoverage = async function (driver)
-{
+module.exports.refreshCoverage = async function (driver) {
     // post coverage info  
     await driver.executeScript("return window.__coverage__;").then(function (obj) {
 
-        try
-        {
+        try {
             var str = JSON.stringify(obj);
 
             var options = {
@@ -69,7 +68,6 @@ exports.encryptWith = async function (driver, password, hint) {
 
 module.exports.assertFormIsLocked = async function (driver, isLocked) {
     var lockedStyle = await driver.findElement(webdriver.By.id('locked')).getAttribute("style");
-    //console.log(lockedStyle);
     var unlockedStyle = await driver.findElement(webdriver.By.id('unlocked')).getAttribute("style");
 
     if (isLocked) {

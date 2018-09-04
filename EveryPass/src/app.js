@@ -1,3 +1,8 @@
+import "../../common/node_modules/drag-drop-touch"
+import "../../common/common.js"
+import "./constants.js"
+import "../../common/lib/sjcl"
+
 /**
  * @file functions to encapsulate interface logic for the Password Manager App
  */
@@ -11,7 +16,6 @@
  * They provide a basic level of abstraction above standard DOM manipulation methods.
  * </p>
  */
-
 
 /**
  * An integer which is used to provide a unique ID for password elements.
@@ -28,7 +32,6 @@ SCA._nextPwdId = 0;
  * @private
  */
 SCA._nextGrpId = 0;
-
 
 /**
  * An identifier for the currently selected group for all new passwords to be added to.
@@ -1139,4 +1142,3 @@ SCA.readOptions = function() {
         keepPwdsOfDeletedGrp: keepGrpPwds
     };
 };
-
