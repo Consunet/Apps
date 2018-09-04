@@ -14,8 +14,8 @@ const webpack = require("webpack");
 
 var path = require("path");
 var languages = {
-	en: require("./src/locale/en.json"),
-	de: require("./src/locale/de.json"),
+	en: require("./locale/en.json"),
+	de: require("./locale/de.json"),
 };
 
 const devMode = process.env.NODE_ENV !== 'production';
