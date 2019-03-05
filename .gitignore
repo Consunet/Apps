@@ -22,6 +22,7 @@ package-lock.json
 /WhisperNote/node_modules/
 /WhisperNote/dist/*
 /WhisperNote/doc/*
+/WhisperNote/public_html/*
 /WhisperNote/src/tests/test_downloads/*
 /WhisperNote/npm-debug.log
 /WhisperNote/imgs/Thumbs.db
@@ -29,6 +30,7 @@ package-lock.json
 /EveryPass/node_modules/
 /EveryPass/dist/*
 /EveryPass/doc/*
+/EveryPass/public_html/*
 /EveryPass/npm-debug.log
 /EveryPass/imgs/Thumbs.db
 /EveryPass/tests/test_downloads/*

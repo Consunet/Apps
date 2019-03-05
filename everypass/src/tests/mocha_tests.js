@@ -18,7 +18,7 @@ const dir = chaiFiles.dir;
 const fs = require('fs')
 const coverageServer = require('../../../common/coverage_server')
 chai.use(chaiFiles);
-const isCollectCoverage = process.env.COLLECT_COVERAGE == 'true';
+const isCollectCoverage = true; 
 const downloadDir = path.normalize(process.cwd() + "/src/tests/test_downloads"); // Normalize the path so it works on all systems.
 
 describe('EveryPass Specific Testing', function () {
@@ -62,8 +62,6 @@ describe('EveryPass Specific Testing', function () {
         if (isCollectCoverage) {
             console.log("Coverage can be viewed at: http://localhost:8888/coverage");
         }
-
-        process.exit();
     });
 
     afterEach(async function () {

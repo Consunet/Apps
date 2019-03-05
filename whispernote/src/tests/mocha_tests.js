@@ -20,7 +20,7 @@ const dir = chaiFiles.dir;
 chai.use(require('../../../common/node_modules/chai-string'));
 chai.use(chaiFiles);
 const coverageServer = require('../../../common/coverage_server')
-const isCollectCoverage = process.env.COLLECT_COVERAGE == 'true';
+const isCollectCoverage = true;
 const downloadDir = path.normalize(process.cwd() + "/src/tests/test_downloads"); // Normalize the path so it works on all systems.
 
 describe('WhisperNote Testing', function () {
@@ -54,22 +54,18 @@ describe('WhisperNote Testing', function () {
     });
 
     after(async function () {
-
         console.log("------------ closing headless browser -------------");
         await driver.quit();
 
         if (isCollectCoverage) {
             console.log("Coverage can be viewed at: http://localhost:8888/coverage");
         }
-
-        process.exit(0);
     });
 
     afterEach(async function () {
         if (isCollectCoverage) {
             await comsupport.refreshCoverage(driver)
         }
-
     });
 
     it('Can verify basic app details.', async function () {
