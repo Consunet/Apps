@@ -21,8 +21,7 @@ chai.use(require('../../../common/node_modules/chai-string'));
 chai.use(chaiFiles);
 const coverageServer = require('../../../common/coverage_server')
 const isCollectCoverage = process.env.COLLECT_COVERAGE == 'true';
-
-
+const downloadDir = path.normalize(process.cwd() + "/src/tests/test_downloads"); // Normalize the path so it works on all systems.
 
 describe('WhisperNote Testing', function () {
 
@@ -38,7 +37,7 @@ describe('WhisperNote Testing', function () {
         console.log("------------ opening headless browser -------------");
 
         let options = new firefox.Options()
-            .setPreference("browser.download.dir", process.cwd() + "/src/tests/test_downloads" )
+            .setPreference("browser.download.dir", downloadDir)
             .setPreference("browser.download.folderList", 2)
             .setPreference("browser.download.panel.shown", false)
             .setPreference("browser.helperApps.neverAsk.saveToDisk", "html")
@@ -62,12 +61,15 @@ describe('WhisperNote Testing', function () {
         if (isCollectCoverage) {
             console.log("Coverage can be viewed at: http://localhost:8888/coverage");
         }
+
+        process.exit(0);
     });
 
     afterEach(async function () {
         if (isCollectCoverage) {
             await comsupport.refreshCoverage(driver)
         }
+
     });
 
     it('Can verify basic app details.', async function () {
@@ -123,7 +125,7 @@ describe('WhisperNote Testing', function () {
 
             await support.addNote(driver, testVars.TEST_MESSAGE);
 
-            await driver.findElement(webdriver.By.id('file')).sendKeys(process.cwd() + '/src/tests/testmessage.txt');
+            await driver.findElement(webdriver.By.id('file')).sendKeys(path.normalize(process.cwd() + '/src/tests/testmessage.txt'));
 
             await sleep(1000);
 

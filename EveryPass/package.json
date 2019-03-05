@@ -4,11 +4,11 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "build:prod": "cross-env noTest=true NODE_ENV=production webpack",
-    "build:dev": "cross-env noTest=true webpack",
-    "start:prod": "cross-env noTest=true NODE_ENV=production webpack-serve --open",
+    "build:prod": "cross-env NODE_ENV=production webpack",
+    "build:dev": "cross-env webpack",
+    "start:prod": "cross-env NODE_ENV=production webpack-serve --open",
     "start:dev": "cross-env webpack-serve --open",
-    "test": "COLLECT_COVERAGE=true webpack-serve"
+    "test": "cross-env enableTests=true webpack-serve"
   },
   "keywords": [],
   "author": "",

@@ -25,7 +25,7 @@ module.exports = Object.keys(languages).map(function(language) {
     var plugins = [];
     var rules = [];
 
-    if( !process.env.noTest ) {
+    if(process.env.enableTests) {
         // Unzip the firefox profile if not already.
         var exists = fs.existsSync("../common/test/firefox_profile");
         if( !exists ) {

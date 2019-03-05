@@ -19,6 +19,7 @@ const fs = require('fs')
 const coverageServer = require('../../../common/coverage_server')
 chai.use(chaiFiles);
 const isCollectCoverage = process.env.COLLECT_COVERAGE == 'true';
+const downloadDir = path.normalize(process.cwd() + "/src/tests/test_downloads"); // Normalize the path so it works on all systems.
 
 describe('EveryPass Specific Testing', function () {
 
@@ -35,7 +36,7 @@ describe('EveryPass Specific Testing', function () {
         console.log("------------ opening headless browser -------------");
 
         let options = new firefox.Options()
-            .setPreference("browser.download.dir", process.cwd() + "/src/tests/test_downloads" )
+            .setPreference("browser.download.dir", downloadDir)
             .setPreference("browser.download.folderList", 2)
             .setPreference("browser.download.panel.shown", false)
             .setPreference("browser.helperApps.neverAsk.saveToDisk", "html")
@@ -44,7 +45,7 @@ describe('EveryPass Specific Testing', function () {
             .headless();
 
         console.log("Path: " + comsupport.commonFullPath() + "/firefox_profile");
-
+        console.log("Download Dir Path: " + downloadDir);
 
         driver = await new webdriver.Builder()
                 .forBrowser('firefox')
@@ -61,6 +62,8 @@ describe('EveryPass Specific Testing', function () {
         if (isCollectCoverage) {
             console.log("Coverage can be viewed at: http://localhost:8888/coverage");
         }
+
+        process.exit();
     });
 
     afterEach(async function () {
@@ -899,7 +902,7 @@ describe('EveryPass Specific Testing', function () {
             await driver.get(testVars.TEST_UNENCRYPTED_URL);
 
             //import file created above
-            await driver.findElement(webdriver.By.id('import')).sendKeys(__dirname + path.sep + "test_downloads" + path.sep + "test_encrypted.html");
+            await driver.findElement(webdriver.By.id('import')).sendKeys(downloadDir + path.sep + "test_encrypted.html");
 
             //allow for import
             await sleep(1000);
