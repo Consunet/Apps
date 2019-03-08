@@ -120,7 +120,6 @@ module.exports = Object.keys(languages).map(function(language) {
                     collapseWhitespace: true,
                     conservativeCollapse: true,
                     collapseBooleanAttributes: true,
-                    removeAttributeQuotes: true,
                     removeRedundantAttributes: true,
                     useShortDoctype: true,
                     removeEmptyAttributes: true,
@@ -128,7 +127,11 @@ module.exports = Object.keys(languages).map(function(language) {
                     keepClosingSlash: true,
                     removeComments: true,
                     minifyCSS: true,
-                    minifyJS: true
+                    minifyJS: {
+                        mangle: {
+                            keep_quoted_props: true
+                        }
+                    }
                 },
                 inlineSource: '.(js|css)$'
             }),

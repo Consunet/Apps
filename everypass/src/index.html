@@ -9,7 +9,7 @@
         <meta http-equiv="expires" content="Mon, 1 Jan 2000 11:11:11 GMT"/>
         <meta name="viewport" content="width=device-width"/>
         <meta name="sca-app-type" content="EveryPass" />
-        <script id="encrypted-data" type="text/javascript">var encData={"v":2.0,"iter":1000,"ks":256,"ts":128,"mode":"ocb2","cipher":"aes","salt":"","iv":"","adata":"","ct":""};</script>
+        <script id="encrypted-data" type="text/javascript">var encData={"iter":1000,"ks":256,"ts":128,"mode":"ocb2","cipher":"aes","keyHashAlgorithm":"SHA-256","cipherAlgorithm":"AES-CBC","v":2,"iv":"","adata":"","ct":""};</script>
     </head>
     <body onload="SCA.doOnload();">
         <nav class="navbar navbar-default navbar-fixed-top" role="navigation">
@@ -25,7 +25,7 @@
             <div class="navbar-header pull-right">
                 <form id="search-form" class="navbar-form" role="search" onsubmit="return false;"> 
                     <label class="sr-only" for="search"><%= Search %></label>
-                    <input id="search" name="search" type="search" class="form-control srch" onkeydown="SCA.filterClear(event);" onkeyup="SCA.filterPwds(event);" placeholder="<%= Search %>..." disabled="">
+                    <input id="search" name="search" type="search" class="form-control srch" onkeydown="SCA.filterClear(event);" onkeyup="SCA.filterPwds(event);" placeholder="<%= Search %>...">
                     <button id="menu-button" type="button" class="btn btn-sm btn-default menu-icon">&equiv;</button>
                     <ul id="menu" class="menu" role="menu" style=" display: none;">
                         <li role="presentation"><a id="menu-import" role="menuitem" onclick="SCA.e('import').click();" href="#"><%= Import %></a></li>

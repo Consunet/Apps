@@ -19,7 +19,7 @@ CONST = {
         mode: "ocb2", // maintained for backwards compatibility
         cipher: "aes", // maintained for backwards compatibility
         keyHashAlgorithm: "SHA-256",
-        cipherAlgorithm: "AES-CBC"
+        cipherAlgorithm: "AES-CBC",
     },
     variableCypherSettings: {
         v:  { desc: "<%= Version %>", type: "number", mandatory: true},
@@ -28,7 +28,7 @@ CONST = {
         adata: { desc: "<%= Hint %>", type: "string", mandatory: false},
         ct: { desc: "<%= CypherText %>", type: "string", mandatory: false}
     },
-    regexEncryptedData: /<script id="encrypted-data" type="text\/javascript">var encData=(.+);<\/script>/g,
+    regexEncryptedData: /<script id="encrypted-data" type="text\/javascript">var encData=(.+?);<\/script>/g,
     regexAppType: /<meta name="sca-app-type" content="(\w+)"/g,
     defaultTimeoutPeriodMins: 2
 };
