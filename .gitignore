@@ -19,21 +19,21 @@ package-lock.json
 
 
 
-/WhisperNote/node_modules/
-/WhisperNote/dist/*
-/WhisperNote/doc/*
-/WhisperNote/public_html/*
-/WhisperNote/src/tests/test_downloads/*
-/WhisperNote/npm-debug.log
-/WhisperNote/imgs/Thumbs.db
+/whispernote/node_modules/
+/whispernote/dist/*
+/whispernote/doc/*
+/whispernote/public_html/*
+/whispernote/src/tests/test_downloads/*
+/whispernote/npm-debug.log
+/whispernote/imgs/Thumbs.db
 
-/EveryPass/node_modules/
-/EveryPass/dist/*
-/EveryPass/doc/*
-/EveryPass/public_html/*
-/EveryPass/npm-debug.log
-/EveryPass/imgs/Thumbs.db
-/EveryPass/tests/test_downloads/*
+/everypass/node_modules/
+/everypass/dist/*
+/everypass/doc/*
+/everypass/public_html/*
+/everypass/npm-debug.log
+/everypass/imgs/Thumbs.db
+/everypass/tests/test_downloads/*
 
 /common/imgs/Thumbs.db
 /common/node_modules/
