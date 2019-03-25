@@ -25,7 +25,7 @@
             <div class="navbar-header pull-right">
                 <form id="search-form" class="navbar-form" role="search" onsubmit="return false;"> 
                     <label class="sr-only" for="search"><%= Search %></label>
-                    <input id="search" name="search" type="search" class="form-control srch" onkeydown="SCA.filterClear(event);" onkeyup="SCA.filterPwds(event);" placeholder="<%= Search %>...">
+                    <input id="search" name="search" type="search" class="form-control srch" onkeydown="SCA.filterClear(event);" onkeyup="SCA.filterPwds(event);" placeholder="<%= Search %>..." disabled="">
                     <button id="menu-button" type="button" class="btn btn-sm btn-default menu-icon">&equiv;</button>
                     <ul id="menu" class="menu" role="menu" style=" display: none;">
                         <li role="presentation"><a id="menu-import" role="menuitem" onclick="SCA.e('import').click();" href="#"><%= Import %></a></li>
@@ -140,7 +140,7 @@
                 </div>
 
                 <div id="store">
-                    <h4 id="store-empty-message"><%= YouHaveNoPasswords %></h4>
+                    <h4 id="store-empty-message" style="display:block"><%= YouHaveNoPasswords %></h4>
                     <div id="grps"></div>
                     <div id="pwds"></div>
                 </div>

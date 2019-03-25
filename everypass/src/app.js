@@ -595,7 +595,7 @@ SCA.encryptAndEmbedData = function() {
         SCA._divGrps().innerHTML = "";
         SCA._divPwds().innerHTML = "";
         SCA.e("search").setAttribute("disabled", "");
-        
+        SCA.setDisplay("store-empty-message", "block");
         return Promise.resolve();
     });
 };
@@ -632,8 +632,14 @@ SCA.setUnlocked = function(isUnlocked) {
         search.removeAttribute("disabled");
         menuButton.removeAttribute("disabled");
         search.focus();
+        if(this.passwordsExist() ) {
+            this.setDisplay("store-empty-message", "none");
+        } else {
+            this.setDisplay("store-empty-message", "block");
+        }
     } else {
         search.setAttribute("disabled", "");
+        this.setDisplay("store-empty-message", "none");
         menuButton.setAttribute("disabled", "");
     }
 };

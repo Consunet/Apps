@@ -25,6 +25,13 @@ EveryPass
 |-- package.json        (NPM metadata and dependency information)
 ```
 
+### Installing GeckoDriver
+wget https://github.com/mozilla/geckodriver/releases/download/v0.24.0/geckodriver-v0.24.0-linux64.tar.gz
+tar -xvzf geckodriver*
+chmod +x geckodriver
+sudo mv geckodriver /opt/
+export PATH=$PATH:/opt/geckodriver
+
 ### Build
 
 This project uses [Webpack](https://webpack.js.org/) for the automation of JavaScript tasks like CSS, JS and HTML minification, and running tests.
@@ -39,3 +46,7 @@ Once you have cloned the repository, the required steps to build the project are
 5. From within common and EveryPass folders, install project dependencies using: ```npm install ```
 6. Run ```npm run start:dev``` from within EveryPass directory.
 7. The built distributions are made available within the dist folder, under their respective locales
+
+
+
+

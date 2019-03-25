@@ -25,6 +25,12 @@ WhisperNote
 |-- README.md           (This document)
 |-- package.json        (NPM metadata and dependency information)
 ```
+### Installing GeckoDriver
+wget https://github.com/mozilla/geckodriver/releases/download/v0.24.0/geckodriver-v0.24.0-linux64.tar.gz
+tar -xvzf geckodriver*
+chmod +x geckodriver
+sudo mv geckodriver /opt/
+export PATH=$PATH:/opt/geckodriver
 
 ### Build
 
