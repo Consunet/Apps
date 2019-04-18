@@ -392,6 +392,7 @@ SCA = {
                                     me.displayOptions(false);
                                     me.resetHelp();
                                     me.displayTimeout(false);
+                                    me.e("dec-hint").innerHTML = "(<%= NoneProvided %>)";
 
                                     var fbGroup = me.e("enc-password-fb-group");
                                     fbGroup.style.display = "none";
