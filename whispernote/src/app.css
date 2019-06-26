@@ -1,0 +1,7 @@
+@import "../../common/css/bootstrap.css";
+@import "../../common/css/bootstrap-theme.css";
+@import "../../common/css/app.css";
+
+.navbar-icon{
+    background-image: url(../imgs/logo.png) !important;
+}

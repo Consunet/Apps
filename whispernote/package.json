@@ -1,0 +1,42 @@
+{
+  "name": "Whispernote",
+  "version": "1.0.0",
+  "description": "Consunet WhisperNote™ is a portable encrypted message container. WhisperNote™ is free to use, open source, free from app stores and compatible with most modern devices (computers, tablets, phones).",
+  "main": "index.js",
+  "scripts": {
+    "build:prod": "cross-env NODE_ENV=production webpack",
+    "build:dev": "cross-env webpack",
+    "start:prod": "cross-env NODE_ENV=production webpack-serve --open",
+    "start:dev": "cross-env webpack-serve --open",
+    "test": "cross-env enableTests=true webpack-serve"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {},
+  "devDependencies": {
+    "adm-zip": "0.4.11",
+    "base64-inline-loader": "1.1.1",
+    "clean-webpack-plugin": "0.1.19",
+    "cross-env": "5.2.0",
+    "css-loader": "1.0.0",
+    "file-loader": "1.1.11",
+    "html-loader": "0.5.5",
+    "html-webpack-inline-source-plugin": "0.0.10",
+    "html-webpack-plugin": "3.2.0",
+    "istanbul-instrumenter-loader": "3.0.1",
+    "mini-css-extract-plugin": "0.4.2",
+    "mocha": "5.2.0",
+    "optimize-css-assets-webpack-plugin": "^5.0.1",
+    "script-ext-html-webpack-plugin": "2.0.1",
+    "string-replace-webpack-plugin": "0.1.3",
+    "style-loader": "0.22.1",
+    "webcrypto-shim": "0.1.4",
+    "webpack": "4.16.5",
+    "webpack-bundle-analyzer": "2.13.1",
+    "webpack-cli": "3.1.0",
+    "webpack-node-externals": "1.7.2",
+    "webpack-serve": "2.0.2",
+    "webpack-shell-plugin": "0.5.0"
+  }
+}
